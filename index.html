@@ -79,35 +79,61 @@
             transform: scale(1.02);
         }
         
-        .participant-list {
-            list-style-type: none;
+        .voting-container {
             margin: 25px 0;
+        }
+        
+        .position-list {
+            list-style-type: none;
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid #e0e0e0;
         }
         
-        .participant-item {
-            padding: 15px;
+        .position-item {
+            display: flex;
+            align-items: center;
             background-color: #fff;
             border-bottom: 1px solid #eee;
+        }
+        
+        .position-item:last-child {
+            border-bottom: none;
+        }
+        
+        .position-number {
+            width: 70px;
+            padding: 15px;
+            background-color: #4caf50;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            border-right: 2px solid #388e3c;
+        }
+        
+        .name-container {
+            flex: 1;
+            padding: 15px;
             cursor: move;
             display: flex;
             align-items: center;
             font-size: 1.1rem;
+            min-height: 60px;
         }
         
-        .participant-item:hover {
+        .name-container:hover {
             background-color: #f9f9f9;
         }
         
-        .participant-item.dragging {
+        .name-container.dragging {
             background-color: #e3f2fd;
         }
         
-        .grip-icon {
+        .drag-icon {
             margin-right: 12px;
             color: #777;
+            font-size: 1.2rem;
         }
         
         .action-btn {
@@ -285,16 +311,10 @@
             font-size: 1.3rem;
         }
         
-        .medal-icon {
-            font-size: 1.5rem;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        
         .position-cell {
             font-weight: bold;
             font-size: 1.2rem;
-            width: 80px;
+            width: 100px;
         }
         
         .admin-section {
@@ -326,15 +346,16 @@
                 padding: 10px;
             }
             
-            .medal-icon {
-                font-size: 1.2rem;
+            .position-number {
+                width: 60px;
+                padding: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎄 Gabonetako Sari Nagusia 🎄</h1>
+        <h1>Gabonetako Sari Nagusia</h1>
         <div class="subtitle">Votacion de Pintxos Navidenos</div>
         
         <!-- Pagina 1: Seleccion de votante -->
@@ -356,20 +377,20 @@
             <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
-                    🏆 Ver podio final
+                    Ver podio final
                 </button>
             </div>
             
             <!-- Resultados finales (solo puntuaciones) -->
             <div class="results-container" id="results-container">
-                <h3>🏆 Podio Final</h3>
+                <h3>Podio Final</h3>
                 <div id="results-content"></div>
             </div>
             
             <!-- Seccion de administracion -->
             <div class="admin-section">
                 <button id="reset-votes-btn" class="export-btn reset-btn">
-                    🗑️ Reiniciar todos los votos
+                    Reiniciar todos los votos
                 </button>
             </div>
         </div>
@@ -378,10 +399,13 @@
         <div id="page-voting" class="page">
             <div class="current-voter" id="current-voter-info"></div>
             <h2>Ordena los pintxos (de mejor a peor)</h2>
+            <p style="color: #666; margin-bottom: 20px;">Arrastra los nombres para ordenarlos. La posicion 1 es la mejor.</p>
             
-            <ul class="participant-list" id="sortable-list">
-                <!-- Los participantes se cargaran aqui -->
-            </ul>
+            <div class="voting-container">
+                <ul class="position-list" id="position-list">
+                    <!-- Las posiciones con nombres se cargaran aqui -->
+                </ul>
+            </div>
             
             <button id="submit-vote" class="action-btn" disabled>Enviar mi voto</button>
         </div>
@@ -392,8 +416,8 @@
             <div id="vote-confirmation"></div>
             
             <div class="export-section">
-                <button id="new-vote" class="export-btn" style="background-color: #4caf50;">➕ Nueva votacion</button>
-                <button id="go-home" class="export-btn" style="background-color: #ff9800;">🏠 Volver al inicio</button>
+                <button id="new-vote" class="export-btn" style="background-color: #4caf50;">Nueva votacion</button>
+                <button id="go-home" class="export-btn" style="background-color: #ff9800;">Volver al inicio</button>
             </div>
         </div>
     </div>
@@ -413,7 +437,7 @@
         const pageVoting = document.getElementById('page-voting');
         const pageResults = document.getElementById('page-results');
         const currentVoterInfo = document.getElementById('current-voter-info');
-        const sortableList = document.getElementById('sortable-list');
+        const positionList = document.getElementById('position-list');
         const submitVoteBtn = document.getElementById('submit-vote');
         const voteConfirmation = document.getElementById('vote-confirmation');
         const newVoteBtn = document.getElementById('new-vote');
@@ -459,7 +483,7 @@
             pageResults.classList.remove('active');
             
             // Limpiar lista
-            sortableList.innerHTML = '';
+            positionList.innerHTML = '';
             
             // Crear lista de participantes para votar
             let votingList = [...participants];
@@ -472,22 +496,33 @@
             // Mezclar aleatoriamente
             votingList = shuffleArray(votingList);
             
-            // Crear elementos de la lista
-            votingList.forEach(participant => {
+            // Crear elementos de posicion con nombres
+            for (let i = 0; i < votingList.length; i++) {
                 const li = document.createElement('li');
-                li.className = 'participant-item';
-                li.setAttribute('data-name', participant);
-                li.draggable = true;
-                li.innerHTML = `<span class="grip-icon">↕️</span> ${participant}`;
+                li.className = 'position-item';
+                
+                // Numero de posicion (fijo)
+                const positionDiv = document.createElement('div');
+                positionDiv.className = 'position-number';
+                positionDiv.textContent = `${i + 1}º`;
+                
+                // Contenedor del nombre (arrastrable)
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'name-container';
+                nameDiv.setAttribute('data-name', votingList[i]);
+                nameDiv.draggable = true;
+                nameDiv.innerHTML = `<span class="drag-icon">↕</span> ${votingList[i]}`;
                 
                 // Eventos drag & drop
-                li.addEventListener('dragstart', handleDragStart);
-                li.addEventListener('dragover', handleDragOver);
-                li.addEventListener('drop', handleDrop);
-                li.addEventListener('dragend', handleDragEnd);
+                nameDiv.addEventListener('dragstart', handleDragStart);
+                nameDiv.addEventListener('dragover', handleDragOver);
+                nameDiv.addEventListener('drop', handleDrop);
+                nameDiv.addEventListener('dragend', handleDragEnd);
                 
-                sortableList.appendChild(li);
-            });
+                li.appendChild(positionDiv);
+                li.appendChild(nameDiv);
+                positionList.appendChild(li);
+            }
             
             // Activar boton de enviar
             submitVoteBtn.disabled = false;
@@ -508,15 +543,19 @@
         function handleDrop(e) {
             e.preventDefault();
             if (draggedItem !== this) {
-                const allItems = Array.from(sortableList.querySelectorAll('.participant-item'));
-                const draggedIndex = allItems.indexOf(draggedItem);
-                const targetIndex = allItems.indexOf(this);
-        
-                if (draggedIndex < targetIndex) {
-                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
-                } else {
-                    this.parentNode.insertBefore(draggedItem, this);
-                }
+                // Encontrar los elementos padre (li)
+                const draggedLi = draggedItem.parentElement;
+                const targetLi = this.parentElement;
+                
+                // Intercambiar los nombres
+                const draggedName = draggedItem.getAttribute('data-name');
+                const targetName = this.getAttribute('data-name');
+                
+                draggedItem.setAttribute('data-name', targetName);
+                draggedItem.innerHTML = `<span class="drag-icon">↕</span> ${targetName}`;
+                
+                this.setAttribute('data-name', draggedName);
+                this.innerHTML = `<span class="drag-icon">↕</span> ${draggedName}`;
             }
         }
         
@@ -538,8 +577,8 @@
         // Enviar voto
         submitVoteBtn.addEventListener('click', function() {
             // Obtener orden actual
-            const order = Array.from(sortableList.querySelectorAll('.participant-item'))
-                .map(item => item.getAttribute('data-name'));
+            const nameContainers = Array.from(document.querySelectorAll('.name-container'));
+            const order = nameContainers.map(item => item.getAttribute('data-name'));
             
             // Crear objeto voto
             const vote = {
@@ -669,23 +708,19 @@
             
             sortedParticipants.forEach((participant, index) => {
                 let medalClass = '';
-                let medalIcon = '';
                 
                 // Asignar medallas a los primeros 3 puestos
                 if (index === 0) {
                     medalClass = 'gold-medal';
-                    medalIcon = '🥇';
                 } else if (index === 1) {
                     medalClass = 'silver-medal';
-                    medalIcon = '🥈';
                 } else if (index === 2) {
                     medalClass = 'bronze-medal';
-                    medalIcon = '🥉';
                 }
                 
                 resultsHTML += `
                     <tr class="${medalClass}">
-                        <td class="position-cell">${medalIcon} ${index + 1}º</td>
+                        <td class="position-cell">${index + 1}º</td>
                         <td><strong>${participant}</strong></td>
                         <td class="total-score">${scores[participant]} puntos</td>
                     </tr>
@@ -701,7 +736,7 @@
             // NO MOSTRAR DETALLES DE VOTOS
             resultsHTML += `
                 <div style="margin-top: 25px; padding: 18px; background-color: #f5f5f5; border-radius: 8px; border-left: 5px solid #4caf50;">
-                    <p style="margin: 0; font-weight: bold;">🏆 Sistema de puntuacion:</p>
+                    <p style="margin: 0; font-weight: bold;">Sistema de puntuacion:</p>
                     <p style="margin: 5px 0 0 0;">1º puesto = 8 puntos, 2º = 7 puntos, 3º = 6 puntos, etc.</p>
                 </div>
             `;
@@ -732,7 +767,7 @@
             if (confirm('¿Estas seguro de REINICIAR TODOS los votos?\n\nEsto borrará todos los votos registrados hasta ahora.')) {
                 allVotes = [];
                 localStorage.removeItem('gabonetakoVotes');
-                alert('✅ Todos los votos han sido reiniciados.');
+                alert('Todos los votos han sido reiniciados.');
                 
                 // Actualizar interfaz
                 updateVotedList();
