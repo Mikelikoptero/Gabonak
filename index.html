@@ -178,6 +178,14 @@
             background-color: #512da8;
         }
         
+        .reset-btn {
+            background-color: #f44336 !important;
+        }
+        
+        .reset-btn:hover {
+            background-color: #d32f2f !important;
+        }
+        
         .current-voter {
             background-color: #e8f5e9;
             padding: 12px;
@@ -273,6 +281,13 @@
             border-bottom: none;
         }
         
+        .admin-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -327,7 +342,7 @@
                 </p>
             </div>
             
-            <!-- Boton para ver resultados -->
+            <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
                     📊 Ver resultados completos
@@ -338,6 +353,13 @@
             <div class="results-container" id="results-container">
                 <h3>📊 Resultados Completos</h3>
                 <div id="results-content"></div>
+            </div>
+            
+            <!-- Seccion de administracion -->
+            <div class="admin-section">
+                <button id="reset-votes-btn" class="export-btn reset-btn">
+                    🗑️ Reiniciar todos los votos
+                </button>
             </div>
         </div>
         
@@ -361,7 +383,6 @@
             <div class="export-section">
                 <button id="new-vote" class="export-btn" style="background-color: #4caf50;">➕ Nueva votacion</button>
                 <button id="go-home" class="export-btn" style="background-color: #ff9800;">🏠 Volver al inicio</button>
-                <button id="reset-votes" class="export-btn" style="background-color: #f44336;">🗑️ Borrar todos los votos</button>
             </div>
         </div>
     </div>
@@ -385,8 +406,8 @@
         const submitVoteBtn = document.getElementById('submit-vote');
         const voteConfirmation = document.getElementById('vote-confirmation');
         const newVoteBtn = document.getElementById('new-vote');
-        const resetVotesBtn = document.getElementById('reset-votes');
         const goHomeBtn = document.getElementById('go-home');
+        const resetVotesBtn = document.getElementById('reset-votes-btn');
         const showResultsBtn = document.getElementById('show-results-btn');
         const resultsContainer = document.getElementById('results-container');
         const resultsContent = document.getElementById('results-content');
@@ -524,8 +545,10 @@
             pageVoting.classList.remove('active');
             pageResults.classList.add('active');
             
-            // Mostrar resumen del voto
+            // Mostrar resumen del voto (solo para el votante actual)
             let html = '<div style="margin-bottom: 20px;">';
+            html += `<p style="margin-bottom: 15px; font-weight: bold; color: #2e7d32;">Has votado de esta manera:</p>`;
+            
             vote.order.forEach((participant, index) => {
                 html += `
                     <div class="vote-result">
@@ -536,14 +559,14 @@
             });
             
             if (participants.includes(currentVoter)) {
-                html += `<p style="margin-top: 15px; color: #666; font-style: italic;">Nota: ${currentVoter} no vota su propio pintxo.</p>`;
+                html += `<p style="margin-top: 15px; color: #666; font-style: italic;">Nota: No votas tu propio pintxo (${currentVoter}).</p>`;
             }
             
             html += '</div>';
             voteConfirmation.innerHTML = html;
         }
         
-        // Actualizar lista de quienes han votado
+        // Actualizar lista de quienes han votado (SOLO NOMBRES)
         function updateVotedList() {
             if (allVotes.length === 0) {
                 votedList.style.display = 'none';
@@ -554,7 +577,7 @@
             votedList.style.display = 'block';
             votedPeople.innerHTML = '';
             
-            // Mostrar quienes han votado
+            // Mostrar solo los nombres de quienes han votado
             allVotes.forEach(vote => {
                 const div = document.createElement('div');
                 div.className = `voted-person ${spectators.includes(vote.voter) ? 'spectator' : ''}`;
@@ -583,7 +606,7 @@
             this.style.display = 'none';
         });
         
-        // Calcular y mostrar resultados
+        // Calcular y mostrar resultados (solo cuando se pulsa el boton)
         function calculateResults() {
             // Inicializar puntuaciones
             const scores = {};
@@ -667,10 +690,10 @@
                 </div>
             `;
             
-            // Mostrar detalles de votos
+            // Mostrar detalles de votos (SOLO CUANDO SE PIDE VER RESULTADOS)
             resultsHTML += `
                 <div class="votes-detail">
-                    <h4>Detalle de votos:</h4>
+                    <h4>Detalle de todos los votos:</h4>
                     ${allVotes.map(vote => `
                         <div class="vote-entry">
                             <strong>${vote.voter}:</strong> 
@@ -702,21 +725,23 @@
             updateVotedList();
         });
         
-        // Resetear votos
+        // Reiniciar todos los votos
         resetVotesBtn.addEventListener('click', function() {
-            if (confirm('¿Estas seguro de borrar TODOS los votos? Esto no se puede deshacer.')) {
+            if (confirm('¿Estas seguro de REINICIAR TODOS los votos?\n\nEsto borrará todos los votos registrados hasta ahora.')) {
                 allVotes = [];
                 localStorage.removeItem('gabonetakoVotes');
-                alert('Todos los votos han sido borrados.');
+                alert('✅ Todos los votos han sido reiniciados.');
                 
+                // Actualizar interfaz
+                updateVotedList();
+                resultsContainer.classList.remove('active');
+                showResultsBtn.style.display = 'none';
+                
+                // Si estamos en la pagina de resultados, volver al inicio
                 if (pageResults.classList.contains('active')) {
                     pageResults.classList.remove('active');
                     pageVoter.classList.add('active');
                 }
-                
-                updateVotedList();
-                resultsContainer.classList.remove('active');
-                showResultsBtn.style.display = 'none';
             }
         });
         
