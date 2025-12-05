@@ -92,9 +92,10 @@
         
         .position-item {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             background-color: #fff;
             border-bottom: 1px solid #eee;
+            min-height: 60px;
         }
         
         .position-item:last-child {
@@ -103,13 +104,42 @@
         
         .position-number {
             width: 60px;
-            padding: 12px;
-            background-color: #4caf50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             text-align: center;
-            border-right: 2px solid #388e3c;
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+        
+        /* ORO - Primer puesto */
+        .position-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            color: #8B7500;
+            border-right-color: rgba(139, 117, 0, 0.3) !important;
+        }
+        
+        /* PLATA - Segundo puesto */
+        .position-2 {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
+            color: #696969;
+            border-right-color: rgba(105, 105, 105, 0.3) !important;
+        }
+        
+        /* BRONCE - Tercer puesto */
+        .position-3 {
+            background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
+            color: #5a3a22;
+            border-right-color: rgba(90, 58, 34, 0.3) !important;
+        }
+        
+        /* Resto de posiciones - Blanco */
+        .position-4, .position-5, .position-6, .position-7, .position-8 {
+            background: white !important;
+            color: #333;
+            border-right-color: #e0e0e0 !important;
         }
         
         .name-container {
@@ -348,7 +378,7 @@
             
             .position-number {
                 width: 50px;
-                padding: 10px;
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -502,6 +532,18 @@
                 // Numero de posicion (fijo) - SIN º
                 const positionDiv = document.createElement('div');
                 positionDiv.className = 'position-number';
+                
+                // Asignar clase segun la posicion
+                if (i === 0) {
+                    positionDiv.classList.add('position-1');
+                } else if (i === 1) {
+                    positionDiv.classList.add('position-2');
+                } else if (i === 2) {
+                    positionDiv.classList.add('position-3');
+                } else {
+                    positionDiv.classList.add(`position-${i + 1}`);
+                }
+                
                 positionDiv.textContent = `${i + 1}`;
                 
                 // Contenedor del nombre (arrastrable)
