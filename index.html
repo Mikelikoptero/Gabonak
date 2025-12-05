@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabonetako Sari Nagusia - Votación de Pintxos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-image: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        h1, h2 {
+            color: #c62828;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 3px solid #ff9800;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: #2e7d32;
+        }
+        
+        .participant-list {
+            list-style-type: none;
+            margin: 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .participant-item {
+            padding: 18px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .participant-item:hover {
+            background-color: #f9f9f9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .participant-item.dragging {
+            opacity: 0.7;
+            background-color: #e3f2fd;
+        }
+        
+        .participant-item.fixed {
+            background-color: #ffecb3;
+            cursor: not-allowed;
+            color: #5d4037;
+        }
+        
+        .grip-icon {
+            margin-right: 15px;
+            color: #777;
+            font-size: 1.5rem;
+        }
+        
+        .voter-select {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .voter-btn {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            min-width: 180px;
+        }
+        
+        .voter-btn:hover {
+            background-color: #388e3c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .voter-btn.spectator {
+            background-color: #2196f3;
+        }
+        
+        .voter-btn.spectator:hover {
+            background-color: #1976d2;
+        }
+        
+        .action-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 18px;
+            font-size: 1.3rem;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .action-btn:hover {
+            background-color: #f57c00;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .instructions {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .instructions h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .vote-result {
+            background-color: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            border-left: 4px solid #689f38;
+        }
+        
+        .position {
+            font-weight: bold;
+            color: #33691e;
+            font-size: 1.3rem;
+            min-width: 40px;
+        }
+        
+        .name {
+            font-size: 1.2rem;
+        }
+        
+        .export-btn {
+            display: inline-block;
+            margin: 20px 10px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            background-color: #673ab7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .export-btn:hover {
+            background-color: #512da8;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .current-voter {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1565c0;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .voter-btn {
+                min-width: 150px;
+                padding: 12px 20px;
+            }
+            
+            .participant-item {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎄 Gabonetako Sari Nagusia 🎄</h1>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px; color: #555;">Concurso de Pintxos Navideños</p>
+        
+        <!-- Página 1: Selección de votante -->
+        <div id="page-voter" class="page active">
+            <h2>Identificación del Votante</h2>
+            <div class="instructions">
+                <h3>Instrucciones:</h3>
+                <p>Selecciona tu nombre para comenzar la votación. Si eres Aitona o Abuela, selecciona tu nombre aunque no participes con pintxo.</p>
+                <p><strong>Nota:</strong> Mikel aparecerá fijo en última posición para evitar trampas.</p>
+            </div>
+            
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 20px;">¿Quién está votando?</p>
+            
+            <div class="voter-select">
+                <button class="voter-btn" data-voter="Mikel">Mikel</button>
+                <button class="voter-btn" data-voter="Jon">Jon</button>
+                <button class="voter-btn" data-voter="Iosu">Iosu</button>
+                <button class="voter-btn" data-voter="Yaiza">Yaiza</button>
+                <button class="voter-btn" data-voter="Josefina">Josefina</button>
+                <button class="voter-btn" data-voter="Juan Mari">Juan Mari</button>
+                <button class="voter-btn" data-voter="Ana Luisa">Ana Luisa</button>
+                <button class="voter-btn" data-voter="Javi">Javi</button>
+                <button class="voter-btn spectator" data-voter="Aitona">Aitona</button>
+                <button class="voter-btn spectator" data-voter="Abuela">Abuela</button>
+            </div>
+        </div>
+        
+        <!-- Página 2: Ordenación de participantes -->
+        <div id="page-voting" class="page">
+            <div class="current-voter" id="current-voter-info">Votando: <span id="voter-name"></span></div>
+            
+            <h2>Ordena los Pintxos</h2>
+            <div class="instructions">
+                <h3>Instrucciones:</h3>
+                <p>Arrastra y suelta los nombres para ordenar los pintxos según tu preferencia (de mejor a peor).</p>
+                <p>El que más te guste en la posición 1, y el que menos en la última.</p>
+                <p><strong>Recuerda:</strong> Mikel está fijo en última posición para evitar trampas.</p>
+            </div>
+            
+            <ul class="participant-list" id="sortable-list">
+                <!-- Los participantes se cargarán aquí mediante JavaScript -->
+            </ul>
+            
+            <button id="submit-vote" class="action-btn" disabled>Enviar Votación</button>
+        </div>
+        
+        <!-- Página 3: Confirmación y exportación -->
+        <div id="page-results" class="page">
+            <h2>¡Votación Registrada!</h2>
+            
+            <div class="instructions">
+                <h3>Votación completada:</h3>
+                <p>Gracias por participar en el Gabonetako Sari Nagusia. Tu voto ha sido registrado correctamente.</p>
+                <p id="vote-summary"></p>
+            </div>
+            
+            <div id="vote-confirmation">
+                <!-- Los resultados de la votación se mostrarán aquí -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <h3>Opciones de exportación</h3>
+                <p>Para recopilar todos los votos, usa los siguientes botones:</p>
+                <button id="export-json" class="export-btn">Exportar a JSON</button>
+                <button id="export-csv" class="export-btn">Exportar a CSV (Excel)</button>
+                <button id="new-vote" class="export-btn" style="background-color: #ff9800;">Nueva Votación</button>
+            </div>
+            
+            <div id="all-votes-container" style="margin-top: 40px; display: none;">
+                <h3>Votos Recopilados</h3>
+                <div id="all-votes"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Gabonetako Sari Nagusia - Sistema de Votación de Pintxos</p>
+            <p>© 2023 - Desarrollado para la familia</p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los participantes
+        const participants = [
+            "Jon", "Iosu", "Yaiza", "Josefina", "Juan Mari", "Ana Luisa", "Javi", "Mikel"
+        ];
+        
+        // Variable para almacenar los votos
+        let allVotes = JSON.parse(localStorage.getItem('gabonetakoVotes')) || [];
+        let currentVoter = '';
+        let currentOrder = [];
+        
+        // Elementos del DOM
+        const pageVoter = document.getElementById('page-voter');
+        const pageVoting = document.getElementById('page-voting');
+        const pageResults = document.getElementById('page-results');
+        const voterNameSpan = document.getElementById('voter-name');
+        const currentVoterInfo = document.getElementById('current-voter-info');
+        const sortableList = document.getElementById('sortable-list');
+        const submitVoteBtn = document.getElementById('submit-vote');
+        const voteConfirmation = document.getElementById('vote-confirmation');
+        const voteSummary = document.getElementById('vote-summary');
+        const allVotesContainer = document.getElementById('all-votes-container');
+        const allVotesDiv = document.getElementById('all-votes');
+        
+        // Event listeners para los botones de votante
+        document.querySelectorAll('.voter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentVoter = this.getAttribute('data-voter');
+                startVoting();
+            });
+        });
+        
+        // Iniciar el proceso de votación
+        function startVoting() {
+            // Actualizar la información del votante
+            voterNameSpan.textContent = currentVoter;
+            currentVoterInfo.textContent = `Votando: ${currentVoter}`;
+            
+            // Cambiar a la página de votación
+            pageVoter.classList.remove('active');
+            pageVoting.classList.add('active');
+            pageResults.classList.remove('active');
+            
+            // Crear la lista de participantes para ordenar
+            sortableList.innerHTML = '';
+            
+            // Crear una copia de los participantes y mezclarlos aleatoriamente
+            let shuffledParticipants = [...participants].filter(p => p !== currentVoter);
+            
+            // Si el votante es Mikel, ya está excluido de la lista
+            if (currentVoter !== 'Mikel') {
+                shuffledParticipants = shuffledParticipants.filter(p => p !== 'Mikel');
+            }
+            
+            // Mezclar aleatoriamente
+            shuffledParticipants = shuffleArray(shuffledParticipants);
+            
+            // Agregar Mikel al final si no es el votante actual
+            if (currentVoter !== 'Mikel') {
+                shuffledParticipants.push('Mikel');
+            }
+            
+            // Crear los elementos de la lista
+            shuffledParticipants.forEach((participant, index) => {
+                const li = document.createElement('li');
+                li.className = 'participant-item';
+                li.setAttribute('data-name', participant);
+                
+                // Marcar a Mikel como fijo si no es el votante actual
+                if (participant === 'Mikel' && currentVoter !== 'Mikel') {
+                    li.classList.add('fixed');
+                    li.innerHTML = `<span class="grip-icon">🔒</span> ${participant} (Última posición fija)`;
+                } else {
+                    li.innerHTML = `<span class="grip-icon">↕️</span> ${participant}`;
+                    li.draggable = true;
+                    
+                    // Eventos de arrastre
+                    li.addEventListener('dragstart', handleDragStart);
+                    li.addEventListener('dragover', handleDragOver);
+                    li.addEventListener('drop', handleDrop);
+                    li.addEventListener('dragend', handleDragEnd);
+                }
+                
+                sortableList.appendChild(li);
+            });
+            
+            // Actualizar el orden actual
+            updateCurrentOrder();
+            
+            // Activar el botón de enviar votación
+            submitVoteBtn.disabled = false;
+        }
+        
+        // Mezclar un array (algoritmo de Fisher-Yates)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // Funciones para el arrastre y soltado
+        let draggedItem = null;
+        
+        function handleDragStart(e) {
+            draggedItem = this;
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedItem !== this && !this.classList.contains('fixed')) {
+                const allItems = Array.from(sortableList.querySelectorAll('.participant-item:not(.fixed)'));
+                const draggedIndex = allItems.indexOf(draggedItem);
+                const targetIndex = allItems.indexOf(this);
+        
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
+                
+                updateCurrentOrder();
+            }
+        }
+        
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItem = null;
+        }
+        
+        // Actualizar el orden actual de la lista
+        function updateCurrentOrder() {
+            currentOrder = Array.from(sortableList.querySelectorAll('.participant-item'))
+                .map(item => item.getAttribute('data-name'));
+        }
+        
+        // Enviar la votación
+        submitVoteBtn.addEventListener('click', function() {
+            // Crear el objeto de voto
+            const vote = {
+                voter: currentVoter,
+                order: currentOrder,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Verificar si este votante ya ha votado
+            const existingVoteIndex = allVotes.findIndex(v => v.voter === currentVoter);
+            if (existingVoteIndex !== -1) {
+                // Reemplazar el voto existente
+                allVotes[existingVoteIndex] = vote;
+            } else {
+                // Agregar nuevo voto
+                allVotes.push(vote);
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('gabonetakoVotes', JSON.stringify(allVotes));
+            
+            // Mostrar página de resultados
+            showResultsPage(vote);
+        });
+        
+        // Mostrar la página de resultados
+        function showResultsPage(vote) {
+            pageVoting.classList.remove('active');
+            pageResults.classList.add('active');
+            
+            // Mostrar resumen del voto
+            voteSummary.textContent = `${currentVoter} ha ordenado los pintxos de la siguiente manera:`;
+            
+            // Mostrar el orden de votación
+            voteConfirmation.innerHTML = '<h3>Tu orden de votación:</h3>';
+            vote.order.forEach((participant, index) => {
+                const div = document.createElement('div');
+                div.className = 'vote-result';
+                div.innerHTML = `
+                    <div class="position">${index + 1}º</div>
+                    <div class="name">${participant}</div>
+                `;
+                voteConfirmation.appendChild(div);
+            });
+            
+            // Mostrar todos los votos si hay más de uno
+            if (allVotes.length > 0) {
+                displayAllVotes();
+            }
+        }
+        
+        // Mostrar todos los votos recopilados
+        function displayAllVotes() {
+            allVotesContainer.style.display = 'block';
+            allVotesDiv.innerHTML = '';
+            
+            allVotes.forEach(vote => {
+                const voteDiv = document.createElement('div');
+                voteDiv.style.backgroundColor = '#f5f5f5';
+                voteDiv.style.padding = '15px';
+                voteDiv.style.marginBottom = '15px';
+                voteDiv.style.borderRadius = '8px';
+                
+                let orderHTML = '';
+                vote.order.forEach((participant, index) => {
+                    orderHTML += `<div><strong>${index + 1}º:</strong> ${participant}</div>`;
+                });
+                
+                const date = new Date(vote.timestamp);
+                voteDiv.innerHTML = `
+                    <h4>Voto de ${vote.voter} (${date.toLocaleDateString()} ${date.toLocaleTimeString()})</h4>
+                    ${orderHTML}
+                `;
+                
+                allVotesDiv.appendChild(voteDiv);
+            });
+        }
+        
+        // Exportar a JSON
+        document.getElementById('export-json').addEventListener('click', function() {
+            const dataStr = JSON.stringify(allVotes, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `gabonetako_votos_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        });
+        
+        // Exportar a CSV (para Excel)
+        document.getElementById('export-csv').addEventListener('click', function() {
+            // Crear encabezados
+            let csv = 'Votante,Fecha,Hora';
+            
+            // Agregar columnas para cada posición
+            for (let i = 1; i <= 8; i++) {
+                csv += `,Posición ${i}`;
+            }
+            csv += '\n';
+            
+            // Agregar datos
+            allVotes.forEach(vote => {
+                const date = new Date(vote.timestamp);
+                const dateStr = date.toLocaleDateString();
+                const timeStr = date.toLocaleTimeString();
+                
+                csv += `"${vote.voter}","${dateStr}","${timeStr}"`;
+                
+                // Agregar cada posición
+                vote.order.forEach(participant => {
+                    csv += `,"${participant}"`;
+                });
+                
+                csv += '\n';
+            });
+            
+            // Crear y descargar archivo
+            const dataUri = 'data:text/csv;charset=utf-8,'+ encodeURIComponent(csv);
+            const exportFileDefaultName = `gabonetako_votos_${new Date().toISOString().slice(0,10)}.csv`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        });
+        
+        // Nueva votación
+        document.getElementById('new-vote').addEventListener('click', function() {
+            // Regresar a la página de selección de votante
+            pageResults.classList.remove('active');
+            pageVoter.classList.add('active');
+            
+            // Limpiar votante actual
+            currentVoter = '';
+        });
+        
+        // Inicializar: mostrar todos los votos si existen
+        if (allVotes.length > 0) {
+            displayAllVotes();
+        }
+    </script>
+</body>
+</html>
