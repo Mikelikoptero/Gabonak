@@ -398,8 +398,7 @@
         <!-- Pagina 2: Votacion -->
         <div id="page-voting" class="page">
             <div class="current-voter" id="current-voter-info"></div>
-            <h2>Ordena los pintxos (de mejor a peor)</h2>
-            <p style="color: #666; margin-bottom: 20px;">Arrastra los nombres para ordenarlos. La posicion 1 es la mejor.</p>
+            <h2>Ordena los pintxos</h2>
             
             <div class="voting-container">
                 <ul class="position-list" id="position-list">
@@ -608,8 +607,6 @@
             
             // Mostrar resumen del voto (solo para el votante actual)
             let html = '<div style="margin-bottom: 20px;">';
-            html += `<p style="margin-bottom: 15px; font-weight: bold; color: #2e7d32;">Has votado de esta manera:</p>`;
-            
             vote.order.forEach((participant, index) => {
                 html += `
                     <div class="vote-result">
@@ -733,13 +730,7 @@
                 </div>
             `;
             
-            // NO MOSTRAR DETALLES DE VOTOS
-            resultsHTML += `
-                <div style="margin-top: 25px; padding: 18px; background-color: #f5f5f5; border-radius: 8px; border-left: 5px solid #4caf50;">
-                    <p style="margin: 0; font-weight: bold;">Sistema de puntuacion:</p>
-                    <p style="margin: 5px 0 0 0;">1º puesto = 8 puntos, 2º = 7 puntos, 3º = 6 puntos, etc.</p>
-                </div>
-            `;
+            // NO MOSTRAR EXPLICACION DE PUNTUACION
             
             // Actualizar contenido
             resultsContent.innerHTML = resultsHTML;
