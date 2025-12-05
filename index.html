@@ -102,12 +102,12 @@
         }
         
         .position-number {
-            width: 70px;
-            padding: 15px;
+            width: 60px;
+            padding: 12px;
             background-color: #4caf50;
             color: white;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             text-align: center;
             border-right: 2px solid #388e3c;
         }
@@ -347,8 +347,8 @@
             }
             
             .position-number {
-                width: 60px;
-                padding: 12px;
+                width: 50px;
+                padding: 10px;
             }
         }
     </style>
@@ -398,7 +398,6 @@
         <!-- Pagina 2: Votacion -->
         <div id="page-voting" class="page">
             <div class="current-voter" id="current-voter-info"></div>
-            <h2>Ordena los pintxos</h2>
             
             <div class="voting-container">
                 <ul class="position-list" id="position-list">
@@ -500,10 +499,10 @@
                 const li = document.createElement('li');
                 li.className = 'position-item';
                 
-                // Numero de posicion (fijo)
+                // Numero de posicion (fijo) - SIN º
                 const positionDiv = document.createElement('div');
                 positionDiv.className = 'position-number';
-                positionDiv.textContent = `${i + 1}º`;
+                positionDiv.textContent = `${i + 1}`;
                 
                 // Contenedor del nombre (arrastrable)
                 const nameDiv = document.createElement('div');
@@ -729,8 +728,6 @@
                     </table>
                 </div>
             `;
-            
-            // NO MOSTRAR EXPLICACION DE PUNTUACION
             
             // Actualizar contenido
             resultsContent.innerHTML = resultsHTML;
