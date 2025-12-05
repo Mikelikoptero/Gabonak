@@ -79,14 +79,6 @@
             transform: scale(1.02);
         }
         
-        .voter-btn.spectator {
-            background-color: #2196f3;
-        }
-        
-        .voter-btn.spectator:hover {
-            background-color: #1976d2;
-        }
-        
         .participant-list {
             list-style-type: none;
             margin: 25px 0;
@@ -213,10 +205,6 @@
             font-weight: bold;
         }
         
-        .voted-person.spectator {
-            background-color: #2196f3;
-        }
-        
         .results-container {
             margin-top: 30px;
             display: none;
@@ -230,55 +218,83 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .results-table th {
             background-color: #4caf50;
             color: white;
-            padding: 12px;
+            padding: 15px;
             text-align: center;
+            font-size: 1.1rem;
         }
         
         .results-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 14px;
+            border: 1px solid #e0e0e0;
             text-align: center;
+            font-size: 1.1rem;
         }
         
         .results-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
         
-        .results-table tr:hover {
-            background-color: #f1f1f1;
+        /* ORO - Primer puesto */
+        .gold-medal {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            font-weight: bold;
+            color: #8B7500;
+            border-left: 5px solid #ffa500 !important;
+        }
+        
+        .gold-medal td {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* PLATA - Segundo puesto */
+        .silver-medal {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
+            font-weight: bold;
+            color: #696969;
+            border-left: 5px solid #a9a9a9 !important;
+        }
+        
+        .silver-medal td {
+            font-weight: bold;
+            font-size: 1.15rem;
+        }
+        
+        /* BRONCE - Tercer puesto */
+        .bronze-medal {
+            background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
+            font-weight: bold;
+            color: #5a3a22;
+            border-left: 5px solid #8b4513 !important;
+        }
+        
+        .bronze-medal td {
+            font-weight: bold;
+            font-size: 1.1rem;
         }
         
         .total-score {
             font-weight: bold;
             color: #c62828;
+            font-size: 1.3rem;
         }
         
-        .winner {
-            background-color: #fff8e1 !important;
+        .medal-icon {
+            font-size: 1.5rem;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .position-cell {
             font-weight: bold;
-        }
-        
-        .votes-detail {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .vote-entry {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .vote-entry:last-child {
-            border-bottom: none;
+            font-size: 1.2rem;
+            width: 80px;
         }
         
         .admin-section {
@@ -307,7 +323,11 @@
             
             .results-table th,
             .results-table td {
-                padding: 6px;
+                padding: 10px;
+            }
+            
+            .medal-icon {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -320,17 +340,8 @@
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
             <h2>¿Quien vota?</h2>
-            <div class="voter-select">
-                <button class="voter-btn" data-voter="Mikel">Mikel</button>
-                <button class="voter-btn" data-voter="Jon">Jon</button>
-                <button class="voter-btn" data-voter="Iosu">Iosu</button>
-                <button class="voter-btn" data-voter="Yaiza">Yaiza</button>
-                <button class="voter-btn" data-voter="Josefina">Josefina</button>
-                <button class="voter-btn" data-voter="Juan Mari">Juan Mari</button>
-                <button class="voter-btn" data-voter="Ana Luisa">Ana Luisa</button>
-                <button class="voter-btn" data-voter="Javi">Javi</button>
-                <button class="voter-btn spectator" data-voter="Aitona">Aitona</button>
-                <button class="voter-btn spectator" data-voter="Abuela">Abuela</button>
+            <div class="voter-select" id="voter-buttons">
+                <!-- Los botones se cargaran en orden alfabetico -->
             </div>
             
             <!-- Seccion de quien ha votado -->
@@ -345,13 +356,13 @@
             <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
-                    📊 Ver resultados completos
+                    🏆 Ver podio final
                 </button>
             </div>
             
-            <!-- Resultados (ocultos por defecto) -->
+            <!-- Resultados finales (solo puntuaciones) -->
             <div class="results-container" id="results-container">
-                <h3>📊 Resultados Completos</h3>
+                <h3>🏆 Podio Final</h3>
                 <div id="results-content"></div>
             </div>
             
@@ -388,10 +399,10 @@
     </div>
 
     <script>
-        // Datos
-        const participants = ["Mikel", "Jon", "Iosu", "Yaiza", "Josefina", "Juan Mari", "Ana Luisa", "Javi"];
-        const spectators = ["Aitona", "Abuela"];
-        const allPossibleVoters = [...participants, ...spectators];
+        // Datos en orden alfabetico
+        const participants = ["Ana Luisa", "Iosu", "Javi", "Jon", "Josefina", "Juan Mari", "Mikel", "Yaiza"];
+        const spectators = ["Abuela", "Aitona"];
+        const allPossibleVoters = [...participants, ...spectators].sort();
         
         // Cargar votos guardados
         let allVotes = JSON.parse(localStorage.getItem('gabonetakoVotes')) || [];
@@ -414,17 +425,28 @@
         const votedList = document.getElementById('voted-list');
         const votedPeople = document.getElementById('voted-people');
         const missingVoters = document.getElementById('missing-voters');
+        const voterButtons = document.getElementById('voter-buttons');
         
-        // Actualizar lista de votantes al cargar
-        updateVotedList();
-        
-        // Eventos para seleccionar votante
-        document.querySelectorAll('.voter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                currentVoter = this.getAttribute('data-voter');
-                startVoting();
+        // Crear botones de votantes en orden alfabetico
+        function createVoterButtons() {
+            voterButtons.innerHTML = '';
+            
+            allPossibleVoters.forEach(voter => {
+                const button = document.createElement('button');
+                button.className = 'voter-btn';
+                button.setAttribute('data-voter', voter);
+                button.textContent = voter;
+                button.addEventListener('click', function() {
+                    currentVoter = voter;
+                    startVoting();
+                });
+                voterButtons.appendChild(button);
             });
-        });
+        }
+        
+        // Inicializar la pagina
+        createVoterButtons();
+        updateVotedList();
         
         // Iniciar votacion
         function startVoting() {
@@ -577,16 +599,18 @@
             votedList.style.display = 'block';
             votedPeople.innerHTML = '';
             
+            // Ordenar alfabeticamente los que han votado
+            const votedNames = allVotes.map(v => v.voter).sort();
+            
             // Mostrar solo los nombres de quienes han votado
-            allVotes.forEach(vote => {
+            votedNames.forEach(voter => {
                 const div = document.createElement('div');
-                div.className = `voted-person ${spectators.includes(vote.voter) ? 'spectator' : ''}`;
-                div.textContent = vote.voter;
+                div.className = 'voted-person';
+                div.textContent = voter;
                 votedPeople.appendChild(div);
             });
             
             // Calcular quienes faltan por votar
-            const votedNames = allVotes.map(v => v.voter);
             const missing = allPossibleVoters.filter(v => !votedNames.includes(v));
             
             if (missing.length > 0) {
@@ -599,25 +623,19 @@
             showResultsBtn.style.display = 'inline-block';
         }
         
-        // Mostrar resultados cuando se pulse el boton
+        // Mostrar resultados cuando se pulse el boton (SOLO PUNTUACIONES)
         showResultsBtn.addEventListener('click', function() {
             calculateResults();
             resultsContainer.classList.add('active');
             this.style.display = 'none';
         });
         
-        // Calcular y mostrar resultados (solo cuando se pulsa el boton)
+        // Calcular y mostrar resultados (SOLO PUNTUACIONES, SIN DETALLES)
         function calculateResults() {
             // Inicializar puntuaciones
             const scores = {};
             participants.forEach(p => {
                 scores[p] = 0;
-            });
-            
-            // Contar votos
-            const voteCounts = {};
-            participants.forEach(p => {
-                voteCounts[p] = 0;
             });
             
             // Calcular puntuaciones
@@ -627,22 +645,20 @@
                         // Puntuacion: 1º = 8 puntos, 2º = 7 puntos, etc.
                         const points = 8 - index;
                         scores[pintxo] += points;
-                        voteCounts[pintxo]++;
                     }
                 });
             });
             
-            // Crear tabla de resultados
+            // Crear tabla de resultados (SOLO PUNTUACIONES)
             let resultsHTML = `
                 <p><strong>Total de votos: ${allVotes.length}</strong></p>
                 <div style="overflow-x: auto;">
                     <table class="results-table">
                         <thead>
                             <tr>
+                                <th>Posicion</th>
                                 <th>Pintxo</th>
                                 <th>Puntuacion</th>
-                                <th>Votos recibidos</th>
-                                <th>Posicion promedio</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -652,34 +668,26 @@
             const sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
             
             sortedParticipants.forEach((participant, index) => {
-                const isWinner = index === 0 && scores[participant] > 0;
-                const votesReceived = voteCounts[participant];
+                let medalClass = '';
+                let medalIcon = '';
                 
-                // Calcular posicion promedio
-                let avgPosition = '-';
-                if (votesReceived > 0) {
-                    let totalPosition = 0;
-                    let positionCount = 0;
-                    
-                    allVotes.forEach(vote => {
-                        const position = vote.order.indexOf(participant);
-                        if (position !== -1) {
-                            totalPosition += (position + 1);
-                            positionCount++;
-                        }
-                    });
-                    
-                    if (positionCount > 0) {
-                        avgPosition = (totalPosition / positionCount).toFixed(1);
-                    }
+                // Asignar medallas a los primeros 3 puestos
+                if (index === 0) {
+                    medalClass = 'gold-medal';
+                    medalIcon = '🥇';
+                } else if (index === 1) {
+                    medalClass = 'silver-medal';
+                    medalIcon = '🥈';
+                } else if (index === 2) {
+                    medalClass = 'bronze-medal';
+                    medalIcon = '🥉';
                 }
                 
                 resultsHTML += `
-                    <tr ${isWinner ? 'class="winner"' : ''}>
+                    <tr class="${medalClass}">
+                        <td class="position-cell">${medalIcon} ${index + 1}º</td>
                         <td><strong>${participant}</strong></td>
-                        <td class="total-score">${scores[participant]}</td>
-                        <td>${votesReceived} / ${allVotes.length}</td>
-                        <td>${avgPosition}</td>
+                        <td class="total-score">${scores[participant]} puntos</td>
                     </tr>
                 `;
             });
@@ -690,17 +698,11 @@
                 </div>
             `;
             
-            // Mostrar detalles de votos (SOLO CUANDO SE PIDE VER RESULTADOS)
+            // NO MOSTRAR DETALLES DE VOTOS
             resultsHTML += `
-                <div class="votes-detail">
-                    <h4>Detalle de todos los votos:</h4>
-                    ${allVotes.map(vote => `
-                        <div class="vote-entry">
-                            <strong>${vote.voter}:</strong> 
-                            ${vote.order.map((p, i) => `${i+1}º=${p}`).join(', ')}
-                            ${participants.includes(vote.voter) ? ` (no vota: ${vote.voter})` : ''}
-                        </div>
-                    `).join('')}
+                <div style="margin-top: 25px; padding: 18px; background-color: #f5f5f5; border-radius: 8px; border-left: 5px solid #4caf50;">
+                    <p style="margin: 0; font-weight: bold;">🏆 Sistema de puntuacion:</p>
+                    <p style="margin: 5px 0 0 0;">1º puesto = 8 puntos, 2º = 7 puntos, 3º = 6 puntos, etc.</p>
                 </div>
             `;
             
