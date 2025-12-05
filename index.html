@@ -31,20 +31,13 @@
         h1 {
             color: #c62828;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
             font-size: 2rem;
         }
         
         h2, h3 {
             color: #2e7d32;
             margin-bottom: 15px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
         }
         
         .page {
@@ -264,87 +257,62 @@
         .results-container {
             margin-top: 30px;
             display: none;
+            text-align: center;
         }
         
         .results-container.active {
             display: block;
         }
         
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        .reveal-container {
+            margin-top: 30px;
         }
         
-        .results-table th {
-            background-color: #4caf50;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        
-        .results-table td {
-            padding: 14px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-        
-        .results-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        /* ORO - Primer puesto */
-        .gold-medal {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+        .revealed-position {
+            background-color: #f8fff8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
             font-weight: bold;
+            border-left: 5px solid #4caf50;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealAnimation 0.5s ease-out forwards;
+        }
+        
+        @keyframes revealAnimation {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Estilos para las posiciones reveladas */
+        .revealed-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
             color: #8B7500;
             border-left: 5px solid #ffa500 !important;
         }
         
-        .gold-medal td {
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        /* PLATA - Segundo puesto */
-        .silver-medal {
+        .revealed-2 {
             background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
-            font-weight: bold;
             color: #696969;
             border-left: 5px solid #a9a9a9 !important;
         }
         
-        .silver-medal td {
-            font-weight: bold;
-            font-size: 1.15rem;
-        }
-        
-        /* BRONCE - Tercer puesto */
-        .bronze-medal {
+        .revealed-3 {
             background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
-            font-weight: bold;
             color: #5a3a22;
             border-left: 5px solid #8b4513 !important;
         }
         
-        .bronze-medal td {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .total-score {
-            font-weight: bold;
-            color: #c62828;
-            font-size: 1.3rem;
-        }
-        
-        .position-cell {
-            font-weight: bold;
-            font-size: 1.2rem;
-            width: 100px;
+        .revealed-4, .revealed-5, .revealed-6, .revealed-7, .revealed-8 {
+            background-color: #f8fff8 !important;
+            color: #333;
         }
         
         .admin-section {
@@ -367,15 +335,6 @@
                 font-size: 1.6rem;
             }
             
-            .results-table {
-                font-size: 0.9rem;
-            }
-            
-            .results-table th,
-            .results-table td {
-                padding: 10px;
-            }
-            
             .position-number {
                 width: 50px;
                 font-size: 1.3rem;
@@ -386,11 +345,10 @@
 <body>
     <div class="container">
         <h1>Gabonetako Sari Nagusia</h1>
-        <div class="subtitle">Votacion de Pintxos Navidenos</div>
         
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
-            <h2>¿Quien vota?</h2>
+            <h2 style="text-align: center;">¿Quien vota?</h2>
             <div class="voter-select" id="voter-buttons">
                 <!-- Los botones se cargaran en orden alfabetico -->
             </div>
@@ -407,14 +365,20 @@
             <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
-                    Ver podio final
+                    Revelar resultados
                 </button>
             </div>
             
-            <!-- Resultados finales (solo puntuaciones) -->
+            <!-- Resultados con revelacion progresiva -->
             <div class="results-container" id="results-container">
-                <h3>Podio Final</h3>
-                <div id="results-content"></div>
+                <h3>Resultados</h3>
+                <div class="reveal-container" id="reveal-container"></div>
+                <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #4caf50;">
+                    Revelar siguiente posicion
+                </button>
+                <div id="all-revealed" style="display: none; margin-top: 20px;">
+                    <p style="font-weight: bold; color: #2e7d32;">¡Todos los resultados han sido revelados!</p>
+                </div>
             </div>
             
             <!-- Seccion de administracion -->
@@ -460,6 +424,11 @@
         let allVotes = JSON.parse(localStorage.getItem('gabonetakoVotes')) || [];
         let currentVoter = '';
         
+        // Variables para la revelacion progresiva
+        let sortedParticipants = [];
+        let scores = {};
+        let currentRevealIndex = 0;
+        
         // Elementos DOM
         const pageVoter = document.getElementById('page-voter');
         const pageVoting = document.getElementById('page-voting');
@@ -473,7 +442,9 @@
         const resetVotesBtn = document.getElementById('reset-votes-btn');
         const showResultsBtn = document.getElementById('show-results-btn');
         const resultsContainer = document.getElementById('results-container');
-        const resultsContent = document.getElementById('results-content');
+        const revealContainer = document.getElementById('reveal-container');
+        const revealNextBtn = document.getElementById('reveal-next-btn');
+        const allRevealedDiv = document.getElementById('all-revealed');
         const votedList = document.getElementById('voted-list');
         const votedPeople = document.getElementById('voted-people');
         const missingVoters = document.getElementById('missing-voters');
@@ -700,17 +671,10 @@
             showResultsBtn.style.display = 'inline-block';
         }
         
-        // Mostrar resultados cuando se pulse el boton (SOLO PUNTUACIONES)
-        showResultsBtn.addEventListener('click', function() {
-            calculateResults();
-            resultsContainer.classList.add('active');
-            this.style.display = 'none';
-        });
-        
-        // Calcular y mostrar resultados (SOLO PUNTUACIONES, SIN DETALLES)
+        // Calcular resultados
         function calculateResults() {
             // Inicializar puntuaciones
-            const scores = {};
+            scores = {};
             participants.forEach(p => {
                 scores[p] = 0;
             });
@@ -726,54 +690,64 @@
                 });
             });
             
-            // Crear tabla de resultados (SOLO PUNTUACIONES)
-            let resultsHTML = `
-                <p><strong>Total de votos: ${allVotes.length}</strong></p>
-                <div style="overflow-x: auto;">
-                    <table class="results-table">
-                        <thead>
-                            <tr>
-                                <th>Posicion</th>
-                                <th>Pintxo</th>
-                                <th>Puntuacion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
+            // Ordenar por puntuacion (de menor a mayor para revelar del 8º al 1º)
+            sortedParticipants = [...participants].sort((a, b) => scores[a] - scores[b]);
             
-            // Ordenar por puntuacion
-            const sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
-            
-            sortedParticipants.forEach((participant, index) => {
-                let medalClass = '';
-                
-                // Asignar medallas a los primeros 3 puestos
-                if (index === 0) {
-                    medalClass = 'gold-medal';
-                } else if (index === 1) {
-                    medalClass = 'silver-medal';
-                } else if (index === 2) {
-                    medalClass = 'bronze-medal';
-                }
-                
-                resultsHTML += `
-                    <tr class="${medalClass}">
-                        <td class="position-cell">${index + 1}º</td>
-                        <td><strong>${participant}</strong></td>
-                        <td class="total-score">${scores[participant]} puntos</td>
-                    </tr>
-                `;
-            });
-            
-            resultsHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            // Actualizar contenido
-            resultsContent.innerHTML = resultsHTML;
+            // Reiniciar indice de revelacion
+            currentRevealIndex = 0;
         }
+        
+        // Revelar siguiente posicion
+        function revealNextPosition() {
+            if (currentRevealIndex < sortedParticipants.length) {
+                const positionIndex = currentRevealIndex;
+                const participant = sortedParticipants[positionIndex];
+                const positionNumber = sortedParticipants.length - positionIndex; // 8º, 7º, etc.
+                const points = scores[participant];
+                
+                // Crear elemento para la posicion revelada
+                const revealDiv = document.createElement('div');
+                revealDiv.className = `revealed-position revealed-${positionNumber}`;
+                
+                // Mostrar posicion del 8º al 1º
+                const displayPosition = sortedParticipants.length - positionIndex;
+                revealDiv.innerHTML = `
+                    <div style="font-size: 1.5rem; font-weight: bold; margin-right: 20px;">${displayPosition}º</div>
+                    <div style="font-size: 1.4rem;">${participant}</div>
+                    <div style="margin-left: 20px; font-size: 1.2rem; color: #c62828;">${points} puntos</div>
+                `;
+                
+                // Agregar al contenedor
+                revealContainer.appendChild(revealDiv);
+                
+                // Incrementar indice
+                currentRevealIndex++;
+                
+                // Si hemos revelado todos, mostrar mensaje final
+                if (currentRevealIndex >= sortedParticipants.length) {
+                    revealNextBtn.style.display = 'none';
+                    allRevealedDiv.style.display = 'block';
+                }
+            }
+        }
+        
+        // Mostrar resultados cuando se pulse el boton
+        showResultsBtn.addEventListener('click', function() {
+            calculateResults();
+            resultsContainer.classList.add('active');
+            this.style.display = 'none';
+            
+            // Mostrar boton para revelar
+            revealNextBtn.style.display = 'inline-block';
+            revealContainer.innerHTML = '';
+            allRevealedDiv.style.display = 'none';
+            
+            // Revelar primera posicion (8º)
+            revealNextPosition();
+        });
+        
+        // Boton para revelar siguiente posicion
+        revealNextBtn.addEventListener('click', revealNextPosition);
         
         // Volver al inicio
         goHomeBtn.addEventListener('click', function() {
