@@ -373,7 +373,6 @@
             const vote = {
                 voter: currentVoter,
                 order: order,
-                timestamp: new Date().toLocaleString('es-ES'),
                 date: new Date().toISOString().split('T')[0]
             };
             
@@ -415,39 +414,64 @@
             voteConfirmation.innerHTML = html;
         }
         
-        // Exportar a CSV - VERSION VERTICAL
+        // Exportar a CSV - FORMATO SIMPLIFICADO
         exportCsvBtn.addEventListener('click', function() {
             if (allVotes.length === 0) {
                 alert('No hay votos para exportar.');
                 return;
             }
             
-            // Crear CSV en formato VERTICAL
-            let csv = 'VOTANTE,POSICION,PINTXO,FECHA,HORA,ES_PARTICIPANTE\n';
+            // Crear CSV en formato simplificado
+            let csv = '';
             
-            // Datos de votos en formato vertical
-            allVotes.forEach(vote => {
-                const isParticipant = participants.includes(vote.voter) ? 'Si' : 'No';
-                const [fecha, hora] = vote.timestamp.split(', ');
+            // Primero agregamos los votos de los participantes (8 primeros)
+            const participantVotes = allVotes.filter(vote => participants.includes(vote.voter));
+            
+            participantVotes.forEach(vote => {
+                // Nombre del votante solo en la primera fila
+                csv += `"${vote.voter}"\n`;
                 
-                // Para cada posicion en el voto, creamos una fila
+                // Cada posicion en una fila separada
                 vote.order.forEach((pintxo, index) => {
                     const posicion = index + 1;
-                    csv += `"${vote.voter}","${posicion}","${pintxo}","${fecha}","${hora}","${isParticipant}"\n`;
+                    csv += `"${posicion}","${pintxo}"\n`;
                 });
                 
-                // Si el votante es participante, agregamos una fila indicando que no voto su propio pintxo
-                if (participants.includes(vote.voter)) {
-                    csv += `"${vote.voter}","-","${vote.voter} (no vota su pintxo)","${fecha}","${hora}","Si"\n`;
-                }
+                // Si es participante, agregamos su propio pintxo como "No votado"
+                csv += `"-","${vote.voter} (no vota)"\n`;
+                
+                // Linea en blanco entre votantes
+                csv += '\n';
             });
+            
+            // Luego agregamos los votos de Aitona y Abuela
+            const spectatorVotes = allVotes.filter(vote => spectators.includes(vote.voter));
+            
+            if (spectatorVotes.length > 0) {
+                // Separador
+                csv += '---\n\n';
+                
+                spectatorVotes.forEach(vote => {
+                    // Nombre del votante solo en la primera fila
+                    csv += `"${vote.voter}"\n`;
+                    
+                    // Cada posicion en una fila separada (ellos votan todos 8 pintxos)
+                    vote.order.forEach((pintxo, index) => {
+                        const posicion = index + 1;
+                        csv += `"${posicion}","${pintxo}"\n`;
+                    });
+                    
+                    // Linea en blanco entre votantes
+                    csv += '\n';
+                });
+            }
             
             // Crear y descargar archivo
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.setAttribute('href', url);
-            link.setAttribute('download', `votos_gabonetako_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute('download', `votos_gabonetako.csv`);
             link.click();
         });
         
