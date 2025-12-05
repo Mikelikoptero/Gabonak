@@ -79,12 +79,6 @@
             background-color: #e3f2fd;
         }
         
-        .participant-item.fixed {
-            background-color: #ffecb3;
-            cursor: not-allowed;
-            color: #5d4037;
-        }
-        
         .grip-icon {
             margin-right: 15px;
             color: #777;
@@ -272,7 +266,7 @@
             <div class="instructions">
                 <h3>Instrucciones:</h3>
                 <p>Selecciona tu nombre para comenzar la votación. Si eres Aitona o Abuela, selecciona tu nombre aunque no participes con pintxo.</p>
-                <p><strong>Nota:</strong> Mikel aparecerá fijo en última posición para evitar trampas.</p>
+                <p><strong>Nota:</strong> Todos los participantes pueden ser ordenados libremente.</p>
             </div>
             
             <p style="text-align: center; font-size: 1.1rem; margin-bottom: 20px;">¿Quién está votando?</p>
@@ -300,7 +294,7 @@
                 <h3>Instrucciones:</h3>
                 <p>Arrastra y suelta los nombres para ordenar los pintxos según tu preferencia (de mejor a peor).</p>
                 <p>El que más te guste en la posición 1, y el que menos en la última.</p>
-                <p><strong>Recuerda:</strong> Mikel está fijo en última posición para evitar trampas.</p>
+                <p><strong>Importante:</strong> No puedes votar tu propio pintxo si eres participante.</p>
             </div>
             
             <ul class="participant-list" id="sortable-list">
@@ -330,6 +324,7 @@
                 <button id="export-json" class="export-btn">Exportar a JSON</button>
                 <button id="export-csv" class="export-btn">Exportar a CSV (Excel)</button>
                 <button id="new-vote" class="export-btn" style="background-color: #ff9800;">Nueva Votación</button>
+                <button id="show-all-votes" class="export-btn" style="background-color: #009688;">Ver Todos los Votos</button>
             </div>
             
             <div id="all-votes-container" style="margin-top: 40px; display: none;">
@@ -347,7 +342,7 @@
     <script>
         // Datos de los participantes
         const participants = [
-            "Jon", "Iosu", "Yaiza", "Josefina", "Juan Mari", "Ana Luisa", "Javi", "Mikel"
+            "Mikel", "Jon", "Iosu", "Yaiza", "Josefina", "Juan Mari", "Ana Luisa", "Javi"
         ];
         
         // Variable para almacenar los votos
@@ -367,6 +362,7 @@
         const voteSummary = document.getElementById('vote-summary');
         const allVotesContainer = document.getElementById('all-votes-container');
         const allVotesDiv = document.getElementById('all-votes');
+        const showAllVotesBtn = document.getElementById('show-all-votes');
         
         // Event listeners para los botones de votante
         document.querySelectorAll('.voter-btn').forEach(btn => {
@@ -390,42 +386,32 @@
             // Crear la lista de participantes para ordenar
             sortableList.innerHTML = '';
             
-            // Crear una copia de los participantes y mezclarlos aleatoriamente
-            let shuffledParticipants = [...participants].filter(p => p !== currentVoter);
+            // Crear una copia de los participantes y excluir al votante actual si es participante
+            let votingParticipants = [...participants];
             
-            // Si el votante es Mikel, ya está excluido de la lista
-            if (currentVoter !== 'Mikel') {
-                shuffledParticipants = shuffledParticipants.filter(p => p !== 'Mikel');
+            // Excluir al votante actual si es uno de los participantes (no Aitona/Abuela)
+            const isParticipant = !['Aitona', 'Abuela'].includes(currentVoter);
+            if (isParticipant) {
+                votingParticipants = votingParticipants.filter(p => p !== currentVoter);
             }
             
             // Mezclar aleatoriamente
-            shuffledParticipants = shuffleArray(shuffledParticipants);
-            
-            // Agregar Mikel al final si no es el votante actual
-            if (currentVoter !== 'Mikel') {
-                shuffledParticipants.push('Mikel');
-            }
+            votingParticipants = shuffleArray(votingParticipants);
             
             // Crear los elementos de la lista
-            shuffledParticipants.forEach((participant, index) => {
+            votingParticipants.forEach((participant, index) => {
                 const li = document.createElement('li');
                 li.className = 'participant-item';
                 li.setAttribute('data-name', participant);
+                li.draggable = true;
                 
-                // Marcar a Mikel como fijo si no es el votante actual
-                if (participant === 'Mikel' && currentVoter !== 'Mikel') {
-                    li.classList.add('fixed');
-                    li.innerHTML = `<span class="grip-icon">🔒</span> ${participant} (Última posición fija)`;
-                } else {
-                    li.innerHTML = `<span class="grip-icon">↕️</span> ${participant}`;
-                    li.draggable = true;
-                    
-                    // Eventos de arrastre
-                    li.addEventListener('dragstart', handleDragStart);
-                    li.addEventListener('dragover', handleDragOver);
-                    li.addEventListener('drop', handleDrop);
-                    li.addEventListener('dragend', handleDragEnd);
-                }
+                li.innerHTML = `<span class="grip-icon">↕️</span> ${participant}`;
+                
+                // Eventos de arrastre
+                li.addEventListener('dragstart', handleDragStart);
+                li.addEventListener('dragover', handleDragOver);
+                li.addEventListener('drop', handleDrop);
+                li.addEventListener('dragend', handleDragEnd);
                 
                 sortableList.appendChild(li);
             });
@@ -435,6 +421,19 @@
             
             // Activar el botón de enviar votación
             submitVoteBtn.disabled = false;
+            
+            // Mostrar mensaje si el votante es participante
+            if (isParticipant) {
+                const infoDiv = document.createElement('div');
+                infoDiv.style.backgroundColor = '#fff3cd';
+                infoDiv.style.color = '#856404';
+                infoDiv.style.padding = '10px';
+                infoDiv.style.borderRadius = '5px';
+                infoDiv.style.marginBottom = '15px';
+                infoDiv.style.borderLeft = '4px solid #ffeaa7';
+                infoDiv.innerHTML = `<strong>Nota:</strong> Como eres ${currentVoter}, tu propio pintxo no aparece en la lista para votar.`;
+                sortableList.parentNode.insertBefore(infoDiv, sortableList);
+            }
         }
         
         // Mezclar un array (algoritmo de Fisher-Yates)
@@ -461,8 +460,8 @@
         
         function handleDrop(e) {
             e.preventDefault();
-            if (draggedItem !== this && !this.classList.contains('fixed')) {
-                const allItems = Array.from(sortableList.querySelectorAll('.participant-item:not(.fixed)'));
+            if (draggedItem !== this) {
+                const allItems = Array.from(sortableList.querySelectorAll('.participant-item'));
                 const draggedIndex = allItems.indexOf(draggedItem);
                 const targetIndex = allItems.indexOf(this);
         
@@ -519,7 +518,12 @@
             pageResults.classList.add('active');
             
             // Mostrar resumen del voto
-            voteSummary.textContent = `${currentVoter} ha ordenado los pintxos de la siguiente manera:`;
+            const isParticipant = !['Aitona', 'Abuela'].includes(currentVoter);
+            if (isParticipant) {
+                voteSummary.textContent = `${currentVoter} ha ordenado los pintxos de los demás participantes:`;
+            } else {
+                voteSummary.textContent = `${currentVoter} ha ordenado todos los pintxos:`;
+            }
             
             // Mostrar el orden de votación
             voteConfirmation.innerHTML = '<h3>Tu orden de votación:</h3>';
@@ -533,6 +537,18 @@
                 voteConfirmation.appendChild(div);
             });
             
+            // Si el votante es participante, mostrar nota sobre su propio pintxo
+            if (isParticipant) {
+                const noteDiv = document.createElement('div');
+                noteDiv.style.backgroundColor = '#fff3cd';
+                noteDiv.style.color = '#856404';
+                noteDiv.style.padding = '10px';
+                noteDiv.style.borderRadius = '5px';
+                noteDiv.style.marginTop = '15px';
+                noteDiv.innerHTML = `<strong>Nota:</strong> Tu propio pintxo (${currentVoter}) no se incluye en esta votación.`;
+                voteConfirmation.appendChild(noteDiv);
+            }
+            
             // Mostrar todos los votos si hay más de uno
             if (allVotes.length > 0) {
                 displayAllVotes();
@@ -543,6 +559,11 @@
         function displayAllVotes() {
             allVotesContainer.style.display = 'block';
             allVotesDiv.innerHTML = '';
+            
+            if (allVotes.length === 0) {
+                allVotesDiv.innerHTML = '<p>No hay votos registrados todavía.</p>';
+                return;
+            }
             
             allVotes.forEach(vote => {
                 const voteDiv = document.createElement('div');
@@ -566,6 +587,12 @@
             });
         }
         
+        // Botón para mostrar todos los votos
+        showAllVotesBtn.addEventListener('click', function() {
+            displayAllVotes();
+            allVotesContainer.style.display = 'block';
+        });
+        
         // Exportar a JSON
         document.getElementById('export-json').addEventListener('click', function() {
             const dataStr = JSON.stringify(allVotes, null, 2);
@@ -581,11 +608,17 @@
         
         // Exportar a CSV (para Excel)
         document.getElementById('export-csv').addEventListener('click', function() {
-            // Crear encabezados
-            let csv = 'Votante,Fecha,Hora';
+            if (allVotes.length === 0) {
+                alert('No hay votos para exportar.');
+                return;
+            }
             
-            // Agregar columnas para cada posición
-            for (let i = 1; i <= 8; i++) {
+            // Crear encabezados
+            let csv = 'Votante,Fecha,Hora,Es participante';
+            
+            // Agregar columnas para cada posición (máximo 7 porque los participantes no votan su propio pintxo)
+            const maxPositions = Math.max(...allVotes.map(vote => vote.order.length));
+            for (let i = 1; i <= maxPositions; i++) {
                 csv += `,Posición ${i}`;
             }
             csv += '\n';
@@ -595,13 +628,19 @@
                 const date = new Date(vote.timestamp);
                 const dateStr = date.toLocaleDateString();
                 const timeStr = date.toLocaleTimeString();
+                const isParticipant = !['Aitona', 'Abuela'].includes(vote.voter);
                 
-                csv += `"${vote.voter}","${dateStr}","${timeStr}"`;
+                csv += `"${vote.voter}","${dateStr}","${timeStr}","${isParticipant ? 'Sí' : 'No'}"`;
                 
                 // Agregar cada posición
                 vote.order.forEach(participant => {
                     csv += `,"${participant}"`;
                 });
+                
+                // Completar con celdas vacías si tiene menos posiciones
+                for (let i = vote.order.length; i < maxPositions; i++) {
+                    csv += ',';
+                }
                 
                 csv += '\n';
             });
@@ -621,6 +660,7 @@
             // Regresar a la página de selección de votante
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
+            allVotesContainer.style.display = 'none';
             
             // Limpiar votante actual
             currentVoter = '';
