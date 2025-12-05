@@ -756,8 +756,8 @@
                 });
             });
             
-            // Ordenar por puntuacion (de menor a mayor para mostrar del 8º al 1º)
-            sortedParticipants = [...participants].sort((a, b) => scores[a] - scores[b]);
+            // Ordenar por puntuacion (de mayor a menor para orden correcto)
+            sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
             totalPositions = sortedParticipants.length;
             
             // Reiniciar contador de revelados
@@ -794,34 +794,39 @@
             }
         }
         
-        // Revelar siguiente posicion en la tabla (del 8º al 1º)
+        // Revelar siguiente posicion en la tabla (del 8º al 1º con colores correctos)
         function revealNextPosition() {
             if (revealedCount < totalPositions) {
-                // Calcular indice inverso: del ultimo al primero
-                const reverseIndex = totalPositions - revealedCount - 1;
-                const participant = sortedParticipants[reverseIndex];
-                const position = totalPositions - reverseIndex; // Posicion real (1º, 2º, 3º...)
+                // Para revelar del 8º al 1º, empezamos por el último (índice más alto)
+                // Pero los colores deben aplicarse según la posición REAL (1º, 2º, 3º)
+                const tableRowIndex = totalPositions - revealedCount - 1; // Empezamos por la última fila (8º)
+                const participantIndex = revealedCount; // Empezamos por el participante con menor puntuación
+                const participant = sortedParticipants[participantIndex];
+                const tablePosition = tableRowIndex + 1; // Posición en la tabla (8, 7, 6...)
+                const realPosition = participantIndex + 1; // Posición real (1º, 2º, 3º... para colores)
                 const points = scores[participant];
                 
-                // Obtener la fila correspondiente (ordenada 1º a 8º en la tabla)
+                // Obtener la fila correspondiente en la tabla
                 const rows = resultsTbody.querySelectorAll('tr');
-                const rowIndex = reverseIndex; // La fila que corresponde a esta posicion
-                const row = rows[rowIndex];
+                const row = rows[tableRowIndex];
                 
                 // Quitar clase de fila vacia
                 row.classList.remove('empty-row');
                 
                 // Asignar clase de medalla segun la posicion REAL
-                if (position === 1) {
+                // NOTA: Aquí está el error corregido - usamos realPosition en lugar de tablePosition
+                if (realPosition === 1) {
                     row.classList.add('gold-medal');
-                } else if (position === 2) {
+                } else if (realPosition === 2) {
                     row.classList.add('silver-medal');
-                } else if (position === 3) {
+                } else if (realPosition === 3) {
                     row.classList.add('bronze-medal');
                 }
                 
-                // Actualizar celdas
+                // Actualizar celdas - IMPORTANTE: Mostrar la posición de TABLA, no la real
                 const cells = row.querySelectorAll('td');
+                cells[0].textContent = `${tablePosition}º`; // Posición en tabla (8º, 7º, 6º...)
+                
                 cells[1].textContent = participant;
                 cells[1].style.color = '';
                 cells[1].style.fontStyle = '';
