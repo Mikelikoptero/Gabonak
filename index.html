@@ -474,8 +474,8 @@
             <div id="vote-confirmation"></div>
             
             <div class="export-section">
-                <button id="new-vote" class="export-btn" style="background-color: #4caf50;">Nueva votacion</button>
-                <button id="go-home" class="export-btn" style="background-color: #ff9800;">Volver al inicio</button>
+                <!-- Solo el boton Volver al inicio -->
+                <button id="go-home" class="export-btn" style="background-color: #ff9800; margin: 10px auto; display: block;">Volver al inicio</button>
             </div>
         </div>
     </div>
@@ -504,7 +504,6 @@
         const positionList = document.getElementById('position-list');
         const submitVoteBtn = document.getElementById('submit-vote');
         const voteConfirmation = document.getElementById('vote-confirmation');
-        const newVoteBtn = document.getElementById('new-vote');
         const goHomeBtn = document.getElementById('go-home');
         const resetVotesBtn = document.getElementById('reset-votes-btn');
         const showResultsBtn = document.getElementById('show-results-btn');
@@ -757,21 +756,21 @@
                 });
             });
             
-            // Ordenar por puntuacion (de mayor a menor para mostrar 1º a 8º)
-            sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
+            // Ordenar por puntuacion (de menor a mayor para mostrar del 8º al 1º)
+            sortedParticipants = [...participants].sort((a, b) => scores[a] - scores[b]);
             totalPositions = sortedParticipants.length;
             
             // Reiniciar contador de revelados
             revealedCount = 0;
             
-            // Crear tabla vacia con todas las filas
+            // Crear tabla vacia con todas las filas (orden 1º a 8º)
             resultsTbody.innerHTML = '';
             
             for (let i = 0; i < totalPositions; i++) {
                 const tr = document.createElement('tr');
                 tr.className = 'empty-row';
                 
-                // Celda de posicion
+                // Celda de posicion (mostramos 1º, 2º, 3º...)
                 const tdPos = document.createElement('td');
                 tdPos.className = 'position-cell';
                 tdPos.textContent = `${i + 1}º`;
@@ -795,21 +794,24 @@
             }
         }
         
-        // Revelar siguiente posicion en la tabla
+        // Revelar siguiente posicion en la tabla (del 8º al 1º)
         function revealNextPosition() {
             if (revealedCount < totalPositions) {
-                const participant = sortedParticipants[revealedCount];
-                const position = revealedCount + 1;
+                // Calcular indice inverso: del ultimo al primero
+                const reverseIndex = totalPositions - revealedCount - 1;
+                const participant = sortedParticipants[reverseIndex];
+                const position = totalPositions - reverseIndex; // Posicion real (1º, 2º, 3º...)
                 const points = scores[participant];
                 
-                // Obtener la fila correspondiente
+                // Obtener la fila correspondiente (ordenada 1º a 8º en la tabla)
                 const rows = resultsTbody.querySelectorAll('tr');
-                const row = rows[revealedCount];
+                const rowIndex = reverseIndex; // La fila que corresponde a esta posicion
+                const row = rows[rowIndex];
                 
                 // Quitar clase de fila vacia
                 row.classList.remove('empty-row');
                 
-                // Asignar clase de medalla segun la posicion
+                // Asignar clase de medalla segun la posicion REAL
                 if (position === 1) {
                     row.classList.add('gold-medal');
                 } else if (position === 2) {
@@ -850,7 +852,7 @@
             revealNextBtn.style.display = 'inline-block';
             allRevealedDiv.style.display = 'none';
             
-            // Revelar primera posicion (1º)
+            // Revelar primera posicion (8º puesto)
             revealNextPosition();
         });
         
@@ -864,14 +866,6 @@
             showResultsBtn.style.display = 'inline-block';
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
-        });
-        
-        // Nueva votacion
-        newVoteBtn.addEventListener('click', function() {
-            currentVoter = '';
-            pageResults.classList.remove('active');
-            pageVoter.classList.add('active');
-            updateVotedList();
         });
         
         // Reiniciar todos los votos
