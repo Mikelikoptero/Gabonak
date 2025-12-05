@@ -15,7 +15,6 @@
         body {
             background-color: #f0f7ff;
             color: #333;
-            line-height: 1.6;
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
@@ -54,8 +53,8 @@
         .voter-select {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 20px;
         }
         
         .voter-btn {
@@ -98,7 +97,6 @@
             cursor: move;
             display: flex;
             align-items: center;
-            transition: all 0.2s;
             font-size: 1.1rem;
         }
         
@@ -203,11 +201,11 @@
 <body>
     <div class="container">
         <h1>🎄 Gabonetako Sari Nagusia 🎄</h1>
-        <div class="subtitle">Votación de Pintxos Navideños</div>
+        <div class="subtitle">Votacion de Pintxos Navidenos</div>
         
-        <!-- Página 1: Selección de votante -->
+        <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
-            <h2>¿Quién vota?</h2>
+            <h2>¿Quien vota?</h2>
             <div class="voter-select">
                 <button class="voter-btn" data-voter="Mikel">Mikel</button>
                 <button class="voter-btn" data-voter="Jon">Jon</button>
@@ -222,28 +220,28 @@
             </div>
         </div>
         
-        <!-- Página 2: Votación -->
+        <!-- Pagina 2: Votacion -->
         <div id="page-voting" class="page">
             <div class="current-voter" id="current-voter-info"></div>
             <h2>Ordena los pintxos (de mejor a peor)</h2>
             
             <ul class="participant-list" id="sortable-list">
-                <!-- Los participantes se cargarán aquí -->
+                <!-- Los participantes se cargaran aqui -->
             </ul>
             
             <button id="submit-vote" class="action-btn" disabled>Enviar mi voto</button>
         </div>
         
-        <!-- Página 3: Confirmación -->
+        <!-- Pagina 3: Confirmacion -->
         <div id="page-results" class="page">
             <h2>¡Voto registrado!</h2>
             <div id="vote-confirmation"></div>
             
             <div class="export-section">
                 <h3>Exportar todos los votos</h3>
-                <p>Todos los votos se guardan automáticamente. Descarga el archivo CSV y ábrelo en Excel o Google Sheets:</p>
+                <p>Descarga el archivo CSV y abrelo en Excel o Google Sheets:</p>
                 <button id="export-csv" class="export-btn">📥 Descargar CSV con todos los votos</button>
-                <button id="new-vote" class="export-btn" style="background-color: #4caf50;">➕ Nueva votación</button>
+                <button id="new-vote" class="export-btn" style="background-color: #4caf50;">➕ Nueva votacion</button>
                 <button id="reset-votes" class="export-btn" style="background-color: #f44336;">🗑️ Borrar todos los votos</button>
             </div>
         </div>
@@ -278,12 +276,12 @@
             });
         });
         
-        // Iniciar votación
+        // Iniciar votacion
         function startVoting() {
-            // Actualizar información
+            // Actualizar informacion
             currentVoterInfo.textContent = `Votando: ${currentVoter}`;
             
-            // Cambiar página
+            // Cambiar pagina
             pageVoter.classList.remove('active');
             pageVoting.classList.add('active');
             pageResults.classList.remove('active');
@@ -294,7 +292,7 @@
             // Crear lista de participantes para votar
             let votingList = [...participants];
             
-            // Si es participante, quitarse a sí mismo
+            // Si es participante, quitarse a si mismo
             if (participants.includes(currentVoter)) {
                 votingList = votingList.filter(p => p !== currentVoter);
             }
@@ -319,7 +317,7 @@
                 sortableList.appendChild(li);
             });
             
-            // Activar botón de enviar
+            // Activar boton de enviar
             submitVoteBtn.disabled = false;
         }
         
@@ -382,18 +380,18 @@
             // Guardar voto
             const existingIndex = allVotes.findIndex(v => v.voter === currentVoter);
             if (existingIndex !== -1) {
-                allVotes[existingIndex] = vote; // Reemplazar si ya votó
+                allVotes[existingIndex] = vote; // Reemplazar si ya voto
             } else {
                 allVotes.push(vote); // Agregar nuevo voto
             }
             
             localStorage.setItem('gabonetakoVotes', JSON.stringify(allVotes));
             
-            // Mostrar confirmación
+            // Mostrar confirmacion
             showConfirmation(vote);
         });
         
-        // Mostrar confirmación
+        // Mostrar confirmacion
         function showConfirmation(vote) {
             pageVoting.classList.remove('active');
             pageResults.classList.add('active');
@@ -417,53 +415,43 @@
             voteConfirmation.innerHTML = html;
         }
         
-        // Exportar a CSV
+        // Exportar a CSV - VERSION VERTICAL
         exportCsvBtn.addEventListener('click', function() {
             if (allVotes.length === 0) {
                 alert('No hay votos para exportar.');
                 return;
             }
             
-            // Crear CSV
-            let csv = 'VOTANTE,FECHA,HORA,';
+            // Crear CSV en formato VERTICAL
+            let csv = 'VOTANTE,POSICION,PINTXO,FECHA,HORA,ES_PARTICIPANTE\n';
             
-            // Encabezados de posiciones
-            const maxPositions = Math.max(...allVotes.map(v => v.order.length));
-            for (let i = 1; i <= maxPositions; i++) {
-                csv += `POSICIÓN ${i},`;
-            }
-            csv += 'ES_PARTICIPANTE\n';
-            
-            // Datos de votos
+            // Datos de votos en formato vertical
             allVotes.forEach(vote => {
-                const isParticipant = participants.includes(vote.voter) ? 'Sí' : 'No';
+                const isParticipant = participants.includes(vote.voter) ? 'Si' : 'No';
                 const [fecha, hora] = vote.timestamp.split(', ');
                 
-                csv += `"${vote.voter}","${fecha}","${hora}",`;
-                
-                // Posiciones
-                vote.order.forEach(participant => {
-                    csv += `"${participant}",`;
+                // Para cada posicion en el voto, creamos una fila
+                vote.order.forEach((pintxo, index) => {
+                    const posicion = index + 1;
+                    csv += `"${vote.voter}","${posicion}","${pintxo}","${fecha}","${hora}","${isParticipant}"\n`;
                 });
                 
-                // Rellenar vacíos si hay menos posiciones
-                for (let i = vote.order.length; i < maxPositions; i++) {
-                    csv += ',';
+                // Si el votante es participante, agregamos una fila indicando que no voto su propio pintxo
+                if (participants.includes(vote.voter)) {
+                    csv += `"${vote.voter}","-","${vote.voter} (no vota su pintxo)","${fecha}","${hora}","Si"\n`;
                 }
-                
-                csv += `${isParticipant}\n`;
             });
             
             // Crear y descargar archivo
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.setAttribute('href', url);
-            link.setAttribute('download', `gabonetako_votos_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute('download', `votos_gabonetako_${new Date().toISOString().slice(0,10)}.csv`);
             link.click();
         });
         
-        // Nueva votación
+        // Nueva votacion
         newVoteBtn.addEventListener('click', function() {
             currentVoter = '';
             pageResults.classList.remove('active');
@@ -472,7 +460,7 @@
         
         // Resetear votos
         resetVotesBtn.addEventListener('click', function() {
-            if (confirm('¿Estás seguro de borrar TODOS los votos? Esto no se puede deshacer.')) {
+            if (confirm('¿Estas seguro de borrar TODOS los votos? Esto no se puede deshacer.')) {
                 allVotes = [];
                 localStorage.removeItem('gabonetakoVotes');
                 alert('Todos los votos han sido borrados.');
@@ -484,7 +472,7 @@
             }
         });
         
-        // Mostrar número de votos en consola (para depuración)
+        // Mostrar numero de votos en consola
         console.log(`Votos guardados: ${allVotes.length}`);
         if (allVotes.length > 0) {
             console.log('Lista de votantes:', allVotes.map(v => v.voter));
