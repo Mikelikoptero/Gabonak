@@ -16,7 +16,7 @@
             background-color: #f0f7ff;
             color: #333;
             padding: 20px;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
         }
         
@@ -188,8 +188,34 @@
             color: #2e7d32;
         }
         
+        .voted-list {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+        
+        .voted-person {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .voted-person.spectator {
+            background-color: #2196f3;
+        }
+        
         .results-container {
             margin-top: 30px;
+            display: none;
+        }
+        
+        .results-container.active {
+            display: block;
         }
         
         .results-table {
@@ -229,7 +255,7 @@
             font-weight: bold;
         }
         
-        .votes-list {
+        .votes-detail {
             background-color: #f5f5f5;
             padding: 15px;
             border-radius: 8px;
@@ -292,9 +318,25 @@
                 <button class="voter-btn spectator" data-voter="Abuela">Abuela</button>
             </div>
             
-            <!-- Resultados visibles desde el inicio -->
-            <div class="results-container" id="results-section" style="margin-top: 40px; display: none;">
-                <h2>📊 Resultados Actuales</h2>
+            <!-- Seccion de quien ha votado -->
+            <div class="voted-list" id="voted-list" style="display: none;">
+                <h3>Ya han votado:</h3>
+                <div id="voted-people"></div>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                    Faltan por votar: <span id="missing-voters"></span>
+                </p>
+            </div>
+            
+            <!-- Boton para ver resultados -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
+                    📊 Ver resultados completos
+                </button>
+            </div>
+            
+            <!-- Resultados (ocultos por defecto) -->
+            <div class="results-container" id="results-container">
+                <h3>📊 Resultados Completos</h3>
                 <div id="results-content"></div>
             </div>
         </div>
@@ -316,14 +358,9 @@
             <h2>¡Voto registrado!</h2>
             <div id="vote-confirmation"></div>
             
-            <div class="results-container">
-                <h3>📊 Resultados Actualizados</h3>
-                <div id="updated-results"></div>
-            </div>
-            
             <div class="export-section">
                 <button id="new-vote" class="export-btn" style="background-color: #4caf50;">➕ Nueva votacion</button>
-                <button id="view-results" class="export-btn" style="background-color: #673ab7;">📊 Ver solo resultados</button>
+                <button id="go-home" class="export-btn" style="background-color: #ff9800;">🏠 Volver al inicio</button>
                 <button id="reset-votes" class="export-btn" style="background-color: #f44336;">🗑️ Borrar todos los votos</button>
             </div>
         </div>
@@ -333,6 +370,7 @@
         // Datos
         const participants = ["Mikel", "Jon", "Iosu", "Yaiza", "Josefina", "Juan Mari", "Ana Luisa", "Javi"];
         const spectators = ["Aitona", "Abuela"];
+        const allPossibleVoters = [...participants, ...spectators];
         
         // Cargar votos guardados
         let allVotes = JSON.parse(localStorage.getItem('gabonetakoVotes')) || [];
@@ -348,16 +386,16 @@
         const voteConfirmation = document.getElementById('vote-confirmation');
         const newVoteBtn = document.getElementById('new-vote');
         const resetVotesBtn = document.getElementById('reset-votes');
-        const viewResultsBtn = document.getElementById('view-results');
-        const resultsSection = document.getElementById('results-section');
+        const goHomeBtn = document.getElementById('go-home');
+        const showResultsBtn = document.getElementById('show-results-btn');
+        const resultsContainer = document.getElementById('results-container');
         const resultsContent = document.getElementById('results-content');
-        const updatedResults = document.getElementById('updated-results');
+        const votedList = document.getElementById('voted-list');
+        const votedPeople = document.getElementById('voted-people');
+        const missingVoters = document.getElementById('missing-voters');
         
-        // Mostrar resultados si hay votos
-        if (allVotes.length > 0) {
-            resultsSection.style.display = 'block';
-            calculateResults();
-        }
+        // Actualizar lista de votantes al cargar
+        updateVotedList();
         
         // Eventos para seleccionar votante
         document.querySelectorAll('.voter-btn').forEach(btn => {
@@ -477,7 +515,7 @@
             
             localStorage.setItem('gabonetakoVotes', JSON.stringify(allVotes));
             
-            // Mostrar confirmacion y resultados
+            // Mostrar confirmacion
             showConfirmation(vote);
         });
         
@@ -503,10 +541,47 @@
             
             html += '</div>';
             voteConfirmation.innerHTML = html;
-            
-            // Mostrar resultados actualizados
-            calculateResults();
         }
+        
+        // Actualizar lista de quienes han votado
+        function updateVotedList() {
+            if (allVotes.length === 0) {
+                votedList.style.display = 'none';
+                showResultsBtn.style.display = 'none';
+                return;
+            }
+            
+            votedList.style.display = 'block';
+            votedPeople.innerHTML = '';
+            
+            // Mostrar quienes han votado
+            allVotes.forEach(vote => {
+                const div = document.createElement('div');
+                div.className = `voted-person ${spectators.includes(vote.voter) ? 'spectator' : ''}`;
+                div.textContent = vote.voter;
+                votedPeople.appendChild(div);
+            });
+            
+            // Calcular quienes faltan por votar
+            const votedNames = allVotes.map(v => v.voter);
+            const missing = allPossibleVoters.filter(v => !votedNames.includes(v));
+            
+            if (missing.length > 0) {
+                missingVoters.textContent = missing.join(', ');
+            } else {
+                missingVoters.textContent = '¡Todos han votado!';
+            }
+            
+            // Mostrar boton de resultados
+            showResultsBtn.style.display = 'inline-block';
+        }
+        
+        // Mostrar resultados cuando se pulse el boton
+        showResultsBtn.addEventListener('click', function() {
+            calculateResults();
+            resultsContainer.classList.add('active');
+            this.style.display = 'none';
+        });
         
         // Calcular y mostrar resultados
         function calculateResults() {
@@ -560,14 +635,13 @@
                 // Calcular posicion promedio
                 let avgPosition = '-';
                 if (votesReceived > 0) {
-                    // Para calcular esto necesitamos revisar todos los votos
                     let totalPosition = 0;
                     let positionCount = 0;
                     
                     allVotes.forEach(vote => {
                         const position = vote.order.indexOf(participant);
                         if (position !== -1) {
-                            totalPosition += (position + 1); // +1 porque array empieza en 0
+                            totalPosition += (position + 1);
                             positionCount++;
                         }
                     });
@@ -595,7 +669,7 @@
             
             // Mostrar detalles de votos
             resultsHTML += `
-                <div class="votes-list">
+                <div class="votes-detail">
                     <h4>Detalle de votos:</h4>
                     ${allVotes.map(vote => `
                         <div class="vote-entry">
@@ -607,19 +681,17 @@
                 </div>
             `;
             
-            // Actualizar en ambas ubicaciones
+            // Actualizar contenido
             resultsContent.innerHTML = resultsHTML;
-            updatedResults.innerHTML = resultsHTML;
-            
-            // Asegurarse de que la seccion de resultados sea visible
-            resultsSection.style.display = 'block';
         }
         
-        // Ver solo resultados
-        viewResultsBtn.addEventListener('click', function() {
+        // Volver al inicio
+        goHomeBtn.addEventListener('click', function() {
+            updateVotedList();
+            resultsContainer.classList.remove('active');
+            showResultsBtn.style.display = 'inline-block';
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
-            resultsSection.style.display = 'block';
         });
         
         // Nueva votacion
@@ -627,6 +699,7 @@
             currentVoter = '';
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
+            updateVotedList();
         });
         
         // Resetear votos
@@ -641,9 +714,9 @@
                     pageVoter.classList.add('active');
                 }
                 
-                resultsSection.style.display = 'none';
-                resultsContent.innerHTML = '';
-                updatedResults.innerHTML = '';
+                updateVotedList();
+                resultsContainer.classList.remove('active');
+                showResultsBtn.style.display = 'none';
             }
         });
         
