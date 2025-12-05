@@ -257,62 +257,104 @@
         .results-container {
             margin-top: 30px;
             display: none;
-            text-align: center;
         }
         
         .results-container.active {
             display: block;
         }
         
-        .reveal-container {
-            margin-top: 30px;
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
-        .revealed-position {
-            background-color: #f8fff8;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-left: 5px solid #4caf50;
+        .results-table th {
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .results-table td {
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 1.1rem;
+            min-height: 60px;
+        }
+        
+        .results-table tr {
             opacity: 0;
             transform: translateY(20px);
-            animation: revealAnimation 0.5s ease-out forwards;
+            animation: revealRow 0.5s ease-out forwards;
         }
         
-        @keyframes revealAnimation {
+        @keyframes revealRow {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
         
-        /* Estilos para las posiciones reveladas */
-        .revealed-1 {
+        /* Filas vacias */
+        .empty-row {
+            background-color: #f9f9f9;
+            color: #999;
+            font-style: italic;
+        }
+        
+        /* ORO - Primer puesto */
+        .gold-medal {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            font-weight: bold;
             color: #8B7500;
             border-left: 5px solid #ffa500 !important;
         }
         
-        .revealed-2 {
+        .gold-medal td {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* PLATA - Segundo puesto */
+        .silver-medal {
             background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
+            font-weight: bold;
             color: #696969;
             border-left: 5px solid #a9a9a9 !important;
         }
         
-        .revealed-3 {
+        .silver-medal td {
+            font-weight: bold;
+            font-size: 1.15rem;
+        }
+        
+        /* BRONCE - Tercer puesto */
+        .bronze-medal {
             background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
+            font-weight: bold;
             color: #5a3a22;
             border-left: 5px solid #8b4513 !important;
         }
         
-        .revealed-4, .revealed-5, .revealed-6, .revealed-7, .revealed-8 {
-            background-color: #f8fff8 !important;
-            color: #333;
+        .bronze-medal td {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .total-score {
+            font-weight: bold;
+            color: #c62828;
+            font-size: 1.3rem;
+        }
+        
+        .position-cell {
+            font-weight: bold;
+            font-size: 1.2rem;
+            width: 100px;
         }
         
         .admin-section {
@@ -333,6 +375,15 @@
             
             h1 {
                 font-size: 1.6rem;
+            }
+            
+            .results-table {
+                font-size: 0.9rem;
+            }
+            
+            .results-table th,
+            .results-table td {
+                padding: 10px;
             }
             
             .position-number {
@@ -369,15 +420,30 @@
                 </button>
             </div>
             
-            <!-- Resultados con revelacion progresiva -->
+            <!-- Resultados con tabla que se va llenando -->
             <div class="results-container" id="results-container">
                 <h3>Resultados</h3>
-                <div class="reveal-container" id="reveal-container"></div>
-                <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #4caf50;">
-                    Revelar siguiente posicion
-                </button>
-                <div id="all-revealed" style="display: none; margin-top: 20px;">
-                    <p style="font-weight: bold; color: #2e7d32;">¡Todos los resultados han sido revelados!</p>
+                <div style="overflow-x: auto;">
+                    <table class="results-table" id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Posicion</th>
+                                <th>Pintxo</th>
+                                <th>Puntuacion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-tbody">
+                            <!-- La tabla se llenara progresivamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #4caf50;">
+                        Revelar siguiente
+                    </button>
+                    <div id="all-revealed" style="display: none; margin-top: 20px;">
+                        <p style="font-weight: bold; color: #2e7d32;">¡Todos los resultados han sido revelados!</p>
+                    </div>
                 </div>
             </div>
             
@@ -427,7 +493,8 @@
         // Variables para la revelacion progresiva
         let sortedParticipants = [];
         let scores = {};
-        let currentRevealIndex = 0;
+        let revealedCount = 0;
+        let totalPositions = 0;
         
         // Elementos DOM
         const pageVoter = document.getElementById('page-voter');
@@ -442,7 +509,7 @@
         const resetVotesBtn = document.getElementById('reset-votes-btn');
         const showResultsBtn = document.getElementById('show-results-btn');
         const resultsContainer = document.getElementById('results-container');
-        const revealContainer = document.getElementById('reveal-container');
+        const resultsTbody = document.getElementById('results-tbody');
         const revealNextBtn = document.getElementById('reveal-next-btn');
         const allRevealedDiv = document.getElementById('all-revealed');
         const votedList = document.getElementById('voted-list');
@@ -671,7 +738,7 @@
             showResultsBtn.style.display = 'inline-block';
         }
         
-        // Calcular resultados
+        // Calcular resultados y crear tabla vacia
         function calculateResults() {
             // Inicializar puntuaciones
             scores = {};
@@ -690,41 +757,83 @@
                 });
             });
             
-            // Ordenar por puntuacion (de menor a mayor para revelar del 8º al 1º)
-            sortedParticipants = [...participants].sort((a, b) => scores[a] - scores[b]);
+            // Ordenar por puntuacion (de mayor a menor para mostrar 1º a 8º)
+            sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
+            totalPositions = sortedParticipants.length;
             
-            // Reiniciar indice de revelacion
-            currentRevealIndex = 0;
+            // Reiniciar contador de revelados
+            revealedCount = 0;
+            
+            // Crear tabla vacia con todas las filas
+            resultsTbody.innerHTML = '';
+            
+            for (let i = 0; i < totalPositions; i++) {
+                const tr = document.createElement('tr');
+                tr.className = 'empty-row';
+                
+                // Celda de posicion
+                const tdPos = document.createElement('td');
+                tdPos.className = 'position-cell';
+                tdPos.textContent = `${i + 1}º`;
+                
+                // Celda de nombre (vacia)
+                const tdName = document.createElement('td');
+                tdName.textContent = '???';
+                tdName.style.color = '#999';
+                tdName.style.fontStyle = 'italic';
+                
+                // Celda de puntuacion (vacia)
+                const tdScore = document.createElement('td');
+                tdScore.textContent = '?';
+                tdScore.style.color = '#999';
+                tdScore.style.fontStyle = 'italic';
+                
+                tr.appendChild(tdPos);
+                tr.appendChild(tdName);
+                tr.appendChild(tdScore);
+                resultsTbody.appendChild(tr);
+            }
         }
         
-        // Revelar siguiente posicion
+        // Revelar siguiente posicion en la tabla
         function revealNextPosition() {
-            if (currentRevealIndex < sortedParticipants.length) {
-                const positionIndex = currentRevealIndex;
-                const participant = sortedParticipants[positionIndex];
-                const positionNumber = sortedParticipants.length - positionIndex; // 8º, 7º, etc.
+            if (revealedCount < totalPositions) {
+                const participant = sortedParticipants[revealedCount];
+                const position = revealedCount + 1;
                 const points = scores[participant];
                 
-                // Crear elemento para la posicion revelada
-                const revealDiv = document.createElement('div');
-                revealDiv.className = `revealed-position revealed-${positionNumber}`;
+                // Obtener la fila correspondiente
+                const rows = resultsTbody.querySelectorAll('tr');
+                const row = rows[revealedCount];
                 
-                // Mostrar posicion del 8º al 1º
-                const displayPosition = sortedParticipants.length - positionIndex;
-                revealDiv.innerHTML = `
-                    <div style="font-size: 1.5rem; font-weight: bold; margin-right: 20px;">${displayPosition}º</div>
-                    <div style="font-size: 1.4rem;">${participant}</div>
-                    <div style="margin-left: 20px; font-size: 1.2rem; color: #c62828;">${points} puntos</div>
-                `;
+                // Quitar clase de fila vacia
+                row.classList.remove('empty-row');
                 
-                // Agregar al contenedor
-                revealContainer.appendChild(revealDiv);
+                // Asignar clase de medalla segun la posicion
+                if (position === 1) {
+                    row.classList.add('gold-medal');
+                } else if (position === 2) {
+                    row.classList.add('silver-medal');
+                } else if (position === 3) {
+                    row.classList.add('bronze-medal');
+                }
                 
-                // Incrementar indice
-                currentRevealIndex++;
+                // Actualizar celdas
+                const cells = row.querySelectorAll('td');
+                cells[1].textContent = participant;
+                cells[1].style.color = '';
+                cells[1].style.fontStyle = '';
+                
+                cells[2].textContent = `${points} puntos`;
+                cells[2].className = 'total-score';
+                cells[2].style.color = '';
+                cells[2].style.fontStyle = '';
+                
+                // Incrementar contador
+                revealedCount++;
                 
                 // Si hemos revelado todos, mostrar mensaje final
-                if (currentRevealIndex >= sortedParticipants.length) {
+                if (revealedCount >= totalPositions) {
                     revealNextBtn.style.display = 'none';
                     allRevealedDiv.style.display = 'block';
                 }
@@ -739,10 +848,9 @@
             
             // Mostrar boton para revelar
             revealNextBtn.style.display = 'inline-block';
-            revealContainer.innerHTML = '';
             allRevealedDiv.style.display = 'none';
             
-            // Revelar primera posicion (8º)
+            // Revelar primera posicion (1º)
             revealNextPosition();
         });
         
