@@ -399,7 +399,7 @@
         
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
-            <h2 style="text-align: center;">¿Quien vota?</h2>
+            <h2 style="text-align: center;">¿Quién vota?</h2>
             <div class="voter-select" id="voter-buttons">
                 <!-- Los botones se cargaran en orden alfabetico -->
             </div>
@@ -416,7 +416,7 @@
             <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
                 <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
-                    Revelar resultados
+                    Ver resultados
                 </button>
             </div>
             
@@ -465,12 +465,12 @@
                 </ul>
             </div>
             
-            <button id="submit-vote" class="action-btn" disabled>Enviar mi voto</button>
+            <button id="submit-vote" class="action-btn" disabled>Enviar voto</button>
         </div>
         
         <!-- Pagina 3: Confirmacion -->
         <div id="page-results" class="page">
-            <h2>¡Voto registrado!</h2>
+            <h2 style="text-align: center;">¡Votad!</h2>
             <div id="vote-confirmation"></div>
             
             <div class="export-section">
@@ -695,7 +695,7 @@
             });
             
             if (participants.includes(currentVoter)) {
-                html += `<p style="margin-top: 15px; color: #666; font-style: italic;">Nota: No votas tu propio pintxo (${currentVoter}).</p>`;
+                html += `<p style="margin-top: 15px; color: #666; font-style: italic;">Nota: No votas tu propio pintxo.</p>`;
             }
             
             html += '</div>';
@@ -908,3 +908,4 @@
     </script>
 </body>
 </html>
+
