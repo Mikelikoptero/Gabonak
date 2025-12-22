@@ -396,18 +396,19 @@
             font-weight: 700;
         }
         
-        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - TIPOGRAFÍA DIFERENTE */
+        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - MENOS EXAGERADA */
         .winner-name {
-            font-family: 'Bangers', 'Bubblegum Sans', cursive;
-            font-size: 3.8rem;
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 3.2rem;
             font-weight: 400;
             color: #27ae60;
             margin: 25px 0;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             line-height: 1.1;
-            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-            -webkit-text-stroke: 2px white;
-            text-stroke: 2px white;
+            /* Quitamos las sombras y efectos más exagerados */
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+            -webkit-text-stroke: 1px white;
+            text-stroke: 1px white;
         }
         
         .winner-event {
@@ -758,7 +759,7 @@
             }
             
             .winner-name {
-                font-size: 3rem;
+                font-size: 2.8rem; /* Más pequeño en móvil */
             }
             
             .winner-popup h2 {
