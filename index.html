@@ -365,6 +365,7 @@
             animation: popupAppear 0.5s ease-out;
             border-top: 8px solid #ffd700;
             position: relative;
+            z-index: 1001;
         }
         
         .winner-popup:before {
@@ -424,6 +425,8 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.2s;
+            position: relative;
+            z-index: 1002;
         }
         
         .close-popup-btn:hover {
@@ -433,6 +436,88 @@
             transform: translateY(-1px);
         }
         
+        /* EFECTOS ESPECIALES - PARTÍCULAS BRILLANTES */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+            animation: particleFloat 3s ease-in-out infinite;
+        }
+        
+        .particle:nth-child(2) {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b;
+            animation-delay: 0.5s;
+        }
+        
+        .particle:nth-child(3) {
+            background: #4ecdc4;
+            box-shadow: 0 0 10px #4ecdc4, 0 0 20px #4ecdc4, 0 0 30px #4ecdc4;
+            animation-delay: 1s;
+        }
+        
+        .particle:nth-child(4) {
+            background: #ffd166;
+            box-shadow: 0 0 10px #ffd166, 0 0 20px #ffd166, 0 0 30px #ffd166;
+            animation-delay: 1.5s;
+        }
+        
+        .particle:nth-child(5) {
+            background: #06d6a0;
+            box-shadow: 0 0 10px #06d6a0, 0 0 20px #06d6a0, 0 0 30px #06d6a0;
+            animation-delay: 2s;
+        }
+        
+        .particle:nth-child(6) {
+            background: #118ab2;
+            box-shadow: 0 0 10px #118ab2, 0 0 20px #118ab2, 0 0 30px #118ab2;
+            animation-delay: 2.5s;
+        }
+        
+        /* EFECTO CONFETI (alternativa) */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #ffd700;
+            top: -20px;
+            opacity: 0;
+        }
+        
+        .confetti:nth-child(odd) {
+            background: #ff6b6b;
+        }
+        
+        .confetti:nth-child(even) {
+            background: #4ecdc4;
+        }
+        
+        .confetti:nth-child(3n) {
+            background: #ffd166;
+        }
+        
+        .confetti:nth-child(4n) {
+            background: #06d6a0;
+        }
+        
+        .confetti:nth-child(5n) {
+            background: #118ab2;
+        }
+        
+        /* ANIMACIONES */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -441,6 +526,42 @@
         @keyframes popupAppear {
             0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes particleFloat {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* ANIMACIÓN PARA EL NOMBRE DEL GANADOR */
+        .pulse-animation {
+            animation: pulse 2s infinite;
         }
         
         /* Filas vacias */
@@ -683,6 +804,9 @@
         </div>
     </div>
 
+    <!-- Contenedor para efectos especiales -->
+    <div id="particles-container" class="particles-container"></div>
+
     <script>
         // Datos en orden alfabetico
         const participants = ["Ana Luisa", "Iosu", "Javi", "Jon", "Josefina", "Juan Mari", "Mikel", "Yaiza"];
@@ -723,6 +847,7 @@
         const winnerPopupOverlay = document.getElementById('winner-popup-overlay');
         const winnerNameElement = document.getElementById('winner-name');
         const closePopupBtn = document.getElementById('close-popup-btn');
+        const particlesContainer = document.getElementById('particles-container');
         
         // Crear botones de votantes en orden alfabetico
         function createVoterButtons() {
@@ -926,10 +1051,66 @@
             voteConfirmation.innerHTML = html;
         }
         
-        // Mostrar popup del ganador - AL INSTANTE
+        // Crear efecto de partículas brillantes
+        function createParticles() {
+            particlesContainer.innerHTML = '';
+            
+            // Crear partículas brillantes
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Posición aleatoria
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 2;
+                const duration = 2 + Math.random() * 2;
+                
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Crear efecto de confeti (alternativa)
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Posición aleatoria en la parte superior
+                const left = Math.random() * 100;
+                const delay = Math.random() * 0.5;
+                const duration = 2 + Math.random() * 2;
+                
+                confetti.style.left = `${left}%`;
+                confetti.style.animation = `confettiFall ${duration}s linear ${delay}s forwards`;
+                
+                particlesContainer.appendChild(confetti);
+            }
+        }
+        
+        // Limpiar efectos
+        function clearEffects() {
+            particlesContainer.innerHTML = '';
+        }
+        
+        // Mostrar popup del ganador con efectos
         function showWinnerPopup(winnerName) {
             winnerNameElement.textContent = winnerName;
             winnerPopupOverlay.style.display = 'flex';
+            
+            // Añadir animación de pulso al nombre del ganador
+            winnerNameElement.classList.add('pulse-animation');
+            
+            // Crear efectos especiales
+            createParticles();
+            
+            // También puedes activar el confeti (comenta createParticles() y descomenta esta línea)
+            // createConfetti();
             
             // Bloquear el scroll del body
             document.body.style.overflow = 'hidden';
@@ -939,6 +1120,12 @@
         function closeWinnerPopup() {
             winnerPopupOverlay.style.display = 'none';
             document.body.style.overflow = 'auto';
+            
+            // Quitar animación del nombre
+            winnerNameElement.classList.remove('pulse-animation');
+            
+            // Limpiar efectos
+            clearEffects();
         }
         
         // Evento para cerrar el popup
@@ -1102,7 +1289,7 @@
                     // Mostrar mensaje final
                     allRevealedDiv.style.display = 'block';
                     
-                    // MOSTRAR EL POPUP DEL GANADOR AL INSTANTE
+                    // MOSTRAR EL POPUP DEL GANADOR AL INSTANTE CON EFECTOS
                     showWinnerPopup(firstPlace);
                     
                     return; // Salir de la función aquí
