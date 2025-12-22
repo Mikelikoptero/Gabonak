@@ -51,7 +51,7 @@
         }
         
         .logo {
-            max-width: 200px; /* Logo más grande */
+            max-width: 250px; /* Logo MUCHO más grande */
             height: auto;
             /* Sin bordes, sombras ni recuadros */
         }
@@ -405,12 +405,12 @@
             font-weight: 700;
         }
         
-        /* TIPOGRAFÍA MÁS FIESTERA PARA EL NOMBRE DEL GANADOR */
+        /* TIPOGRAFÍA MÁS FIESTERA PARA EL NOMBRE DEL GANADOR - EN NEGRO */
         .winner-name {
             font-family: 'Luckiest Guy', 'Fredoka One', cursive;
             font-size: 3.8rem;
             font-weight: 400;
-            color: #d32f2f; /* MISMO COLOR ROJO QUE EL LOGO */
+            color: #000000; /* NEGRO en lugar de rojo */
             margin: 25px 0;
             letter-spacing: 1px;
             line-height: 1.1;
@@ -636,7 +636,7 @@
             font-style: italic;
         }
         
-        /* ORO - Primer puesto */
+        /* ORO - Primer puesto - FIJADO */
         .gold-medal {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
             font-weight: bold;
@@ -649,7 +649,7 @@
             font-size: 1.2rem;
         }
         
-        /* PLATA - Segundo puesto */
+        /* PLATA - Segundo puesto - FIJADO */
         .silver-medal {
             background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
             font-weight: bold;
@@ -662,7 +662,7 @@
             font-size: 1.15rem;
         }
         
-        /* BRONCE - Tercer puesto */
+        /* BRONCE - Tercer puesto - FIJADO */
         .bronze-medal {
             background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
             font-weight: bold;
@@ -746,7 +746,7 @@
             }
             
             .logo {
-                max-width: 180px; /* Más grande en móvil también */
+                max-width: 220px; /* Más grande en móvil también */
             }
             
             .voter-select {
@@ -807,7 +807,7 @@
             }
             
             .logo {
-                max-width: 150px;
+                max-width: 180px;
             }
         }
     </style>
@@ -823,8 +823,8 @@
         
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
-            <h2 style="text-align: center;">¿Quién vota?</h2>
-            <p class="instruction-text">Selecciona tu nombre para comenzar a votar</p>
+            <!-- TEXTO SIMPLIFICADO -->
+            <p class="instruction-text">Selecciona tu nombre para votar</p>
             <div class="voter-select" id="voter-buttons">
                 <!-- Los botones se cargaran en orden alfabetico -->
             </div>
@@ -1375,7 +1375,8 @@
                 tdScore.textContent = `${scores[sortedParticipants[i]]} puntos`;
                 tdScore.className = 'total-score';
                 
-                // Aplicar colores según posición (oro, plata, bronce)
+                // Aplicar colores según posición (oro, plata, bronce) DESDE EL PRINCIPIO
+                // Esto asegura que cuando se revelen los nombres, ya tengan las clases correctas
                 if (i === 0) {
                     tr.classList.add('gold-medal');
                 } else if (i === 1) {
@@ -1422,12 +1423,20 @@
                     tdName2nd.style.fontStyle = '';
                     tdName2nd.classList.remove('hidden-name');
                     
+                    // Asegurarse que la fila tiene la clase silver-medal
+                    row2nd.classList.remove('empty-row');
+                    row2nd.classList.add('silver-medal');
+                    
                     // 1ª POSICIÓN - ORO
                     const tdName1st = row1st.querySelector('td:nth-child(2)');
                     tdName1st.innerHTML = firstPlace;
                     tdName1st.style.color = '';
                     tdName1st.style.fontStyle = '';
                     tdName1st.classList.remove('hidden-name');
+                    
+                    // Asegurarse que la fila tiene la clase gold-medal
+                    row1st.classList.remove('empty-row');
+                    row1st.classList.add('gold-medal');
                     
                     // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
                     revealedCount += 2;
@@ -1449,11 +1458,21 @@
                 const tableRowIndex = totalPositions - revealedCount - 1;
                 const participantIndex = totalPositions - revealedCount - 1;
                 const participant = sortedParticipants[participantIndex];
+                const position = participantIndex + 1;
                 
                 const rows = resultsTbody.querySelectorAll('tr');
                 const row = rows[tableRowIndex];
                 
                 row.classList.remove('empty-row');
+                
+                // Asegurar que las clases de medalla están aplicadas según la posición
+                if (position === 1) {
+                    row.classList.add('gold-medal');
+                } else if (position === 2) {
+                    row.classList.add('silver-medal');
+                } else if (position === 3) {
+                    row.classList.add('bronze-medal');
+                }
                 
                 const tdName = row.querySelector('td:nth-child(2)');
                 tdName.innerHTML = participant;
