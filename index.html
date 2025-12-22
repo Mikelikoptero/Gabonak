@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabonetako Sari Nagusia - Votación</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -388,16 +390,18 @@
             font-weight: 700;
         }
         
-        /* NUEVA TIPOGRAFÍA PARA EL NOMBRE DEL GANADOR */
+        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR */
         .winner-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.2rem;
-            font-weight: 800;
+            font-family: 'Chewy', 'Bubblegum Sans', cursive;
+            font-size: 3.4rem;
+            font-weight: 400;
             color: #27ae60;
             margin: 25px 0;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             line-height: 1.1;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            -webkit-text-stroke: 1px white;
+            text-stroke: 1px white;
         }
         
         .winner-event {
@@ -607,9 +611,12 @@
             animation: popupAppear 0.5s ease-out, glow 4s ease-in-out infinite;
         }
         
-        /* Filas vacias */
+        /* Filas vacias - MODIFICADO PARA COMPLETAMENTE VACÍAS */
         .empty-row {
             background-color: #f8f9fa;
+        }
+        
+        .empty-row td {
             color: #95a5a6;
             font-style: italic;
         }
@@ -713,7 +720,7 @@
             }
             
             .winner-name {
-                font-size: 2.6rem;
+                font-size: 2.8rem;
             }
             
             .winner-popup h2 {
@@ -736,7 +743,7 @@
         
         @media (max-width: 400px) {
             .winner-name {
-                font-size: 2.2rem;
+                font-size: 2.4rem;
             }
             
             .winner-event {
@@ -868,6 +875,7 @@
         let scores = {};
         let revealedCount = 0;
         let totalPositions = 0;
+        let hasCalculatedResults = false; // Nueva variable para controlar si ya se calcularon
         
         // Elementos DOM
         const pageVoter = document.getElementById('page-voter');
@@ -1256,8 +1264,8 @@
             showResultsBtn.style.display = 'inline-block';
         }
         
-        // Calcular resultados y crear tabla vacia
-        function calculateResults() {
+        // Calcular resultados y crear tabla COMPLETAMENTE VACÍA
+        function calculateResultsAndCreateEmptyTable() {
             // Inicializar puntuaciones
             scores = {};
             participants.forEach(p => {
@@ -1282,7 +1290,7 @@
             // Reiniciar contador de revelados
             revealedCount = 0;
             
-            // Crear tabla vacia con todas las filas (orden 1º a 8º de arriba a abajo)
+            // Crear tabla COMPLETAMENTE VACÍA (solo signos de interrogación)
             resultsTbody.innerHTML = '';
             
             for (let i = 0; i < totalPositions; i++) {
@@ -1294,13 +1302,13 @@
                 tdPos.className = 'position-cell';
                 tdPos.textContent = `${i + 1}º`;
                 
-                // Celda de nombre (vacia)
+                // Celda de nombre (COMPLETAMENTE VACÍA)
                 const tdName = document.createElement('td');
                 tdName.textContent = '???';
                 tdName.style.color = '#95a5a6';
                 tdName.style.fontStyle = 'italic';
                 
-                // Celda de puntuacion (vacia)
+                // Celda de puntuacion (COMPLETAMENTE VACÍA)
                 const tdScore = document.createElement('td');
                 tdScore.textContent = '?';
                 tdScore.style.color = '#95a5a6';
@@ -1311,9 +1319,11 @@
                 tr.appendChild(tdScore);
                 resultsTbody.appendChild(tr);
             }
+            
+            hasCalculatedResults = true;
         }
         
-        // Revelar siguiente posicion en la tabla (del 8º al 1º, CON ORDEN CORRECTO)
+        // Revelar siguiente posicion en la tabla (del 8º al 1º)
         function revealNextPosition() {
             if (revealedCount < totalPositions) {
                 // Calcular cuántos quedan por revelar
@@ -1420,18 +1430,19 @@
             }
         }
         
-        // Mostrar resultados cuando se pulse el boton
+        // Mostrar resultados cuando se pulse el boton (solo calcula y muestra tabla vacía)
         showResultsBtn.addEventListener('click', function() {
-            calculateResults();
+            // Calcular resultados y crear tabla COMPLETAMENTE VACÍA
+            calculateResultsAndCreateEmptyTable();
             resultsContainer.classList.add('active');
             this.style.display = 'none';
             
-            // Mostrar boton para revelar
+            // Mostrar boton para revelar (primera vez)
             revealNextBtn.style.display = 'inline-block';
             allRevealedDiv.style.display = 'none';
             
-            // Revelar primera posicion (8º puesto)
-            revealNextPosition();
+            // NOTA: No revelamos ninguna posición aquí, la tabla está completamente vacía
+            // El usuario debe pulsar "Revelar siguiente" para ver la primera posición (8º lugar)
         });
         
         // Boton para revelar siguiente posicion
@@ -1444,6 +1455,10 @@
             showResultsBtn.style.display = 'inline-block';
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
+            
+            // Resetear el estado de revelación
+            hasCalculatedResults = false;
+            revealedCount = 0;
             
             // Asegurarse de cerrar el popup si está abierto
             closeWinnerPopup();
@@ -1461,6 +1476,10 @@
                 updateVotedList();
                 resultsContainer.classList.remove('active');
                 showResultsBtn.style.display = 'none';
+                
+                // Resetear el estado de revelación
+                hasCalculatedResults = false;
+                revealedCount = 0;
                 
                 // Cerrar popup si está abierto
                 closeWinnerPopup();
