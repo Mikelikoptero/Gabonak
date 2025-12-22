@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -34,38 +36,24 @@
             border: 1px solid #e9ecef;
         }
         
-        /* ENCABEZADO CON LOGO Y TÍTULO */
+        /* ENCABEZADO SOLO CON LOGO CENTRADO Y GRANDE */
         .header {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 20px;
         }
         
         .logo-container {
             display: flex;
             align-items: center;
+            justify-content: center;
         }
         
         .logo {
-            max-width: 120px;
+            max-width: 200px; /* Logo más grande */
             height: auto;
             /* Sin bordes, sombras ni recuadros */
-        }
-        
-        /* TÍTULO DE LA WEB - MISMO COLOR QUE EL LOGO Y MAYÚSCULAS */
-        h1 {
-            color: #d32f2f; /* Color rojo similar al logo */
-            text-align: center;
-            margin-bottom: 0;
-            font-size: 2.8rem;
-            font-weight: 400;
-            letter-spacing: 1px;
-            font-family: 'Bubblegum Sans', cursive;
-            text-transform: uppercase; /* TODO EN MAYÚSCULAS */
-            /* SIN sombras, efectos especiales, ni transformaciones */
         }
         
         h2, h3 {
@@ -417,18 +405,18 @@
             font-weight: 700;
         }
         
-        /* TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - MISMO COLOR QUE EL LOGO */
+        /* TIPOGRAFÍA MÁS FIESTERA PARA EL NOMBRE DEL GANADOR */
         .winner-name {
-            font-family: 'Bubblegum Sans', cursive;
-            font-size: 3.2rem;
+            font-family: 'Luckiest Guy', 'Fredoka One', cursive;
+            font-size: 3.8rem;
             font-weight: 400;
             color: #d32f2f; /* MISMO COLOR ROJO QUE EL LOGO */
             margin: 25px 0;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             line-height: 1.1;
-            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-            -webkit-text-stroke: 1px white;
-            text-stroke: 1px white;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            -webkit-text-stroke: 2px white;
+            text-stroke: 2px white;
         }
         
         .winner-event {
@@ -755,19 +743,14 @@
             .header {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
             }
             
             .logo {
-                max-width: 100px;
+                max-width: 180px; /* Más grande en móvil también */
             }
             
             .voter-select {
                 grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
             }
             
             .results-table {
@@ -789,7 +772,7 @@
             }
             
             .winner-name {
-                font-size: 2.8rem;
+                font-size: 3.2rem;
             }
             
             .winner-popup h2 {
@@ -812,7 +795,7 @@
         
         @media (max-width: 400px) {
             .winner-name {
-                font-size: 2.4rem;
+                font-size: 2.6rem;
             }
             
             .winner-event {
@@ -823,24 +806,19 @@
                 font-size: 1.2rem;
             }
             
-            h1 {
-                font-size: 1.8rem;
-            }
-            
             .logo {
-                max-width: 80px;
+                max-width: 150px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ENCABEZADO CON LOGO Y TÍTULO -->
+        <!-- ENCABEZADO SOLO CON LOGO GRANDE Y CENTRADO -->
         <div class="header">
             <div class="logo-container">
                 <img src="https://github.com/Mikelikoptero/Gabonak/blob/main/gsn2.png?raw=true" alt="Logo Gabonetako Sari Nagusia" class="logo">
             </div>
-            <h1>GABONETAKO SARI NAGUSIA</h1>
         </div>
         
         <!-- Pagina 1: Seleccion de votante -->
