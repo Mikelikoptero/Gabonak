@@ -13,7 +13,7 @@
         }
         
         body {
-            background-color: #f0f7ff;
+            background-color: #f8f9fa;
             color: #333;
             padding: 20px;
             max-width: 800px;
@@ -22,22 +22,26 @@
         
         .container {
             background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
             padding: 30px;
             margin-bottom: 20px;
+            border: 1px solid #e9ecef;
         }
         
         h1 {
-            color: #c62828;
+            color: #2c3e50;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
         
         h2, h3 {
-            color: #2e7d32;
+            color: #27ae60;
             margin-bottom: 15px;
+            font-weight: 500;
         }
         
         .page {
@@ -51,37 +55,42 @@
         .voter-select {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin-top: 20px;
         }
         
         .voter-btn {
-            padding: 15px;
+            padding: 14px;
             font-size: 1.1rem;
-            background-color: #4caf50;
-            color: white;
-            border: none;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #dfe6e9;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
+            transition: all 0.2s;
+            font-weight: 500;
         }
         
         .voter-btn:hover {
-            background-color: #388e3c;
-            transform: scale(1.02);
+            background-color: #27ae60;
+            color: white;
+            border-color: #27ae60;
+            transform: translateY(-2px);
         }
         
         .voter-btn.disabled {
-            background-color: #9e9e9e;
-            color: #e0e0e0;
+            background-color: #f8f9fa;
+            color: #95a5a6;
             cursor: not-allowed;
             opacity: 0.7;
+            border-color: #e9ecef;
         }
         
         .voter-btn.disabled:hover {
-            background-color: #9e9e9e;
+            background-color: #f8f9fa;
+            color: #95a5a6;
             transform: none;
+            border-color: #e9ecef;
         }
         
         .voting-container {
@@ -92,14 +101,14 @@
             list-style-type: none;
             border-radius: 10px;
             overflow: hidden;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #e9ecef;
         }
         
         .position-item {
             display: flex;
             align-items: stretch;
             background-color: #fff;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f1f3f4;
             min-height: 60px;
         }
         
@@ -116,35 +125,35 @@
             font-weight: bold;
             font-size: 1.5rem;
             text-align: center;
-            border-right: 2px solid rgba(0,0,0,0.1);
+            border-right: 1px solid rgba(0,0,0,0.1);
         }
         
-        /* ORO - Primer puesto */
+        /* ORO - Primer puesto - MANTENEMOS COLOR */
         .position-1 {
             background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
             color: #8B7500;
             border-right-color: rgba(139, 117, 0, 0.3) !important;
         }
         
-        /* PLATA - Segundo puesto */
+        /* PLATA - Segundo puesto - MANTENEMOS COLOR */
         .position-2 {
             background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
             color: #696969;
             border-right-color: rgba(105, 105, 105, 0.3) !important;
         }
         
-        /* BRONCE - Tercer puesto */
+        /* BRONCE - Tercer puesto - MANTENEMOS COLOR */
         .position-3 {
             background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
             color: #5a3a22;
             border-right-color: rgba(90, 58, 34, 0.3) !important;
         }
         
-        /* Resto de posiciones - Blanco */
+        /* Resto de posiciones - Gris claro */
         .position-4, .position-5, .position-6, .position-7, .position-8 {
-            background: white !important;
-            color: #333;
-            border-right-color: #e0e0e0 !important;
+            background: #f8f9fa !important;
+            color: #2c3e50;
+            border-right-color: #e9ecef !important;
         }
         
         .name-container {
@@ -155,19 +164,23 @@
             align-items: center;
             font-size: 1.1rem;
             min-height: 60px;
+            color: #2c3e50;
+            background-color: white;
+            transition: background-color 0.2s;
         }
         
         .name-container:hover {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
         }
         
         .name-container.dragging {
-            background-color: #e3f2fd;
+            background-color: #e8f5e9;
+            border: 1px dashed #27ae60;
         }
         
         .drag-icon {
             margin-right: 12px;
-            color: #777;
+            color: #95a5a6;
             font-size: 1.2rem;
         }
         
@@ -176,22 +189,27 @@
             width: 100%;
             padding: 15px;
             font-size: 1.2rem;
-            background-color: #ff9800;
+            background-color: #27ae60;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             margin: 25px 0;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.2s;
         }
         
         .action-btn:hover {
-            background-color: #f57c00;
+            background-color: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
         }
         
         .action-btn:disabled {
-            background-color: #ccc;
+            background-color: #bdc3c7;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .vote-result {
@@ -200,12 +218,13 @@
             border-radius: 6px;
             margin-bottom: 10px;
             display: flex;
-            border-left: 4px solid #4caf50;
+            border-left: 4px solid #27ae60;
+            background-color: #f8f9fa;
         }
         
         .position {
             font-weight: bold;
-            color: #2e7d32;
+            color: #27ae60;
             min-width: 40px;
         }
         
@@ -213,30 +232,33 @@
             text-align: center;
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #e9ecef;
         }
         
         .export-btn {
             padding: 12px 24px;
             font-size: 1rem;
-            background-color: #673ab7;
+            background-color: #34495e;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             margin: 5px;
+            transition: all 0.2s;
+            font-weight: 500;
         }
         
         .export-btn:hover {
-            background-color: #512da8;
+            background-color: #2c3e50;
+            transform: translateY(-2px);
         }
         
         .reset-btn {
-            background-color: #f44336 !important;
+            background-color: #e74c3c !important;
         }
         
         .reset-btn:hover {
-            background-color: #d32f2f !important;
+            background-color: #c0392b !important;
         }
         
         .current-voter {
@@ -245,25 +267,28 @@
             border-radius: 8px;
             text-align: center;
             margin-bottom: 20px;
-            font-weight: bold;
-            color: #2e7d32;
+            font-weight: 600;
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
         }
         
         .voted-list {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-top: 25px;
+            border: 1px solid #e9ecef;
         }
         
         .voted-person {
             display: inline-block;
-            background-color: #4caf50;
+            background-color: #27ae60;
             color: white;
             padding: 8px 15px;
             margin: 5px;
             border-radius: 20px;
-            font-weight: bold;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .results-container {
@@ -279,23 +304,26 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
         }
         
         .results-table th {
-            background-color: #4caf50;
+            background-color: #34495e;
             color: white;
             padding: 15px;
             text-align: center;
             font-size: 1.1rem;
+            font-weight: 500;
         }
         
         .results-table td {
             padding: 14px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e9ecef;
             text-align: center;
             font-size: 1.1rem;
             min-height: 60px;
+            background-color: white;
         }
         
         .results-table tr {
@@ -311,79 +339,95 @@
             }
         }
         
-        /* POPUP del ganador */
+        /* POPUP del ganador - ESTILO ELEGANTE */
         .winner-popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(44, 62, 80, 0.9);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.3s ease-out;
         }
         
         .winner-popup {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            border-radius: 20px;
-            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
             max-width: 500px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-            animation: popupAppear 0.7s ease-out;
-            border: 5px solid #ff9800;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupAppear 0.5s ease-out;
+            border-top: 8px solid #ffd700;
+            position: relative;
+        }
+        
+        .winner-popup:before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #ffd700, #c0c0c0, #cd7f32);
         }
         
         .winner-popup h2 {
-            color: #c62828;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
         }
         
         .winner-name {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #c62828;
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #27ae60;
             margin: 30px 0;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
         }
         
-        .winner-subtitle {
-            font-size: 1.8rem;
-            color: #2e7d32;
-            font-weight: bold;
-            margin-top: 30px;
+        .winner-message {
+            font-size: 1.5rem;
+            color: #34495e;
+            font-weight: 500;
+            line-height: 1.4;
+            margin: 20px 0;
         }
         
         .winner-year {
-            font-size: 1.5rem;
-            color: #673ab7;
-            font-weight: bold;
-            margin-top: 10px;
+            font-size: 1.8rem;
+            color: #ffd700;
+            font-weight: 700;
+            margin-top: 15px;
+            letter-spacing: 1px;
         }
         
         .close-popup-btn {
             margin-top: 30px;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            background-color: #c62828;
+            padding: 14px 40px;
+            font-size: 1.2rem;
+            background-color: #34495e;
             color: white;
             border: none;
-            border-radius: 50px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             transition: all 0.3s;
         }
         
         .close-popup-btn:hover {
-            background-color: #b71c1c;
-            transform: scale(1.05);
+            background-color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
         }
         
         @keyframes fadeIn {
@@ -392,15 +436,14 @@
         }
         
         @keyframes popupAppear {
-            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
-            70% { transform: scale(1.05) rotate(2deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
         /* Filas vacias */
         .empty-row {
-            background-color: #f9f9f9;
-            color: #999;
+            background-color: #f8f9fa;
+            color: #95a5a6;
             font-style: italic;
         }
         
@@ -445,7 +488,7 @@
         
         .total-score {
             font-weight: bold;
-            color: #c62828;
+            color: #27ae60;
             font-size: 1.3rem;
         }
         
@@ -453,13 +496,22 @@
             font-weight: bold;
             font-size: 1.2rem;
             width: 100px;
+            color: #2c3e50;
         }
         
         .admin-section {
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #e9ecef;
             text-align: center;
+        }
+        
+        .instruction-text {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
         }
         
         @media (max-width: 600px) {
@@ -490,23 +542,23 @@
             }
             
             .winner-popup {
-                padding: 25px;
+                padding: 30px 20px;
             }
             
             .winner-name {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .winner-popup h2 {
                 font-size: 2rem;
             }
             
-            .winner-subtitle {
-                font-size: 1.4rem;
+            .winner-message {
+                font-size: 1.2rem;
             }
             
             .winner-year {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
             }
         }
     </style>
@@ -518,6 +570,7 @@
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
             <h2 style="text-align: center;">¿Quién vota?</h2>
+            <p class="instruction-text">Selecciona tu nombre para comenzar a votar</p>
             <div class="voter-select" id="voter-buttons">
                 <!-- Los botones se cargaran en orden alfabetico -->
             </div>
@@ -526,14 +579,14 @@
             <div class="voted-list" id="voted-list" style="display: none;">
                 <h3>Ya han votado:</h3>
                 <div id="voted-people"></div>
-                <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #7f8c8d;">
                     Faltan por votar: <span id="missing-voters"></span>
                 </p>
             </div>
             
             <!-- Botones principales -->
             <div style="text-align: center; margin-top: 20px;">
-                <button id="show-results-btn" class="export-btn" style="display: none; background-color: #673ab7;">
+                <button id="show-results-btn" class="export-btn" style="display: none; background-color: #34495e;">
                     Ver resultados
                 </button>
             </div>
@@ -541,13 +594,14 @@
             <!-- Resultados con tabla que se va llenando -->
             <div class="results-container" id="results-container">
                 <h3>Resultados</h3>
+                <p class="instruction-text">Los resultados se revelan de abajo hacia arriba</p>
                 <div style="overflow-x: auto;">
                     <table class="results-table" id="results-table">
                         <thead>
                             <tr>
-                                <th>Posicion</th>
+                                <th>Posición</th>
                                 <th>Pintxo</th>
-                                <th>Puntuacion</th>
+                                <th>Puntuación</th>
                             </tr>
                         </thead>
                         <tbody id="results-tbody">
@@ -556,11 +610,11 @@
                     </table>
                 </div>
                 <div style="text-align: center; margin-top: 20px;">
-                    <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #4caf50;">
+                    <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #27ae60;">
                         Revelar siguiente
                     </button>
                     <div id="all-revealed" style="display: none; margin-top: 20px;">
-                        <p style="font-weight: bold; color: #2e7d32;">¡Todos los resultados han sido revelados!</p>
+                        <p style="font-weight: bold; color: #27ae60;">¡Todos los resultados han sido revelados!</p>
                     </div>
                 </div>
             </div>
@@ -570,6 +624,7 @@
                 <button id="reset-votes-btn" class="export-btn reset-btn">
                     Reiniciar todos los votos
                 </button>
+                <p class="instruction-text" style="margin-top: 15px;">Esta acción borrará todos los votos registrados</p>
             </div>
         </div>
         
@@ -578,6 +633,7 @@
             <div class="current-voter" id="current-voter-info"></div>
             
             <div class="voting-container">
+                <p class="instruction-text">Arrastra los nombres para ordenarlos de mejor a peor</p>
                 <ul class="position-list" id="position-list">
                     <!-- Las posiciones con nombres se cargaran aqui -->
                 </ul>
@@ -588,12 +644,11 @@
         
         <!-- Pagina 3: Confirmacion -->
         <div id="page-results" class="page">
-            <h2 style="text-align: center;">¡Votad!</h2>
+            <h2 style="text-align: center;">¡Voto registrado!</h2>
             <div id="vote-confirmation"></div>
             
             <div class="export-section">
-                <!-- Solo el boton Volver al inicio -->
-                <button id="go-home" class="export-btn" style="background-color: #ff9800; margin: 10px auto; display: block;">Volver al inicio</button>
+                <button id="go-home" class="export-btn" style="background-color: #34495e; margin: 10px auto; display: block;">Volver al inicio</button>
             </div>
         </div>
     </div>
@@ -601,9 +656,9 @@
     <!-- Popup del ganador (oculto inicialmente) -->
     <div id="winner-popup-overlay" class="winner-popup-overlay" style="display: none;">
         <div class="winner-popup">
-            <h2>¡GANADOR/A!</h2>
+            <h2>IRABAZLEA</h2>
             <div class="winner-name" id="winner-name"></div>
-            <div class="winner-subtitle">Gabonetako Sari Nagusia</div>
+            <div class="winner-message" id="winner-message"></div>
             <div class="winner-year">25-26</div>
             <button id="close-popup-btn" class="close-popup-btn">Cerrar</button>
         </div>
@@ -648,6 +703,7 @@
         // Elementos del popup
         const winnerPopupOverlay = document.getElementById('winner-popup-overlay');
         const winnerNameElement = document.getElementById('winner-name');
+        const winnerMessageElement = document.getElementById('winner-message');
         const closePopupBtn = document.getElementById('close-popup-btn');
         
         // Crear botones de votantes en orden alfabetico
@@ -845,16 +901,17 @@
             });
             
             if (participants.includes(currentVoter)) {
-                html += `<p style="margin-top: 15px; color: #666; font-style: italic;">Nota: No votas tu propio pintxo.</p>`;
+                html += `<p style="margin-top: 15px; color: #7f8c8d; font-style: italic;">Nota: No votas tu propio pintxo.</p>`;
             }
             
             html += '</div>';
             voteConfirmation.innerHTML = html;
         }
         
-        // Mostrar popup del ganador
+        // Mostrar popup del ganador - AL INSTANTE
         function showWinnerPopup(winnerName) {
             winnerNameElement.textContent = winnerName;
+            winnerMessageElement.textContent = `Zorionak ${winnerName}, Gabonetako Sari Nagusia!`;
             winnerPopupOverlay.style.display = 'flex';
             
             // Bloquear el scroll del body
@@ -953,13 +1010,13 @@
                 // Celda de nombre (vacia)
                 const tdName = document.createElement('td');
                 tdName.textContent = '???';
-                tdName.style.color = '#999';
+                tdName.style.color = '#95a5a6';
                 tdName.style.fontStyle = 'italic';
                 
                 // Celda de puntuacion (vacia)
                 const tdScore = document.createElement('td');
                 tdScore.textContent = '?';
-                tdScore.style.color = '#999';
+                tdScore.style.color = '#95a5a6';
                 tdScore.style.fontStyle = 'italic';
                 
                 tr.appendChild(tdPos);
@@ -1017,7 +1074,7 @@
                     cells1st[1].style.fontStyle = '';
                     cells1st[2].textContent = `${firstPlacePoints} puntos`;
                     cells1st[2].className = 'total-score';
-                    cells1st[2].style.color = '#d32f2f';
+                    cells1st[2].style.color = '#27ae60';
                     
                     // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
                     revealedCount += 2;
@@ -1028,10 +1085,8 @@
                     // Mostrar mensaje final
                     allRevealedDiv.style.display = 'block';
                     
-                    // ESPERAR 1 SEGUNDO y luego mostrar el POPUP del ganador
-                    setTimeout(() => {
-                        showWinnerPopup(firstPlace);
-                    }, 1000);
+                    // MOSTRAR EL POPUP DEL GANADOR AL INSTANTE
+                    showWinnerPopup(firstPlace);
                     
                     return; // Salir de la función aquí
                 }
