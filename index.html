@@ -311,18 +311,90 @@
             }
         }
         
-        /* Animación especial para el ganador */
-        @keyframes pulseWinner {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-            50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.2); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        /* POPUP del ganador */
+        .winner-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease-out;
         }
         
-        /* Para la fila del ganador cuando se revela */
-        .winner-row {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
-            border: 3px solid #ff9800 !important;
-            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.3) !important;
+        .winner-popup {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            animation: popupAppear 0.7s ease-out;
+            border: 5px solid #ff9800;
+        }
+        
+        .winner-popup h2 {
+            color: #c62828;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .winner-name {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #c62828;
+            margin: 30px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .winner-subtitle {
+            font-size: 1.8rem;
+            color: #2e7d32;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+        
+        .winner-year {
+            font-size: 1.5rem;
+            color: #673ab7;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .close-popup-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            background-color: #c62828;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .close-popup-btn:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes popupAppear {
+            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+            70% { transform: scale(1.05) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
         
         /* Filas vacias */
@@ -416,6 +488,26 @@
                 width: 50px;
                 font-size: 1.3rem;
             }
+            
+            .winner-popup {
+                padding: 25px;
+            }
+            
+            .winner-name {
+                font-size: 2.5rem;
+            }
+            
+            .winner-popup h2 {
+                font-size: 2rem;
+            }
+            
+            .winner-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .winner-year {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -506,6 +598,17 @@
         </div>
     </div>
 
+    <!-- Popup del ganador (oculto inicialmente) -->
+    <div id="winner-popup-overlay" class="winner-popup-overlay" style="display: none;">
+        <div class="winner-popup">
+            <h2>¡GANADOR/A!</h2>
+            <div class="winner-name" id="winner-name"></div>
+            <div class="winner-subtitle">Gabonetako Sari Nagusia</div>
+            <div class="winner-year">25-26</div>
+            <button id="close-popup-btn" class="close-popup-btn">Cerrar</button>
+        </div>
+    </div>
+
     <script>
         // Datos en orden alfabetico
         const participants = ["Ana Luisa", "Iosu", "Javi", "Jon", "Josefina", "Juan Mari", "Mikel", "Yaiza"];
@@ -541,6 +644,11 @@
         const votedPeople = document.getElementById('voted-people');
         const missingVoters = document.getElementById('missing-voters');
         const voterButtons = document.getElementById('voter-buttons');
+        
+        // Elementos del popup
+        const winnerPopupOverlay = document.getElementById('winner-popup-overlay');
+        const winnerNameElement = document.getElementById('winner-name');
+        const closePopupBtn = document.getElementById('close-popup-btn');
         
         // Crear botones de votantes en orden alfabetico
         function createVoterButtons() {
@@ -744,6 +852,31 @@
             voteConfirmation.innerHTML = html;
         }
         
+        // Mostrar popup del ganador
+        function showWinnerPopup(winnerName) {
+            winnerNameElement.textContent = winnerName;
+            winnerPopupOverlay.style.display = 'flex';
+            
+            // Bloquear el scroll del body
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Cerrar popup del ganador
+        function closeWinnerPopup() {
+            winnerPopupOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Evento para cerrar el popup
+        closePopupBtn.addEventListener('click', closeWinnerPopup);
+        
+        // También cerrar al hacer clic fuera del popup
+        winnerPopupOverlay.addEventListener('click', function(e) {
+            if (e.target === winnerPopupOverlay) {
+                closeWinnerPopup();
+            }
+        });
+        
         // Actualizar lista de quienes han votado (SOLO NOMBRES)
         function updateVotedList() {
             if (allVotes.length === 0) {
@@ -842,30 +975,21 @@
                 // Calcular cuántos quedan por revelar
                 const remainingToReveal = totalPositions - revealedCount;
                 
-                // Si quedan solo 2 por revelar (1ª y 2ª posición), mostrarlas JUNTAS
+                // Si quedan solo 2 por revelar (1ª y 2ª posición)
                 if (remainingToReveal === 2) {
-                    // Revelar las DOS ÚLTIMAS posiciones juntas (2ª y 1ª)
+                    // Revelar las DOS ÚLTIMAS posiciones JUNTAS
                     
-                    // 1. Revelar la 2ª posición (índice 1 en sortedParticipants)
-                    const secondPlaceIndex = 1;
-                    const secondPlace = sortedParticipants[secondPlaceIndex];
-                    const secondPlacePoints = scores[secondPlace];
-                    
-                    // 2. Revelar la 1ª posición (índice 0 en sortedParticipants)
-                    const firstPlaceIndex = 0;
-                    const firstPlace = sortedParticipants[firstPlaceIndex];
-                    const firstPlacePoints = scores[firstPlace];
-                    
-                    // Obtener las filas de la tabla (recordemos: tabla ordenada de 1º arriba a 8º abajo)
+                    // Obtener las filas de la tabla
                     const rows = resultsTbody.querySelectorAll('tr');
                     
-                    // Filas para 1ª posición (índice 0) y 2ª posición (índice 1)
-                    const row1st = rows[0]; // Fila superior para 1º lugar
-                    const row2nd = rows[1]; // Segunda fila para 2º lugar
-                    
-                    // Revelar PRIMERO la 2ª posición (para mantener suspense del ganador)
+                    // Índices: 0 = 1º lugar, 1 = 2º lugar
+                    const row1st = rows[0]; // Fila para 1º lugar
+                    const row2nd = rows[1]; // Fila para 2º lugar
                     
                     // 2ª POSICIÓN - PLATA
+                    const secondPlace = sortedParticipants[1];
+                    const secondPlacePoints = scores[secondPlace];
+                    
                     row2nd.classList.remove('empty-row');
                     row2nd.classList.add('silver-medal');
                     
@@ -879,53 +1003,35 @@
                     cells2nd[2].style.color = '';
                     cells2nd[2].style.fontStyle = '';
                     
-                    // Añadir animación de revelación para la 2ª posición
-                    row2nd.style.animationDelay = '0s';
+                    // 1ª POSICIÓN - ORO
+                    const firstPlace = sortedParticipants[0];
+                    const firstPlacePoints = scores[firstPlace];
                     
-                    // ESPERAR 1 SEGUNDO y luego revelar al GANADOR
+                    row1st.classList.remove('empty-row');
+                    row1st.classList.add('gold-medal');
+                    
+                    const cells1st = row1st.querySelectorAll('td');
+                    cells1st[0].textContent = `1º`;
+                    cells1st[1].textContent = firstPlace;
+                    cells1st[1].style.color = '';
+                    cells1st[1].style.fontStyle = '';
+                    cells1st[2].textContent = `${firstPlacePoints} puntos`;
+                    cells1st[2].className = 'total-score';
+                    cells1st[2].style.color = '#d32f2f';
+                    
+                    // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
+                    revealedCount += 2;
+                    
+                    // Ocultar botón de revelar
+                    revealNextBtn.style.display = 'none';
+                    
+                    // Mostrar mensaje final
+                    allRevealedDiv.style.display = 'block';
+                    
+                    // ESPERAR 1 SEGUNDO y luego mostrar el POPUP del ganador
                     setTimeout(() => {
-                        // 1ª POSICIÓN - ORO con EFECTO ESPECIAL
-                        row1st.classList.remove('empty-row');
-                        row1st.classList.add('gold-medal');
-                        
-                        const cells1st = row1st.querySelectorAll('td');
-                        cells1st[0].textContent = `🏆 1º 🏆`;
-                        cells1st[1].textContent = firstPlace;
-                        cells1st[1].style.color = '';
-                        cells1st[1].style.fontStyle = '';
-                        cells1st[1].style.fontSize = '1.5rem'; // Nombre más grande
-                        cells1st[1].style.fontWeight = 'bold';
-                        cells1st[1].style.letterSpacing = '1px';
-                        cells1st[2].textContent = `${firstPlacePoints} puntos`;
-                        cells1st[2].className = 'total-score';
-                        cells1st[2].style.color = '#d32f2f';
-                        cells1st[2].style.fontSize = '1.4rem'; // Puntuación más grande
-                        cells1st[2].style.fontWeight = 'bold';
-                        
-                        // Añadir animación especial para el ganador
-                        row1st.style.animation = 'revealRow 1s ease-out, pulseWinner 2s 1s infinite';
-                        row1st.style.animationFillMode = 'forwards';
-                        
-                        // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
-                        revealedCount += 2;
-                        
-                        // Ocultar botón de revelar y mostrar mensaje final
-                        revealNextBtn.style.display = 'none';
-                        allRevealedDiv.style.display = 'block';
-                        
-                        // Mostrar mensaje especial de felicitación
-                        allRevealedDiv.innerHTML = `
-                            <p style="font-weight: bold; color: #2e7d32; font-size: 1.2rem;">
-                            ¡Todos los resultados han sido revelados!
-                            </p>
-                            <p style="margin-top: 10px; color: #c62828; font-size: 1.4rem; font-weight: bold;">
-                            🎉 ¡ENHORABUENA A <span style="color: #ff9800;">${firstPlace}</span>! 🎉
-                            </p>
-                            <p style="margin-top: 5px; color: #666; font-style: italic;">
-                            Ganador/a de la Gabonetako Sari Nagusia
-                            </p>
-                        `;
-                    }, 1000); // Esperar 1 segundo antes de revelar al ganador
+                        showWinnerPopup(firstPlace);
+                    }, 1000);
                     
                     return; // Salir de la función aquí
                 }
@@ -996,6 +1102,9 @@
             showResultsBtn.style.display = 'inline-block';
             pageResults.classList.remove('active');
             pageVoter.classList.add('active');
+            
+            // Asegurarse de cerrar el popup si está abierto
+            closeWinnerPopup();
         });
         
         // Reiniciar todos los votos
@@ -1010,6 +1119,9 @@
                 updateVotedList();
                 resultsContainer.classList.remove('active');
                 showResultsBtn.style.display = 'none';
+                
+                // Cerrar popup si está abierto
+                closeWinnerPopup();
                 
                 // Si estamos en la pagina de resultados, volver al inicio
                 if (pageResults.classList.contains('active')) {
