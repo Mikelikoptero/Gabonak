@@ -34,17 +34,38 @@
             border: 1px solid #e9ecef;
         }
         
-        /* TÍTULO DE LA WEB - MODIFICADO COMO SOLICITADO */
-        h1 {
-            color: #000000; /* Color negro puro */
-            text-align: center;
+        /* ENCABEZADO CON LOGO Y TÍTULO */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 25px;
-            font-size: 2.8rem; /* Tamaño más grande */
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            font-family: 'Montserrat', sans-serif; /* Tipografía más seria */
-            text-transform: uppercase;
-            /* SIN sombras ni efectos especiales */
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            max-width: 80px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* TÍTULO DE LA WEB - BUBBLE SIN EFECTOS EXTRA */
+        h1 {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 0;
+            font-size: 2.8rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            font-family: 'Bubblegum Sans', cursive;
+            /* SIN sombras, efectos especiales, ni transformaciones */
         }
         
         h2, h3 {
@@ -396,7 +417,7 @@
             font-weight: 700;
         }
         
-        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - MENOS EXAGERADA */
+        /* TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - CONSISTENTE CON EL TÍTULO */
         .winner-name {
             font-family: 'Bubblegum Sans', cursive;
             font-size: 3.2rem;
@@ -405,7 +426,6 @@
             margin: 25px 0;
             letter-spacing: 0.5px;
             line-height: 1.1;
-            /* Quitamos las sombras y efectos más exagerados */
             text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
             -webkit-text-stroke: 1px white;
             text-stroke: 1px white;
@@ -732,12 +752,22 @@
                 padding: 20px;
             }
             
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo {
+                max-width: 70px;
+            }
+            
             .voter-select {
                 grid-template-columns: 1fr;
             }
             
             h1 {
-                font-size: 2.2rem; /* Tamaño ajustado para móvil */
+                font-size: 2.2rem;
             }
             
             .results-table {
@@ -759,7 +789,7 @@
             }
             
             .winner-name {
-                font-size: 2.8rem; /* Más pequeño en móvil */
+                font-size: 2.8rem;
             }
             
             .winner-popup h2 {
@@ -796,12 +826,22 @@
             h1 {
                 font-size: 1.8rem;
             }
+            
+            .logo {
+                max-width: 60px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gabonetako Sari Nagusia</h1>
+        <!-- ENCABEZADO CON LOGO Y TÍTULO -->
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://github.com/Mikelikoptero/Gabonak/blob/main/gsn2.png?raw=true" alt="Logo Gabonetako Sari Nagusia" class="logo">
+            </div>
+            <h1>Gabonetako Sari Nagusia</h1>
+        </div>
         
         <!-- Pagina 1: Seleccion de votante -->
         <div id="page-voter" class="page active">
