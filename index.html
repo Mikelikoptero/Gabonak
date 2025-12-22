@@ -50,21 +50,21 @@
         }
         
         .logo {
-            max-width: 80px;
+            max-width: 120px;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            /* Sin bordes, sombras ni recuadros */
         }
         
-        /* TÍTULO DE LA WEB - BUBBLE SIN EFECTOS EXTRA */
+        /* TÍTULO DE LA WEB - MISMO COLOR QUE EL LOGO Y MAYÚSCULAS */
         h1 {
-            color: #000000;
+            color: #d32f2f; /* Color rojo similar al logo */
             text-align: center;
             margin-bottom: 0;
             font-size: 2.8rem;
             font-weight: 400;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             font-family: 'Bubblegum Sans', cursive;
+            text-transform: uppercase; /* TODO EN MAYÚSCULAS */
             /* SIN sombras, efectos especiales, ni transformaciones */
         }
         
@@ -417,12 +417,12 @@
             font-weight: 700;
         }
         
-        /* TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - CONSISTENTE CON EL TÍTULO */
+        /* TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - MISMO COLOR QUE EL LOGO */
         .winner-name {
             font-family: 'Bubblegum Sans', cursive;
             font-size: 3.2rem;
             font-weight: 400;
-            color: #27ae60;
+            color: #d32f2f; /* MISMO COLOR ROJO QUE EL LOGO */
             margin: 25px 0;
             letter-spacing: 0.5px;
             line-height: 1.1;
@@ -759,7 +759,7 @@
             }
             
             .logo {
-                max-width: 70px;
+                max-width: 100px;
             }
             
             .voter-select {
@@ -828,7 +828,7 @@
             }
             
             .logo {
-                max-width: 60px;
+                max-width: 80px;
             }
         }
     </style>
@@ -840,7 +840,7 @@
             <div class="logo-container">
                 <img src="https://github.com/Mikelikoptero/Gabonak/blob/main/gsn2.png?raw=true" alt="Logo Gabonetako Sari Nagusia" class="logo">
             </div>
-            <h1>Gabonetako Sari Nagusia</h1>
+            <h1>GABONETAKO SARI NAGUSIA</h1>
         </div>
         
         <!-- Pagina 1: Seleccion de votante -->
@@ -934,7 +934,7 @@
         <div class="winner-popup">
             <h2>IRABAZLEA</h2>
             <div class="winner-name" id="winner-name"></div>
-            <div class="winner-event">Gabonetako Sari Nagusia</div>
+            <div class="winner-event">GABONETAKO SARI NAGUSIA</div>
             <div class="winner-year">25-26</div>
             <button id="close-popup-btn" class="close-popup-btn">Cerrar</button>
         </div>
