@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -32,13 +34,18 @@
             border: 1px solid #e9ecef;
         }
         
+        /* TÍTULO DE LA WEB CON TIPOGRAFÍA ESPECIAL */
         h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 25px;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 600;
             letter-spacing: -0.5px;
+            font-family: 'Luckiest Guy', 'Bubblegum Sans', cursive;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 #ffd700, 4px 4px 0 rgba(0, 0, 0, 0.1);
+            color: #27ae60;
         }
         
         h2, h3 {
@@ -390,18 +397,18 @@
             font-weight: 700;
         }
         
-        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR */
+        /* NUEVA TIPOGRAFÍA BUBBLE PARA EL NOMBRE DEL GANADOR - TIPOGRAFÍA DIFERENTE */
         .winner-name {
-            font-family: 'Chewy', 'Bubblegum Sans', cursive;
-            font-size: 3.4rem;
+            font-family: 'Bangers', 'Bubblegum Sans', cursive;
+            font-size: 3.8rem;
             font-weight: 400;
             color: #27ae60;
             margin: 25px 0;
             letter-spacing: 1px;
             line-height: 1.1;
             text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-            -webkit-text-stroke: 1px white;
-            text-stroke: 1px white;
+            -webkit-text-stroke: 2px white;
+            text-stroke: 2px white;
         }
         
         .winner-event {
@@ -611,7 +618,7 @@
             animation: popupAppear 0.5s ease-out, glow 4s ease-in-out infinite;
         }
         
-        /* Filas vacias - MODIFICADO PARA COMPLETAMENTE VACÍAS */
+        /* Filas vacias - MODIFICADO PARA MOSTRAR PUNTUACIONES PERO NOMBRES OCULTOS */
         .empty-row {
             background-color: #f8f9fa;
         }
@@ -688,6 +695,38 @@
             font-style: italic;
         }
         
+        /* Estilo para nombre oculto en la tabla */
+        .hidden-name {
+            color: #95a5a6;
+            font-style: italic;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px dashed #ddd;
+        }
+        
+        .hidden-name:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Botón de revelar nombre */
+        .reveal-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        .reveal-btn:hover {
+            background-color: #219653;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -698,7 +737,8 @@
             }
             
             h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
+                text-shadow: 1px 1px 0 #ffd700, 2px 2px 0 rgba(0, 0, 0, 0.1);
             }
             
             .results-table {
@@ -720,7 +760,7 @@
             }
             
             .winner-name {
-                font-size: 2.8rem;
+                font-size: 3rem;
             }
             
             .winner-popup h2 {
@@ -752,6 +792,10 @@
             
             .winner-year {
                 font-size: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
             }
         }
     </style>
@@ -787,7 +831,7 @@
             <!-- Resultados con tabla que se va llenando -->
             <div class="results-container" id="results-container">
                 <h3>Resultados</h3>
-                <p class="instruction-text">Los resultados se revelan de abajo hacia arriba</p>
+                <p class="instruction-text">Las puntuaciones se muestran desde el principio. Revela los nombres pulsando el botón "Revelar siguiente"</p>
                 <div style="overflow-x: auto;">
                     <table class="results-table" id="results-table">
                         <thead>
@@ -807,7 +851,7 @@
                         Revelar siguiente
                     </button>
                     <div id="all-revealed" style="display: none; margin-top: 20px;">
-                        <p style="font-weight: bold; color: #27ae60;">¡Todos los resultados han sido revelados!</p>
+                        <p style="font-weight: bold; color: #27ae60;">¡Todos los nombres han sido revelados!</p>
                     </div>
                 </div>
             </div>
@@ -875,7 +919,7 @@
         let scores = {};
         let revealedCount = 0;
         let totalPositions = 0;
-        let hasCalculatedResults = false; // Nueva variable para controlar si ya se calcularon
+        let hasCalculatedResults = false;
         
         // Elementos DOM
         const pageVoter = document.getElementById('page-voter');
@@ -1192,8 +1236,6 @@
             winnerNameElement.textContent = winnerName;
             winnerPopupOverlay.style.display = 'flex';
             
-            // NOTA: Quitado el efecto de pulso/zoom del nombre
-            
             // Crear efectos DESPUÉS de que aparezca el popup
             setTimeout(() => {
                 particlesContainer.style.display = 'block';
@@ -1264,8 +1306,8 @@
             showResultsBtn.style.display = 'inline-block';
         }
         
-        // Calcular resultados y crear tabla COMPLETAMENTE VACÍA
-        function calculateResultsAndCreateEmptyTable() {
+        // Calcular resultados y crear tabla MOSTRANDO PUNTUACIONES PERO OCULTANDO NOMBRES
+        function calculateResultsAndCreateTableWithScores() {
             // Inicializar puntuaciones
             scores = {};
             participants.forEach(p => {
@@ -1290,29 +1332,40 @@
             // Reiniciar contador de revelados
             revealedCount = 0;
             
-            // Crear tabla COMPLETAMENTE VACÍA (solo signos de interrogación)
+            // Crear tabla con PUNTUACIONES VISIBLES pero NOMBRES OCULTOS
             resultsTbody.innerHTML = '';
             
             for (let i = 0; i < totalPositions; i++) {
                 const tr = document.createElement('tr');
                 tr.className = 'empty-row';
+                tr.setAttribute('data-position', i);
+                tr.setAttribute('data-participant', sortedParticipants[i]);
+                tr.setAttribute('data-score', scores[sortedParticipants[i]]);
                 
                 // Celda de posicion (mostramos 1º, 2º, 3º... de arriba a abajo)
                 const tdPos = document.createElement('td');
                 tdPos.className = 'position-cell';
                 tdPos.textContent = `${i + 1}º`;
                 
-                // Celda de nombre (COMPLETAMENTE VACÍA)
+                // Celda de nombre (OCULTO al principio)
                 const tdName = document.createElement('td');
-                tdName.textContent = '???';
+                tdName.innerHTML = '<span class="hidden-name">???</span>';
                 tdName.style.color = '#95a5a6';
                 tdName.style.fontStyle = 'italic';
                 
-                // Celda de puntuacion (COMPLETAMENTE VACÍA)
+                // Celda de puntuacion (VISIBLE desde el principio)
                 const tdScore = document.createElement('td');
-                tdScore.textContent = '?';
-                tdScore.style.color = '#95a5a6';
-                tdScore.style.fontStyle = 'italic';
+                tdScore.textContent = `${scores[sortedParticipants[i]]} puntos`;
+                tdScore.className = 'total-score';
+                
+                // Aplicar colores según posición (oro, plata, bronce)
+                if (i === 0) {
+                    tr.classList.add('gold-medal');
+                } else if (i === 1) {
+                    tr.classList.add('silver-medal');
+                } else if (i === 2) {
+                    tr.classList.add('bronze-medal');
+                }
                 
                 tr.appendChild(tdPos);
                 tr.appendChild(tdName);
@@ -1320,11 +1373,12 @@
                 resultsTbody.appendChild(tr);
             }
             
+            // Establecer que se han calculado los resultados
             hasCalculatedResults = true;
         }
         
-        // Revelar siguiente posicion en la tabla (del 8º al 1º)
-        function revealNextPosition() {
+        // Revelar siguiente nombre en la tabla (del 8º al 1º)
+        function revealNextName() {
             if (revealedCount < totalPositions) {
                 // Calcular cuántos quedan por revelar
                 const remainingToReveal = totalPositions - revealedCount;
@@ -1340,38 +1394,23 @@
                     const row1st = rows[0]; // Fila para 1º lugar
                     const row2nd = rows[1]; // Fila para 2º lugar
                     
+                    // Obtener datos de las filas
+                    const secondPlace = row2nd.getAttribute('data-participant');
+                    const firstPlace = row1st.getAttribute('data-participant');
+                    
                     // 2ª POSICIÓN - PLATA
-                    const secondPlace = sortedParticipants[1];
-                    const secondPlacePoints = scores[secondPlace];
-                    
-                    row2nd.classList.remove('empty-row');
-                    row2nd.classList.add('silver-medal');
-                    
-                    const cells2nd = row2nd.querySelectorAll('td');
-                    cells2nd[0].textContent = `2º`;
-                    cells2nd[1].textContent = secondPlace;
-                    cells2nd[1].style.color = '';
-                    cells2nd[1].style.fontStyle = '';
-                    cells2nd[2].textContent = `${secondPlacePoints} puntos`;
-                    cells2nd[2].className = 'total-score';
-                    cells2nd[2].style.color = '';
-                    cells2nd[2].style.fontStyle = '';
+                    const tdName2nd = row2nd.querySelector('td:nth-child(2)');
+                    tdName2nd.innerHTML = secondPlace;
+                    tdName2nd.style.color = '';
+                    tdName2nd.style.fontStyle = '';
+                    tdName2nd.classList.remove('hidden-name');
                     
                     // 1ª POSICIÓN - ORO
-                    const firstPlace = sortedParticipants[0];
-                    const firstPlacePoints = scores[firstPlace];
-                    
-                    row1st.classList.remove('empty-row');
-                    row1st.classList.add('gold-medal');
-                    
-                    const cells1st = row1st.querySelectorAll('td');
-                    cells1st[0].textContent = `1º`;
-                    cells1st[1].textContent = firstPlace;
-                    cells1st[1].style.color = '';
-                    cells1st[1].style.fontStyle = '';
-                    cells1st[2].textContent = `${firstPlacePoints} puntos`;
-                    cells1st[2].className = 'total-score';
-                    cells1st[2].style.color = '#27ae60';
+                    const tdName1st = row1st.querySelector('td:nth-child(2)');
+                    tdName1st.innerHTML = firstPlace;
+                    tdName1st.style.color = '';
+                    tdName1st.style.fontStyle = '';
+                    tdName1st.classList.remove('hidden-name');
                     
                     // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
                     revealedCount += 2;
@@ -1393,31 +1432,17 @@
                 const tableRowIndex = totalPositions - revealedCount - 1;
                 const participantIndex = totalPositions - revealedCount - 1;
                 const participant = sortedParticipants[participantIndex];
-                const position = participantIndex + 1;
-                const points = scores[participant];
                 
                 const rows = resultsTbody.querySelectorAll('tr');
                 const row = rows[tableRowIndex];
                 
                 row.classList.remove('empty-row');
                 
-                if (position === 1) {
-                    row.classList.add('gold-medal');
-                } else if (position === 2) {
-                    row.classList.add('silver-medal');
-                } else if (position === 3) {
-                    row.classList.add('bronze-medal');
-                }
-                
-                const cells = row.querySelectorAll('td');
-                cells[0].textContent = `${position}º`;
-                cells[1].textContent = participant;
-                cells[1].style.color = '';
-                cells[1].style.fontStyle = '';
-                cells[2].textContent = `${points} puntos`;
-                cells[2].className = 'total-score';
-                cells[2].style.color = '';
-                cells[2].style.fontStyle = '';
+                const tdName = row.querySelector('td:nth-child(2)');
+                tdName.innerHTML = participant;
+                tdName.style.color = '';
+                tdName.style.fontStyle = '';
+                tdName.classList.remove('hidden-name');
                 
                 // Incrementar contador
                 revealedCount++;
@@ -1430,23 +1455,20 @@
             }
         }
         
-        // Mostrar resultados cuando se pulse el boton (solo calcula y muestra tabla vacía)
+        // Mostrar resultados cuando se pulse el boton
         showResultsBtn.addEventListener('click', function() {
-            // Calcular resultados y crear tabla COMPLETAMENTE VACÍA
-            calculateResultsAndCreateEmptyTable();
+            // Calcular resultados y crear tabla con PUNTUACIONES VISIBLES pero NOMBRES OCULTOS
+            calculateResultsAndCreateTableWithScores();
             resultsContainer.classList.add('active');
             this.style.display = 'none';
             
             // Mostrar boton para revelar (primera vez)
             revealNextBtn.style.display = 'inline-block';
             allRevealedDiv.style.display = 'none';
-            
-            // NOTA: No revelamos ninguna posición aquí, la tabla está completamente vacía
-            // El usuario debe pulsar "Revelar siguiente" para ver la primera posición (8º lugar)
         });
         
-        // Boton para revelar siguiente posicion
-        revealNextBtn.addEventListener('click', revealNextPosition);
+        // Boton para revelar siguiente nombre
+        revealNextBtn.addEventListener('click', revealNextName);
         
         // Volver al inicio
         goHomeBtn.addEventListener('click', function() {
