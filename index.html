@@ -311,6 +311,20 @@
             }
         }
         
+        /* Animación especial para el ganador */
+        @keyframes pulseWinner {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+        
+        /* Para la fila del ganador cuando se revela */
+        .winner-row {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
+            border: 3px solid #ff9800 !important;
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.3) !important;
+        }
+        
         /* Filas vacias */
         .empty-row {
             background-color: #f9f9f9;
@@ -825,30 +839,110 @@
         // Revelar siguiente posicion en la tabla (del 8º al 1º, CON ORDEN CORRECTO)
         function revealNextPosition() {
             if (revealedCount < totalPositions) {
-                // Para revelar del 8º al 1º (de abajo hacia arriba)
-                // Pero la tabla está ordenada de 1º (arriba) a 8º (abajo)
-                // Así que revelamos empezando por la última fila (8º posición)
-                const tableRowIndex = totalPositions - revealedCount - 1; // Empieza en 7 (última fila), luego 6, etc.
+                // Calcular cuántos quedan por revelar
+                const remainingToReveal = totalPositions - revealedCount;
                 
-                // El participante que corresponde a esta fila es el que tiene MENOS puntuación para el 8º,
-                // el que tiene MÁS puntuación para el 1º
-                // Como sortedParticipants está ordenado de MAYOR a MENOR puntuación:
-                // - sortedParticipants[0] = 1º lugar (más puntos)
-                // - sortedParticipants[7] = 8º lugar (menos puntos)
-                // Para revelar del 8º al 1º, empezamos por el último índice
+                // Si quedan solo 2 por revelar (1ª y 2ª posición), mostrarlas JUNTAS
+                if (remainingToReveal === 2) {
+                    // Revelar las DOS ÚLTIMAS posiciones juntas (2ª y 1ª)
+                    
+                    // 1. Revelar la 2ª posición (índice 1 en sortedParticipants)
+                    const secondPlaceIndex = 1;
+                    const secondPlace = sortedParticipants[secondPlaceIndex];
+                    const secondPlacePoints = scores[secondPlace];
+                    
+                    // 2. Revelar la 1ª posición (índice 0 en sortedParticipants)
+                    const firstPlaceIndex = 0;
+                    const firstPlace = sortedParticipants[firstPlaceIndex];
+                    const firstPlacePoints = scores[firstPlace];
+                    
+                    // Obtener las filas de la tabla (recordemos: tabla ordenada de 1º arriba a 8º abajo)
+                    const rows = resultsTbody.querySelectorAll('tr');
+                    
+                    // Filas para 1ª posición (índice 0) y 2ª posición (índice 1)
+                    const row1st = rows[0]; // Fila superior para 1º lugar
+                    const row2nd = rows[1]; // Segunda fila para 2º lugar
+                    
+                    // Revelar PRIMERO la 2ª posición (para mantener suspense del ganador)
+                    
+                    // 2ª POSICIÓN - PLATA
+                    row2nd.classList.remove('empty-row');
+                    row2nd.classList.add('silver-medal');
+                    
+                    const cells2nd = row2nd.querySelectorAll('td');
+                    cells2nd[0].textContent = `2º`;
+                    cells2nd[1].textContent = secondPlace;
+                    cells2nd[1].style.color = '';
+                    cells2nd[1].style.fontStyle = '';
+                    cells2nd[2].textContent = `${secondPlacePoints} puntos`;
+                    cells2nd[2].className = 'total-score';
+                    cells2nd[2].style.color = '';
+                    cells2nd[2].style.fontStyle = '';
+                    
+                    // Añadir animación de revelación para la 2ª posición
+                    row2nd.style.animationDelay = '0s';
+                    
+                    // ESPERAR 1 SEGUNDO y luego revelar al GANADOR
+                    setTimeout(() => {
+                        // 1ª POSICIÓN - ORO con EFECTO ESPECIAL
+                        row1st.classList.remove('empty-row');
+                        row1st.classList.add('gold-medal');
+                        
+                        const cells1st = row1st.querySelectorAll('td');
+                        cells1st[0].textContent = `🏆 1º 🏆`;
+                        cells1st[1].textContent = firstPlace;
+                        cells1st[1].style.color = '';
+                        cells1st[1].style.fontStyle = '';
+                        cells1st[1].style.fontSize = '1.5rem'; // Nombre más grande
+                        cells1st[1].style.fontWeight = 'bold';
+                        cells1st[1].style.letterSpacing = '1px';
+                        cells1st[2].textContent = `${firstPlacePoints} puntos`;
+                        cells1st[2].className = 'total-score';
+                        cells1st[2].style.color = '#d32f2f';
+                        cells1st[2].style.fontSize = '1.4rem'; // Puntuación más grande
+                        cells1st[2].style.fontWeight = 'bold';
+                        
+                        // Añadir animación especial para el ganador
+                        row1st.style.animation = 'revealRow 1s ease-out, pulseWinner 2s 1s infinite';
+                        row1st.style.animationFillMode = 'forwards';
+                        
+                        // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
+                        revealedCount += 2;
+                        
+                        // Ocultar botón de revelar y mostrar mensaje final
+                        revealNextBtn.style.display = 'none';
+                        allRevealedDiv.style.display = 'block';
+                        
+                        // Mostrar mensaje especial de felicitación
+                        allRevealedDiv.innerHTML = `
+                            <p style="font-weight: bold; color: #2e7d32; font-size: 1.2rem;">
+                            ¡Todos los resultados han sido revelados!
+                            </p>
+                            <p style="margin-top: 10px; color: #c62828; font-size: 1.4rem; font-weight: bold;">
+                            🎉 ¡ENHORABUENA A <span style="color: #ff9800;">${firstPlace}</span>! 🎉
+                            </p>
+                            <p style="margin-top: 5px; color: #666; font-style: italic;">
+                            Ganador/a de la Gabonetako Sari Nagusia
+                            </p>
+                        `;
+                    }, 1000); // Esperar 1 segundo antes de revelar al ganador
+                    
+                    return; // Salir de la función aquí
+                }
+                
+                // CÓDIGO NORMAL para las demás revelaciones (cuando quedan más de 2)
+                // Para revelar del 8º al 1º (de abajo hacia arriba)
+                const tableRowIndex = totalPositions - revealedCount - 1;
                 const participantIndex = totalPositions - revealedCount - 1;
                 const participant = sortedParticipants[participantIndex];
-                const position = participantIndex + 1; // Posición real (1, 2, 3...)
+                const position = participantIndex + 1;
                 const points = scores[participant];
                 
-                // Obtener la fila correspondiente en la tabla (de abajo hacia arriba)
                 const rows = resultsTbody.querySelectorAll('tr');
                 const row = rows[tableRowIndex];
                 
-                // Quitar clase de fila vacia
                 row.classList.remove('empty-row');
                 
-                // Asignar clase de medalla segun la posicion REAL
                 if (position === 1) {
                     row.classList.add('gold-medal');
                 } else if (position === 2) {
@@ -857,15 +951,11 @@
                     row.classList.add('bronze-medal');
                 }
                 
-                // Actualizar celdas
                 const cells = row.querySelectorAll('td');
-                // Mostrar posición REAL (1º, 2º, 3º...) no la de tabla
                 cells[0].textContent = `${position}º`;
-                
                 cells[1].textContent = participant;
                 cells[1].style.color = '';
                 cells[1].style.fontStyle = '';
-                
                 cells[2].textContent = `${points} puntos`;
                 cells[2].className = 'total-score';
                 cells[2].style.color = '';
