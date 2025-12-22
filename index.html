@@ -436,7 +436,7 @@
             transform: translateY(-1px);
         }
         
-        /* EFECTOS ESPECIALES - PARTÍCULAS BRILLANTES */
+        /* EFECTOS ESPECIALES - BRILLOS Y PARTÍCULAS */
         .particles-container {
             position: fixed;
             top: 0;
@@ -444,77 +444,70 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 999;
+            z-index: 1002;
+            display: none;
         }
         
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #ffd700;
             border-radius: 50%;
-            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
             animation: particleFloat 3s ease-in-out infinite;
         }
         
-        .particle:nth-child(2) {
+        .particle.type1 {
+            width: 8px;
+            height: 8px;
+            background: #ffd700;
+            box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+        }
+        
+        .particle.type2 {
+            width: 6px;
+            height: 6px;
             background: #ff6b6b;
-            box-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b;
+            box-shadow: 0 0 15px #ff6b6b, 0 0 30px #ff6b6b;
             animation-delay: 0.5s;
         }
         
-        .particle:nth-child(3) {
+        .particle.type3 {
+            width: 7px;
+            height: 7px;
             background: #4ecdc4;
-            box-shadow: 0 0 10px #4ecdc4, 0 0 20px #4ecdc4, 0 0 30px #4ecdc4;
+            box-shadow: 0 0 18px #4ecdc4, 0 0 36px #4ecdc4;
             animation-delay: 1s;
         }
         
-        .particle:nth-child(4) {
+        .particle.type4 {
+            width: 5px;
+            height: 5px;
             background: #ffd166;
-            box-shadow: 0 0 10px #ffd166, 0 0 20px #ffd166, 0 0 30px #ffd166;
+            box-shadow: 0 0 12px #ffd166, 0 0 24px #ffd166;
             animation-delay: 1.5s;
         }
         
-        .particle:nth-child(5) {
+        .particle.type5 {
+            width: 9px;
+            height: 9px;
             background: #06d6a0;
-            box-shadow: 0 0 10px #06d6a0, 0 0 20px #06d6a0, 0 0 30px #06d6a0;
+            box-shadow: 0 0 22px #06d6a0, 0 0 44px #06d6a0;
             animation-delay: 2s;
         }
         
-        .particle:nth-child(6) {
-            background: #118ab2;
-            box-shadow: 0 0 10px #118ab2, 0 0 20px #118ab2, 0 0 30px #118ab2;
-            animation-delay: 2.5s;
-        }
-        
-        /* EFECTO CONFETI (alternativa) */
-        .confetti {
+        /* BRILLOS ESPECIALES (más grandes y brillantes) */
+        .sparkle {
             position: absolute;
-            width: 10px;
-            height: 20px;
-            background: #ffd700;
-            top: -20px;
-            opacity: 0;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white;
+            animation: sparkleTwinkle 1.5s ease-in-out infinite;
         }
         
-        .confetti:nth-child(odd) {
-            background: #ff6b6b;
-        }
-        
-        .confetti:nth-child(even) {
-            background: #4ecdc4;
-        }
-        
-        .confetti:nth-child(3n) {
-            background: #ffd166;
-        }
-        
-        .confetti:nth-child(4n) {
-            background: #06d6a0;
-        }
-        
-        .confetti:nth-child(5n) {
-            background: #118ab2;
+        .sparkle.big {
+            width: 6px;
+            height: 6px;
+            box-shadow: 0 0 15px white, 0 0 30px white, 0 0 45px white;
         }
         
         /* ANIMACIONES */
@@ -537,31 +530,47 @@
                 opacity: 1;
             }
             50% {
-                transform: translateY(-20px) translateX(10px) rotate(180deg);
-                opacity: 0.8;
+                transform: translateY(-40px) translateX(20px) rotate(180deg);
+                opacity: 1;
             }
         }
         
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
+        @keyframes sparkleTwinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.8);
             }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
             }
         }
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.08); }
             100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
+                            0 0 40px rgba(255, 215, 0, 0.2);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6),
+                            0 0 60px rgba(255, 215, 0, 0.4);
+            }
         }
         
         /* ANIMACIÓN PARA EL NOMBRE DEL GANADOR */
         .pulse-animation {
             animation: pulse 2s infinite;
+        }
+        
+        /* Efecto de brillo sutil para el popup */
+        .winner-popup {
+            animation: popupAppear 0.5s ease-out, glow 4s ease-in-out infinite;
         }
         
         /* Filas vacias */
@@ -691,7 +700,6 @@
             }
         }
         
-        /* Para pantallas muy pequeñas */
         @media (max-width: 400px) {
             .winner-event {
                 font-size: 1.4rem;
@@ -804,7 +812,7 @@
         </div>
     </div>
 
-    <!-- Contenedor para efectos especiales -->
+    <!-- Contenedor para efectos especiales de brillos -->
     <div id="particles-container" class="particles-container"></div>
 
     <script>
@@ -1051,54 +1059,62 @@
             voteConfirmation.innerHTML = html;
         }
         
-        // Crear efecto de partículas brillantes
-        function createParticles() {
+        // Crear efecto de brillos y partículas
+        function createSparkles() {
             particlesContainer.innerHTML = '';
+            particlesContainer.style.display = 'block';
             
-            // Crear partículas brillantes
-            for (let i = 0; i < 20; i++) {
+            // Crear partículas brillantes de colores
+            const particleTypes = ['type1', 'type2', 'type3', 'type4', 'type5'];
+            
+            for (let i = 0; i < 40; i++) {
                 const particle = document.createElement('div');
-                particle.className = 'particle';
+                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                particle.className = `particle ${type}`;
                 
-                // Posición aleatoria
+                // Posición aleatoria en toda la pantalla
                 const left = Math.random() * 100;
                 const top = Math.random() * 100;
-                const delay = Math.random() * 2;
-                const duration = 2 + Math.random() * 2;
+                const delay = Math.random() * 3;
+                const duration = 2 + Math.random() * 3;
                 
                 particle.style.left = `${left}%`;
                 particle.style.top = `${top}%`;
                 particle.style.animationDelay = `${delay}s`;
                 particle.style.animationDuration = `${duration}s`;
                 
+                // Añadir variación de tamaño aleatoria
+                const sizeVariation = 0.8 + Math.random() * 0.4;
+                particle.style.transform = `scale(${sizeVariation})`;
+                
                 particlesContainer.appendChild(particle);
             }
-        }
-        
-        // Crear efecto de confeti (alternativa)
-        function createConfetti() {
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
+            
+            // Crear destellos blancos (sparkles) adicionales
+            for (let i = 0; i < 15; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = Math.random() > 0.5 ? 'sparkle' : 'sparkle big';
                 
-                // Posición aleatoria en la parte superior
-                const left = Math.random() * 100;
-                const delay = Math.random() * 0.5;
-                const duration = 2 + Math.random() * 2;
+                // Posición concentrada alrededor del popup
+                const left = 35 + Math.random() * 30;
+                const top = 35 + Math.random() * 30;
+                const delay = Math.random() * 2;
                 
-                confetti.style.left = `${left}%`;
-                confetti.style.animation = `confettiFall ${duration}s linear ${delay}s forwards`;
+                sparkle.style.left = `${left}%`;
+                sparkle.style.top = `${top}%`;
+                sparkle.style.animationDelay = `${delay}s`;
                 
-                particlesContainer.appendChild(confetti);
+                particlesContainer.appendChild(sparkle);
             }
         }
         
         // Limpiar efectos
         function clearEffects() {
             particlesContainer.innerHTML = '';
+            particlesContainer.style.display = 'none';
         }
         
-        // Mostrar popup del ganador con efectos
+        // Mostrar popup del ganador con efectos de brillos
         function showWinnerPopup(winnerName) {
             winnerNameElement.textContent = winnerName;
             winnerPopupOverlay.style.display = 'flex';
@@ -1106,11 +1122,10 @@
             // Añadir animación de pulso al nombre del ganador
             winnerNameElement.classList.add('pulse-animation');
             
-            // Crear efectos especiales
-            createParticles();
-            
-            // También puedes activar el confeti (comenta createParticles() y descomenta esta línea)
-            // createConfetti();
+            // Crear efectos de brillos DESPUÉS de que aparezca el popup
+            setTimeout(() => {
+                createSparkles();
+            }, 300);
             
             // Bloquear el scroll del body
             document.body.style.overflow = 'hidden';
@@ -1289,7 +1304,7 @@
                     // Mostrar mensaje final
                     allRevealedDiv.style.display = 'block';
                     
-                    // MOSTRAR EL POPUP DEL GANADOR AL INSTANTE CON EFECTOS
+                    // MOSTRAR EL POPUP DEL GANADOR CON BRILLOS
                     showWinnerPopup(firstPlace);
                     
                     return; // Salir de la función aquí
