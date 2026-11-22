@@ -1,1563 +1,570 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabonetako Sari Nagusia - Votación</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .container {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 1px solid #e9ecef;
-        }
-        
-        /* ENCABEZADO SOLO CON LOGO CENTRADO Y GRANDE */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logo {
-            max-width: 250px; /* Logo MUCHO más grande */
-            height: auto;
-            /* Sin bordes, sombras ni recuadros */
-        }
-        
-        h2, h3 {
-            color: #27ae60;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-        
-        .page {
-            display: none;
-        }
-        
-        .page.active {
-            display: block;
-        }
-        
-        .voter-select {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .voter-btn {
-            padding: 14px;
-            font-size: 1.1rem;
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            border: 1px solid #dfe6e9;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .voter-btn:hover {
-            background-color: #27ae60;
-            color: white;
-            border-color: #27ae60;
-            transform: translateY(-2px);
-        }
-        
-        .voter-btn.disabled {
-            background-color: #f8f9fa;
-            color: #95a5a6;
-            cursor: not-allowed;
-            opacity: 0.7;
-            border-color: #e9ecef;
-        }
-        
-        .voter-btn.disabled:hover {
-            background-color: #f8f9fa;
-            color: #95a5a6;
-            transform: none;
-            border-color: #e9ecef;
-        }
-        
-        .voting-container {
-            margin: 25px 0;
-        }
-        
-        .position-list {
-            list-style-type: none;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #e9ecef;
-        }
-        
-        .position-item {
-            display: flex;
-            align-items: stretch;
-            background-color: #fff;
-            border-bottom: 1px solid #f1f3f4;
-            min-height: 60px;
-        }
-        
-        .position-item:last-child {
-            border-bottom: none;
-        }
-        
-        .position-number {
-            width: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.5rem;
-            text-align: center;
-            border-right: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        /* ORO - Primer puesto - MANTENEMOS COLOR */
-        .position-1 {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
-            color: #8B7500;
-            border-right-color: rgba(139, 117, 0, 0.3) !important;
-        }
-        
-        /* PLATA - Segundo puesto - MANTENEMOS COLOR */
-        .position-2 {
-            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
-            color: #696969;
-            border-right-color: rgba(105, 105, 105, 0.3) !important;
-        }
-        
-        /* BRONCE - Tercer puesto - MANTENEMOS COLOR */
-        .position-3 {
-            background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
-            color: #5a3a22;
-            border-right-color: rgba(90, 58, 34, 0.3) !important;
-        }
-        
-        /* Resto de posiciones - Gris claro */
-        .position-4, .position-5, .position-6, .position-7, .position-8 {
-            background: #f8f9fa !important;
-            color: #2c3e50;
-            border-right-color: #e9ecef !important;
-        }
-        
-        .name-container {
-            flex: 1;
-            padding: 15px;
-            cursor: move;
-            display: flex;
-            align-items: center;
-            font-size: 1.1rem;
-            min-height: 60px;
-            color: #2c3e50;
-            background-color: white;
-            transition: background-color 0.2s;
-        }
-        
-        .name-container:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .name-container.dragging {
-            background-color: #e8f5e9;
-            border: 1px dashed #27ae60;
-        }
-        
-        .drag-icon {
-            margin-right: 12px;
-            color: #95a5a6;
-            font-size: 1.2rem;
-        }
-        
-        .action-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 25px 0;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .action-btn:hover {
-            background-color: #219653;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
-        }
-        
-        .action-btn:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .vote-result {
-            background-color: #f8fff8;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            border-left: 4px solid #27ae60;
-            background-color: #f8f9fa;
-        }
-        
-        .position {
-            font-weight: bold;
-            color: #27ae60;
-            min-width: 40px;
-        }
-        
-        .export-section {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
-        }
-        
-        .export-btn {
-            padding: 12px 24px;
-            font-size: 1rem;
-            background-color: #34495e;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin: 5px;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-        
-        .export-btn:hover {
-            background-color: #2c3e50;
-            transform: translateY(-2px);
-        }
-        
-        .reset-btn {
-            background-color: #e74c3c !important;
-        }
-        
-        .reset-btn:hover {
-            background-color: #c0392b !important;
-        }
-        
-        .current-voter {
-            background-color: #e8f5e9;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-            color: #27ae60;
-            border-left: 4px solid #27ae60;
-        }
-        
-        .voted-list {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 25px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .voted-person {
-            display: inline-block;
-            background-color: #27ae60;
-            color: white;
-            padding: 8px 15px;
-            margin: 5px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .results-container {
-            margin-top: 30px;
-            display: none;
-        }
-        
-        .results-container.active {
-            display: block;
-        }
-        
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e9ecef;
-        }
-        
-        .results-table th {
-            background-color: #34495e;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .results-table td {
-            padding: 14px;
-            border: 1px solid #e9ecef;
-            text-align: center;
-            font-size: 1.1rem;
-            min-height: 60px;
-            background-color: white;
-        }
-        
-        .results-table tr {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: revealRow 0.5s ease-out forwards;
-        }
-        
-        @keyframes revealRow {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* POPUP del ganador - ESTILO ELEGANTE */
-        .winner-popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(44, 62, 80, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .winner-popup {
-            background: white;
-            border-radius: 16px;
-            padding: 40px 30px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: popupAppear 0.5s ease-out;
-            border-top: 8px solid #ffd700;
-            position: relative;
-            z-index: 1001;
-        }
-        
-        .winner-popup:before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(90deg, #ffd700, #c0c0c0, #cd7f32);
-        }
-        
-        .winner-popup h2 {
-            color: #2c3e50;
-            font-size: 2.4rem;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-        }
-        
-        /* TIPOGRAFÍA MÁS FIESTERA PARA EL NOMBRE DEL GANADOR - EN NEGRO */
-        .winner-name {
-            font-family: 'Luckiest Guy', 'Fredoka One', cursive;
-            font-size: 3.8rem;
-            font-weight: 400;
-            color: #000000; /* NEGRO en lugar de rojo */
-            margin: 25px 0;
-            letter-spacing: 1px;
-            line-height: 1.1;
-            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-            -webkit-text-stroke: 2px white;
-            text-stroke: 2px white;
-        }
-        
-        .winner-event {
-            font-size: 1.7rem;
-            color: #2c3e50;
-            font-weight: 600;
-            line-height: 1.2;
-            margin: 15px 0 5px 0;
-            letter-spacing: 0.3px;
-        }
-        
-        .winner-year {
-            font-size: 1.6rem;
-            color: #2c3e50;
-            font-weight: 500;
-            margin: 0;
-            letter-spacing: 0.5px;
-        }
-        
-        .close-popup-btn {
-            margin-top: 25px;
-            padding: 10px 30px;
-            font-size: 1rem;
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            border: 1px solid #dfe6e9;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            position: relative;
-            z-index: 1002;
-        }
-        
-        .close-popup-btn:hover {
-            background-color: #34495e;
-            color: white;
-            border-color: #34495e;
-            transform: translateY(-1px);
-        }
-        
-        /* EFECTOS ESPECIALES - BRILLOS */
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1002;
-            display: none;
-        }
-        
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: particleFloat 3s ease-in-out infinite;
-        }
-        
-        .particle.type1 {
-            width: 8px;
-            height: 8px;
-            background: #ffd700;
-            box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
-        }
-        
-        .particle.type2 {
-            width: 6px;
-            height: 6px;
-            background: #ff6b6b;
-            box-shadow: 0 0 15px #ff6b6b, 0 0 30px #ff6b6b;
-            animation-delay: 0.5s;
-        }
-        
-        .particle.type3 {
-            width: 7px;
-            height: 7px;
-            background: #4ecdc4;
-            box-shadow: 0 0 18px #4ecdc4, 0 0 36px #4ecdc4;
-            animation-delay: 1s;
-        }
-        
-        .particle.type4 {
-            width: 5px;
-            height: 5px;
-            background: #ffd166;
-            box-shadow: 0 0 12px #ffd166, 0 0 24px #ffd166;
-            animation-delay: 1.5s;
-        }
-        
-        .particle.type5 {
-            width: 9px;
-            height: 9px;
-            background: #06d6a0;
-            box-shadow: 0 0 22px #06d6a0, 0 0 44px #06d6a0;
-            animation-delay: 2s;
-        }
-        
-        /* BRILLOS ESPECIALES */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white;
-            animation: sparkleTwinkle 1.5s ease-in-out infinite;
-        }
-        
-        .sparkle.big {
-            width: 6px;
-            height: 6px;
-            box-shadow: 0 0 15px white, 0 0 30px white, 0 0 45px white;
-        }
-        
-        /* CONFETI (solo primeros 5 segundos) */
-        .confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 20px;
-            top: -30px;
-            opacity: 0;
-            z-index: 1002;
-            transform-origin: center;
-        }
-        
-        .confetti-piece:nth-child(odd) {
-            background: #ff6b6b;
-        }
-        
-        .confetti-piece:nth-child(even) {
-            background: #4ecdc4;
-        }
-        
-        .confetti-piece:nth-child(3n) {
-            background: #ffd700;
-        }
-        
-        .confetti-piece:nth-child(4n) {
-            background: #06d6a0;
-        }
-        
-        .confetti-piece:nth-child(5n) {
-            background: #118ab2;
-        }
-        
-        /* ANIMACIONES */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes popupAppear {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        @keyframes particleFloat {
-            0%, 100% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10%, 90% {
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(-40px) translateX(20px) rotate(180deg);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes sparkleTwinkle {
-            0%, 100% {
-                opacity: 0.2;
-                transform: scale(0.8);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-        
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes glow {
-            0%, 100% { 
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
-                            0 0 40px rgba(255, 215, 0, 0.2);
-            }
-            50% { 
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6),
-                            0 0 60px rgba(255, 215, 0, 0.4);
-            }
-        }
-        
-        /* Efecto de brillo sutil para el popup */
-        .winner-popup {
-            animation: popupAppear 0.5s ease-out, glow 4s ease-in-out infinite;
-        }
-        
-        /* Filas vacias - MODIFICADO PARA MOSTRAR PUNTUACIONES PERO NOMBRES OCULTOS */
-        .empty-row {
-            background-color: #f8f9fa;
-        }
-        
-        .empty-row td {
-            color: #95a5a6;
-            font-style: italic;
-        }
-        
-        /* ORO - Primer puesto - FIJADO */
-        .gold-medal {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important;
-            font-weight: bold;
-            color: #8B7500;
-            border-left: 5px solid #ffa500 !important;
-        }
-        
-        .gold-medal td {
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        /* PLATA - Segundo puesto - FIJADO */
-        .silver-medal {
-            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%) !important;
-            font-weight: bold;
-            color: #696969;
-            border-left: 5px solid #a9a9a9 !important;
-        }
-        
-        .silver-medal td {
-            font-weight: bold;
-            font-size: 1.15rem;
-        }
-        
-        /* BRONCE - Tercer puesto - FIJADO */
-        .bronze-medal {
-            background: linear-gradient(135deg, #cd7f32 0%, #e6b17e 100%) !important;
-            font-weight: bold;
-            color: #5a3a22;
-            border-left: 5px solid #8b4513 !important;
-        }
-        
-        .bronze-medal td {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .total-score {
-            font-weight: bold;
-            color: #27ae60;
-            font-size: 1.3rem;
-        }
-        
-        .position-cell {
-            font-weight: bold;
-            font-size: 1.2rem;
-            width: 100px;
-            color: #2c3e50;
-        }
-        
-        .admin-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
-            text-align: center;
-        }
-        
-        .instruction-text {
-            color: #7f8c8d;
-            font-size: 0.95rem;
-            margin-top: 10px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        /* Estilo para nombre oculto en la tabla */
-        .hidden-name {
-            color: #95a5a6;
-            font-style: italic;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 5px 10px;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-            border: 1px dashed #ddd;
-        }
-        
-        .hidden-name:hover {
-            background-color: #e9ecef;
-        }
-        
-        /* Botón de revelar nombre */
-        .reveal-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-        
-        .reveal-btn:hover {
-            background-color: #219653;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .logo {
-                max-width: 220px; /* Más grande en móvil también */
-            }
-            
-            .voter-select {
-                grid-template-columns: 1fr;
-            }
-            
-            .results-table {
-                font-size: 0.9rem;
-            }
-            
-            .results-table th,
-            .results-table td {
-                padding: 10px;
-            }
-            
-            .position-number {
-                width: 50px;
-                font-size: 1.3rem;
-            }
-            
-            .winner-popup {
-                padding: 30px 20px;
-            }
-            
-            .winner-name {
-                font-size: 3.2rem;
-            }
-            
-            .winner-popup h2 {
-                font-size: 2rem;
-            }
-            
-            .winner-event {
-                font-size: 1.5rem;
-            }
-            
-            .winner-year {
-                font-size: 1.3rem;
-            }
-            
-            .close-popup-btn {
-                padding: 8px 25px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .winner-name {
-                font-size: 2.6rem;
-            }
-            
-            .winner-event {
-                font-size: 1.4rem;
-            }
-            
-            .winner-year {
-                font-size: 1.2rem;
-            }
-            
-            .logo {
-                max-width: 180px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gabonetako Sari Nagusia — Votación</title>
+<style>
+  :root{
+    --bg:#0f1720;
+    --card:#1b2733;
+    --card2:#22303f;
+    --accent:#e8b04b;
+    --accent2:#f2c96b;
+    --text:#eef3f8;
+    --muted:#93a4b5;
+    --danger:#c0453b;
+    --ok:#4caf7d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:radial-gradient(circle at 20% 0%, #1c2a38 0%, #0f1720 60%);
+    color:var(--text);
+    min-height:100vh;
+    padding:24px 16px 80px;
+  }
+  h1{
+    text-align:center;
+    font-size:clamp(1.4rem,3vw,2.2rem);
+    margin:0 0 4px;
+    letter-spacing:.5px;
+  }
+  h1 span{color:var(--accent);}
+  .subtitle{
+    text-align:center;
+    color:var(--muted);
+    margin:0 0 32px;
+    font-size:.95rem;
+  }
+  .container{
+    max-width:760px;
+    margin:0 auto;
+  }
+  /* ---------- Pantalla de votantes ---------- */
+  .voter-list{
+    display:grid;
+    gap:12px;
+  }
+  .voter-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 22px;
+    background:linear-gradient(135deg,var(--card),var(--card2));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:14px;
+    color:var(--text);
+    font-size:1.1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .12s ease, border-color .12s, box-shadow .12s;
+    text-align:left;
+  }
+  .voter-btn:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+    box-shadow:0 8px 20px rgba(0,0,0,.35);
+  }
+  .voter-btn .arrow{color:var(--accent);font-size:1.2rem;}
+  /* ---------- Pantalla de votación ---------- */
+  .header-bar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .back-btn{
+    background:transparent;
+    border:1px solid var(--muted);
+    color:var(--text);
+    padding:8px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:.9rem;
+  }
+  .back-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .voter-name{
+    font-size:1.25rem;
+    font-weight:700;
+  }
+  .voter-name span{color:var(--accent);}
+  .section-title{
+    font-size:.85rem;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--muted);
+    margin:28px 0 12px;
+  }
+  /* ---------- Lista de pintxos ---------- */
+  .pintxo-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .pintxo-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 16px;
+    background:linear-gradient(135deg,var(--card),var(--card2));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:12px;
+    cursor:grab;
+    user-select:none;
+    transition:background .12s, border-color .12s, box-shadow .12s;
+    position:relative;
+  }
+  .pintxo-item:active{cursor:grabbing;}
+  .pintxo-item.dragging{
+    opacity:.35;
+    border-color:var(--accent);
+  }
+  .pintxo-item.drag-over{
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px var(--accent) inset;
+  }
+  .pintxo-item.locked{
+    background:linear-gradient(135deg,#2a2320,#332a24);
+    border-color:rgba(192,69,59,.5);
+    cursor:not-allowed;
+  }
+  .pintxo-item.locked .handle{color:var(--danger);}
+  .handle{
+    color:var(--muted);
+    font-size:1.2rem;
+    line-height:1;
+  }
+  .pos-num{
+    min-width:26px;
+    font-weight:700;
+    color:var(--accent);
+    font-size:1.05rem;
+  }
+  .pintxo-name{flex:1;font-weight:600;font-size:1.05rem;}
+  .points{
+    background:rgba(232,176,75,.15);
+    color:var(--accent2);
+    padding:4px 10px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:.9rem;
+    min-width:52px;
+    text-align:center;
+  }
+  .lock-tag{
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--danger);
+    border:1px solid var(--danger);
+    padding:2px 6px;
+    border-radius:6px;
+  }
+  /* ---------- Presentaciones ---------- */
+  .presentation-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+  }
+  @media(max-width:520px){
+    .presentation-grid{grid-template-columns:1fr;}
+  }
+  .pres-cell{
+    background:var(--card);
+    border:1px dashed rgba(255,255,255,.2);
+    border-radius:12px;
+    padding:14px;
+    min-height:64px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:6px;
+    cursor:pointer;
+    position:relative;
+    transition:border-color .12s;
+  }
+  .pres-cell:hover{border-color:var(--accent);}
+  .pres-cell.filled{
+    border-style:solid;
+    border-color:var(--accent);
+    background:linear-gradient(135deg,var(--card),var(--card2));
+  }
+  .pres-label{
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--muted);
+  }
+  .pres-value{
+    font-weight:700;
+    font-size:1rem;
+  }
+  .pres-value.empty{color:var(--muted);font-weight:400;font-style:italic;}
+  .pres-cell select{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+    width:100%;
+    height:100%;
+  }
+  .pres-cell.filled select{cursor:pointer;}
+  /* ---------- Botón guardar ---------- */
+  .save-btn{
+    margin-top:34px;
+    width:100%;
+    padding:16px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#1a1305;
+    font-weight:800;
+    font-size:1.05rem;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    letter-spacing:.5px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .save-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(232,176,75,.35);
+  }
+  .save-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+  }
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(120%);
+    background:var(--ok);
+    color:#06210f;
+    padding:12px 22px;
+    border-radius:12px;
+    font-weight:700;
+    transition:transform .3s ease;
+    z-index:50;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .hidden{display:none !important;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- ENCABEZADO SOLO CON LOGO GRANDE Y CENTRADO -->
-        <div class="header">
-            <div class="logo-container">
-                <img src="https://github.com/Mikelikoptero/Gabonak/blob/main/gsn2.png?raw=true" alt="Logo Gabonetako Sari Nagusia" class="logo">
-            </div>
-        </div>
-        
-        <!-- Pagina 1: Seleccion de votante -->
-        <div id="page-voter" class="page active">
-            <!-- TEXTO SIMPLIFICADO -->
-            
-            <div class="voter-select" id="voter-buttons">
-                <!-- Los botones se cargaran en orden alfabetico -->
-            </div>
-            
-            <!-- Seccion de quien ha votado -->
-            <div class="voted-list" id="voted-list" style="display: none;">
-                <h3>Ya han votado:</h3>
-                <div id="voted-people"></div>
-                <p style="margin-top: 10px; font-size: 0.9rem; color: #7f8c8d;">
-                    Faltan por votar: <span id="missing-voters"></span>
-                </p>
-            </div>
-            
-            <!-- Botones principales -->
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="show-results-btn" class="export-btn" style="display: none; background-color: #34495e;">
-                    Ver resultados
-                </button>
-            </div>
-            
-            <!-- Resultados con tabla que se va llenando -->
-            <div class="results-container" id="results-container">
-                <h3>Resultados</h3>
-               
-                <div style="overflow-x: auto;">
-                    <table class="results-table" id="results-table">
-                        <thead>
-                            <tr>
-                                <th>Posición</th>
-                                <th>Pintxo</th>
-                                <th>Puntuación</th>
-                            </tr>
-                        </thead>
-                        <tbody id="results-tbody">
-                            <!-- La tabla se llenara progresivamente -->
-                        </tbody>
-                    </table>
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button id="reveal-next-btn" class="export-btn" style="display: none; background-color: #27ae60;">
-                        Revelar siguiente
-                    </button>
-                    <div id="all-revealed" style="display: none; margin-top: 20px;">
-                        
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Seccion de administracion -->
-            <div class="admin-section">
-                <button id="reset-votes-btn" class="export-btn reset-btn">
-                    Reiniciar todos los votos
-                </button>
-                
-            </div>
-        </div>
-        
-        <!-- Pagina 2: Votacion -->
-        <div id="page-voting" class="page">
-            <div class="current-voter" id="current-voter-info"></div>
-            
-            <div class="voting-container">
-                <p class="instruction-text">Arrastra los nombres para ordenarlos de mejor a peor</p>
-                <ul class="position-list" id="position-list">
-                    <!-- Las posiciones con nombres se cargaran aqui -->
-                </ul>
-            </div>
-            
-            <button id="submit-vote" class="action-btn" disabled>Enviar voto</button>
-        </div>
-        
-        <!-- Pagina 3: Confirmacion -->
-        <div id="page-results" class="page">
-            <h2 style="text-align: center;">¡Voto registrado!</h2>
-            <div id="vote-confirmation"></div>
-            
-            <div class="export-section">
-                <button id="go-home" class="export-btn" style="background-color: #34495e; margin: 10px auto; display: block;">Volver al inicio</button>
-            </div>
-        </div>
+<div class="container">
+
+  <!-- ============ PANTALLA 1: VOTANTES ============ -->
+  <section id="screen-voters">
+    <h1>Gabonetako <span>Sari Nagusia</span></h1>
+    <p class="subtitle">Selecciona quién va a votar</p>
+    <div class="voter-list" id="voterList"></div>
+  </section>
+
+  <!-- ============ PANTALLA 2: VOTACIÓN ============ -->
+  <section id="screen-vote" class="hidden">
+    <div class="header-bar">
+      <button class="back-btn" id="backBtn">← Volver</button>
+      <div class="voter-name">Votando: <span id="currentVoterName"></span></div>
     </div>
 
-    <!-- Popup del ganador (oculto inicialmente) -->
-    <div id="winner-popup-overlay" class="winner-popup-overlay" style="display: none;">
-        <div class="winner-popup">
-            <h2>IRABAZLEA</h2>
-            <div class="winner-name" id="winner-name"></div>
-            <div class="winner-event">GABONETAKO SARI NAGUSIA</div>
-            <div class="winner-year">25-26</div>
-            <button id="close-popup-btn" class="close-popup-btn">Cerrar</button>
-        </div>
-    </div>
+    <div class="section-title">Ordena los pintxos (mejor → peor)</div>
+    <div class="pintxo-list" id="pintxoList"></div>
 
-    <!-- Contenedor para efectos especiales de brillos y confeti -->
-    <div id="particles-container" class="particles-container"></div>
+    <div class="section-title">Mejores presentaciones</div>
+    <div class="presentation-grid" id="presentationGrid"></div>
 
-    <script>
-        // Datos en orden alfabetico
-        const participants = ["Ana Luisa", "Iosu", "Javi", "Jon", "Josefina", "Juan Mari", "Mikel", "Yaiza"];
-        const spectators = ["Abuela", "Aitona"];
-        const allPossibleVoters = [...participants, ...spectators].sort();
-        
-        // Cargar votos guardados
-        let allVotes = JSON.parse(localStorage.getItem('gabonetakoVotes')) || [];
-        let currentVoter = '';
-        
-        // Variables para la revelacion progresiva
-        let sortedParticipants = []; // Ordenados de MAYOR a MENOR puntuacion (1º a 8º)
-        let scores = {};
-        let revealedCount = 0;
-        let totalPositions = 0;
-        let hasCalculatedResults = false;
-        
-        // Elementos DOM
-        const pageVoter = document.getElementById('page-voter');
-        const pageVoting = document.getElementById('page-voting');
-        const pageResults = document.getElementById('page-results');
-        const currentVoterInfo = document.getElementById('current-voter-info');
-        const positionList = document.getElementById('position-list');
-        const submitVoteBtn = document.getElementById('submit-vote');
-        const voteConfirmation = document.getElementById('vote-confirmation');
-        const goHomeBtn = document.getElementById('go-home');
-        const resetVotesBtn = document.getElementById('reset-votes-btn');
-        const showResultsBtn = document.getElementById('show-results-btn');
-        const resultsContainer = document.getElementById('results-container');
-        const resultsTbody = document.getElementById('results-tbody');
-        const revealNextBtn = document.getElementById('reveal-next-btn');
-        const allRevealedDiv = document.getElementById('all-revealed');
-        const votedList = document.getElementById('voted-list');
-        const votedPeople = document.getElementById('voted-people');
-        const missingVoters = document.getElementById('missing-voters');
-        const voterButtons = document.getElementById('voter-buttons');
-        
-        // Elementos del popup
-        const winnerPopupOverlay = document.getElementById('winner-popup-overlay');
-        const winnerNameElement = document.getElementById('winner-name');
-        const closePopupBtn = document.getElementById('close-popup-btn');
-        const particlesContainer = document.getElementById('particles-container');
-        
-        // Crear botones de votantes en orden alfabetico
-        function createVoterButtons() {
-            voterButtons.innerHTML = '';
-            
-            // Obtener lista de votantes que ya han votado
-            const votedVoters = allVotes.map(v => v.voter);
-            
-            allPossibleVoters.forEach(voter => {
-                const button = document.createElement('button');
-                button.className = 'voter-btn';
-                button.setAttribute('data-voter', voter);
-                button.textContent = voter;
-                
-                // Si ya ha votado, deshabilitar el boton
-                if (votedVoters.includes(voter)) {
-                    button.classList.add('disabled');
-                    button.disabled = true;
-                } else {
-                    // Solo agregar evento si no ha votado
-                    button.addEventListener('click', function() {
-                        currentVoter = voter;
-                        startVoting();
-                    });
-                }
-                
-                voterButtons.appendChild(button);
-            });
-        }
-        
-        // Inicializar la pagina
-        createVoterButtons();
-        updateVotedList();
-        
-        // Iniciar votacion
-        function startVoting() {
-            // Actualizar informacion
-            currentVoterInfo.textContent = `Votando: ${currentVoter}`;
-            
-            // Cambiar pagina
-            pageVoter.classList.remove('active');
-            pageVoting.classList.add('active');
-            pageResults.classList.remove('active');
-            
-            // Limpiar lista
-            positionList.innerHTML = '';
-            
-            // Crear lista de participantes para votar
-            let votingList = [...participants];
-            
-            // Si es participante, quitarse a si mismo
-            if (participants.includes(currentVoter)) {
-                votingList = votingList.filter(p => p !== currentVoter);
-            }
-            
-            // Mezclar aleatoriamente
-            votingList = shuffleArray(votingList);
-            
-            // Crear elementos de posicion con nombres
-            for (let i = 0; i < votingList.length; i++) {
-                const li = document.createElement('li');
-                li.className = 'position-item';
-                
-                // Numero de posicion (fijo) - SIN º
-                const positionDiv = document.createElement('div');
-                positionDiv.className = 'position-number';
-                
-                // Asignar clase segun la posicion
-                if (i === 0) {
-                    positionDiv.classList.add('position-1');
-                } else if (i === 1) {
-                    positionDiv.classList.add('position-2');
-                } else if (i === 2) {
-                    positionDiv.classList.add('position-3');
-                } else {
-                    positionDiv.classList.add(`position-${i + 1}`);
-                }
-                
-                positionDiv.textContent = `${i + 1}`;
-                
-                // Contenedor del nombre (arrastrable)
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'name-container';
-                nameDiv.setAttribute('data-name', votingList[i]);
-                nameDiv.draggable = true;
-                nameDiv.innerHTML = `<span class="drag-icon">↕</span> ${votingList[i]}`;
-                
-                // Eventos drag & drop
-                nameDiv.addEventListener('dragstart', handleDragStart);
-                nameDiv.addEventListener('dragover', handleDragOver);
-                nameDiv.addEventListener('drop', handleDrop);
-                nameDiv.addEventListener('dragend', handleDragEnd);
-                
-                li.appendChild(positionDiv);
-                li.appendChild(nameDiv);
-                positionList.appendChild(li);
-            }
-            
-            // Activar boton de enviar
-            submitVoteBtn.disabled = false;
-        }
-        
-        // Funciones para drag & drop
-        let draggedItem = null;
-        
-        function handleDragStart() {
-            draggedItem = this;
-            setTimeout(() => this.classList.add('dragging'), 0);
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-        
-        function handleDrop(e) {
-            e.preventDefault();
-            if (draggedItem !== this) {
-                // Encontrar los elementos padre (li)
-                const draggedLi = draggedItem.parentElement;
-                const targetLi = this.parentElement;
-                
-                // Intercambiar los nombres
-                const draggedName = draggedItem.getAttribute('data-name');
-                const targetName = this.getAttribute('data-name');
-                
-                draggedItem.setAttribute('data-name', targetName);
-                draggedItem.innerHTML = `<span class="drag-icon">↕</span> ${targetName}`;
-                
-                this.setAttribute('data-name', draggedName);
-                this.innerHTML = `<span class="drag-icon">↕</span> ${draggedName}`;
-            }
-        }
-        
-        function handleDragEnd() {
-            this.classList.remove('dragging');
-            draggedItem = null;
-        }
-        
-        // Mezclar array
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-        
-        // Enviar voto
-        submitVoteBtn.addEventListener('click', function() {
-            // Obtener orden actual
-            const nameContainers = Array.from(document.querySelectorAll('.name-container'));
-            const order = nameContainers.map(item => item.getAttribute('data-name'));
-            
-            // Crear objeto voto
-            const vote = {
-                voter: currentVoter,
-                order: order,
-                date: new Date().toISOString().split('T')[0]
-            };
-            
-            // Guardar voto
-            const existingIndex = allVotes.findIndex(v => v.voter === currentVoter);
-            if (existingIndex !== -1) {
-                allVotes[existingIndex] = vote; // Reemplazar si ya voto
-            } else {
-                allVotes.push(vote); // Agregar nuevo voto
-            }
-            
-            localStorage.setItem('gabonetakoVotes', JSON.stringify(allVotes));
-            
-            // Mostrar confirmacion
-            showConfirmation(vote);
-            
-            // Actualizar botones de votantes
-            createVoterButtons();
-            updateVotedList();
-        });
-        
-        // Mostrar confirmacion
-        function showConfirmation(vote) {
-            pageVoting.classList.remove('active');
-            pageResults.classList.add('active');
-            
-            // Mostrar resumen del voto (solo para el votante actual)
-            let html = '<div style="margin-bottom: 20px;">';
-            vote.order.forEach((participant, index) => {
-                html += `
-                    <div class="vote-result">
-                        <div class="position">${index + 1}º</div>
-                        <div>${participant}</div>
-                    </div>
-                `;
-            });
-            
-            if (participants.includes(currentVoter)) {
-                html += `<p style="margin-top: 15px; color: #7f8c8d; font-style: italic;">Nota: No votas tu propio pintxo.</p>`;
-            }
-            
-            html += '</div>';
-            voteConfirmation.innerHTML = html;
-        }
-        
-        // Crear efecto de confeti (solo 5 segundos)
-        function createConfetti() {
-            // Crear confeti
-            for (let i = 0; i < 60; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti-piece';
-                
-                // Posición aleatoria en la parte superior
-                const left = Math.random() * 100;
-                const delay = Math.random() * 0.3;
-                const duration = 2 + Math.random() * 3;
-                const rotation = Math.random() * 720;
-                
-                confetti.style.left = `${left}%`;
-                confetti.style.animation = `confettiFall ${duration}s linear ${delay}s forwards`;
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                
-                particlesContainer.appendChild(confetti);
-                
-                // Remover después de 5 segundos
-                setTimeout(() => {
-                    if (confetti.parentNode) {
-                        confetti.style.transition = 'opacity 0.5s';
-                        confetti.style.opacity = '0';
-                        setTimeout(() => {
-                            if (confetti.parentNode) {
-                                confetti.parentNode.removeChild(confetti);
-                            }
-                        }, 500);
-                    }
-                }, 5000);
-            }
-        }
-        
-        // Crear efecto de brillos y partículas (permanentes)
-        function createSparkles() {
-            // Crear partículas brillantes de colores
-            const particleTypes = ['type1', 'type2', 'type3', 'type4', 'type5'];
-            
-            for (let i = 0; i < 35; i++) {
-                const particle = document.createElement('div');
-                const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-                particle.className = `particle ${type}`;
-                
-                // Posición aleatoria en toda la pantalla
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                const delay = Math.random() * 3;
-                const duration = 2 + Math.random() * 3;
-                
-                particle.style.left = `${left}%`;
-                particle.style.top = `${top}%`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                
-                particlesContainer.appendChild(particle);
-            }
-            
-            // Crear destellos blancos (sparkles) adicionales
-            for (let i = 0; i < 12; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = Math.random() > 0.5 ? 'sparkle' : 'sparkle big';
-                
-                // Posición concentrada alrededor del popup
-                const left = 35 + Math.random() * 30;
-                const top = 35 + Math.random() * 30;
-                const delay = Math.random() * 2;
-                
-                sparkle.style.left = `${left}%`;
-                sparkle.style.top = `${top}%`;
-                sparkle.style.animationDelay = `${delay}s`;
-                
-                particlesContainer.appendChild(sparkle);
-            }
-        }
-        
-        // Limpiar efectos
-        function clearEffects() {
-            particlesContainer.innerHTML = '';
-            particlesContainer.style.display = 'none';
-        }
-        
-        // Mostrar popup del ganador con efectos
-        function showWinnerPopup(winnerName) {
-            winnerNameElement.textContent = winnerName;
-            winnerPopupOverlay.style.display = 'flex';
-            
-            // Crear efectos DESPUÉS de que aparezca el popup
-            setTimeout(() => {
-                particlesContainer.style.display = 'block';
-                
-                // 1. Confeti (solo primeros 5 segundos)
-                createConfetti();
-                
-                // 2. Brillos (permanentes)
-                createSparkles();
-                
-            }, 300);
-            
-            // Bloquear el scroll del body
-            document.body.style.overflow = 'hidden';
-        }
-        
-        // Cerrar popup del ganador
-        function closeWinnerPopup() {
-            winnerPopupOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            
-            // Limpiar efectos
-            clearEffects();
-        }
-        
-        // Evento para cerrar el popup
-        closePopupBtn.addEventListener('click', closeWinnerPopup);
-        
-        // También cerrar al hacer clic fuera del popup
-        winnerPopupOverlay.addEventListener('click', function(e) {
-            if (e.target === winnerPopupOverlay) {
-                closeWinnerPopup();
-            }
-        });
-        
-        // Actualizar lista de quienes han votado (SOLO NOMBRES)
-        function updateVotedList() {
-            if (allVotes.length === 0) {
-                votedList.style.display = 'none';
-                showResultsBtn.style.display = 'none';
-                return;
-            }
-            
-            votedList.style.display = 'block';
-            votedPeople.innerHTML = '';
-            
-            // Ordenar alfabeticamente los que han votado
-            const votedNames = allVotes.map(v => v.voter).sort();
-            
-            // Mostrar solo los nombres de quienes han votado
-            votedNames.forEach(voter => {
-                const div = document.createElement('div');
-                div.className = 'voted-person';
-                div.textContent = voter;
-                votedPeople.appendChild(div);
-            });
-            
-            // Calcular quienes faltan por votar
-            const missing = allPossibleVoters.filter(v => !votedNames.includes(v));
-            
-            if (missing.length > 0) {
-                missingVoters.textContent = missing.join(', ');
-            } else {
-                missingVoters.textContent = '¡Todos han votado!';
-            }
-            
-            // Mostrar boton de resultados
-            showResultsBtn.style.display = 'inline-block';
-        }
-        
-        // Calcular resultados y crear tabla MOSTRANDO PUNTUACIONES PERO OCULTANDO NOMBRES
-        function calculateResultsAndCreateTableWithScores() {
-            // Inicializar puntuaciones
-            scores = {};
-            participants.forEach(p => {
-                scores[p] = 0;
-            });
-            
-            // Calcular puntuaciones
-            allVotes.forEach(vote => {
-                vote.order.forEach((pintxo, index) => {
-                    if (participants.includes(pintxo)) {
-                        // Puntuacion: 1º = 8 puntos, 2º = 7 puntos, etc.
-                        const points = 8 - index;
-                        scores[pintxo] += points;
-                    }
-                });
-            });
-            
-            // Ordenar por puntuacion (de MAYOR a MENOR - 1º a 8º)
-            sortedParticipants = [...participants].sort((a, b) => scores[b] - scores[a]);
-            totalPositions = sortedParticipants.length;
-            
-            // Reiniciar contador de revelados
-            revealedCount = 0;
-            
-            // Crear tabla con PUNTUACIONES VISIBLES pero NOMBRES OCULTOS
-            resultsTbody.innerHTML = '';
-            
-            for (let i = 0; i < totalPositions; i++) {
-                const tr = document.createElement('tr');
-                tr.className = 'empty-row';
-                tr.setAttribute('data-position', i);
-                tr.setAttribute('data-participant', sortedParticipants[i]);
-                tr.setAttribute('data-score', scores[sortedParticipants[i]]);
-                
-                // Celda de posicion (mostramos 1º, 2º, 3º... de arriba a abajo)
-                const tdPos = document.createElement('td');
-                tdPos.className = 'position-cell';
-                tdPos.textContent = `${i + 1}º`;
-                
-                // Celda de nombre (OCULTO al principio)
-                const tdName = document.createElement('td');
-                tdName.innerHTML = '<span class="hidden-name">???</span>';
-                tdName.style.color = '#95a5a6';
-                tdName.style.fontStyle = 'italic';
-                
-                // Celda de puntuacion (VISIBLE desde el principio)
-                const tdScore = document.createElement('td');
-                tdScore.textContent = `${scores[sortedParticipants[i]]} puntos`;
-                tdScore.className = 'total-score';
-                
-                // Aplicar colores según posición (oro, plata, bronce) DESDE EL PRINCIPIO
-                // Esto asegura que cuando se revelen los nombres, ya tengan las clases correctas
-                if (i === 0) {
-                    tr.classList.add('gold-medal');
-                } else if (i === 1) {
-                    tr.classList.add('silver-medal');
-                } else if (i === 2) {
-                    tr.classList.add('bronze-medal');
-                }
-                
-                tr.appendChild(tdPos);
-                tr.appendChild(tdName);
-                tr.appendChild(tdScore);
-                resultsTbody.appendChild(tr);
-            }
-            
-            // Establecer que se han calculado los resultados
-            hasCalculatedResults = true;
-        }
-        
-        // Revelar siguiente nombre en la tabla (del 8º al 1º)
-        function revealNextName() {
-            if (revealedCount < totalPositions) {
-                // Calcular cuántos quedan por revelar
-                const remainingToReveal = totalPositions - revealedCount;
-                
-                // Si quedan solo 2 por revelar (1ª y 2ª posición)
-                if (remainingToReveal === 2) {
-                    // Revelar las DOS ÚLTIMAS posiciones JUNTAS
-                    
-                    // Obtener las filas de la tabla
-                    const rows = resultsTbody.querySelectorAll('tr');
-                    
-                    // Índices: 0 = 1º lugar, 1 = 2º lugar
-                    const row1st = rows[0]; // Fila para 1º lugar
-                    const row2nd = rows[1]; // Fila para 2º lugar
-                    
-                    // Obtener datos de las filas
-                    const secondPlace = row2nd.getAttribute('data-participant');
-                    const firstPlace = row1st.getAttribute('data-participant');
-                    
-                    // 2ª POSICIÓN - PLATA
-                    const tdName2nd = row2nd.querySelector('td:nth-child(2)');
-                    tdName2nd.innerHTML = secondPlace;
-                    tdName2nd.style.color = '';
-                    tdName2nd.style.fontStyle = '';
-                    tdName2nd.classList.remove('hidden-name');
-                    
-                    // Asegurarse que la fila tiene la clase silver-medal
-                    row2nd.classList.remove('empty-row');
-                    row2nd.classList.add('silver-medal');
-                    
-                    // 1ª POSICIÓN - ORO
-                    const tdName1st = row1st.querySelector('td:nth-child(2)');
-                    tdName1st.innerHTML = firstPlace;
-                    tdName1st.style.color = '';
-                    tdName1st.style.fontStyle = '';
-                    tdName1st.classList.remove('hidden-name');
-                    
-                    // Asegurarse que la fila tiene la clase gold-medal
-                    row1st.classList.remove('empty-row');
-                    row1st.classList.add('gold-medal');
-                    
-                    // Actualizar contador (sumamos 2 porque revelamos ambas posiciones)
-                    revealedCount += 2;
-                    
-                    // Ocultar botón de revelar
-                    revealNextBtn.style.display = 'none';
-                    
-                    // Mostrar mensaje final
-                    allRevealedDiv.style.display = 'block';
-                    
-                    // MOSTRAR EL POPUP DEL GANADOR CON EFECTOS
-                    showWinnerPopup(firstPlace);
-                    
-                    return; // Salir de la función aquí
-                }
-                
-                // CÓDIGO NORMAL para las demás revelaciones (cuando quedan más de 2)
-                // Para revelar del 8º al 1º (de abajo hacia arriba)
-                const tableRowIndex = totalPositions - revealedCount - 1;
-                const participantIndex = totalPositions - revealedCount - 1;
-                const participant = sortedParticipants[participantIndex];
-                const position = participantIndex + 1;
-                
-                const rows = resultsTbody.querySelectorAll('tr');
-                const row = rows[tableRowIndex];
-                
-                row.classList.remove('empty-row');
-                
-                // Asegurar que las clases de medalla están aplicadas según la posición
-                if (position === 1) {
-                    row.classList.add('gold-medal');
-                } else if (position === 2) {
-                    row.classList.add('silver-medal');
-                } else if (position === 3) {
-                    row.classList.add('bronze-medal');
-                }
-                
-                const tdName = row.querySelector('td:nth-child(2)');
-                tdName.innerHTML = participant;
-                tdName.style.color = '';
-                tdName.style.fontStyle = '';
-                tdName.classList.remove('hidden-name');
-                
-                // Incrementar contador
-                revealedCount++;
-                
-                // Si hemos revelado todos, mostrar mensaje final
-                if (revealedCount >= totalPositions) {
-                    revealNextBtn.style.display = 'none';
-                    allRevealedDiv.style.display = 'block';
-                }
-            }
-        }
-        
-        // Mostrar resultados cuando se pulse el boton
-        showResultsBtn.addEventListener('click', function() {
-            // Calcular resultados y crear tabla con PUNTUACIONES VISIBLES pero NOMBRES OCULTOS
-            calculateResultsAndCreateTableWithScores();
-            resultsContainer.classList.add('active');
-            this.style.display = 'none';
-            
-            // Mostrar boton para revelar (primera vez)
-            revealNextBtn.style.display = 'inline-block';
-            allRevealedDiv.style.display = 'none';
-        });
-        
-        // Boton para revelar siguiente nombre
-        revealNextBtn.addEventListener('click', revealNextName);
-        
-        // Volver al inicio
-        goHomeBtn.addEventListener('click', function() {
-            updateVotedList();
-            resultsContainer.classList.remove('active');
-            showResultsBtn.style.display = 'inline-block';
-            pageResults.classList.remove('active');
-            pageVoter.classList.add('active');
-            
-            // Resetear el estado de revelación
-            hasCalculatedResults = false;
-            revealedCount = 0;
-            
-            // Asegurarse de cerrar el popup si está abierto
-            closeWinnerPopup();
-        });
-        
-        // Reiniciar todos los votos
-        resetVotesBtn.addEventListener('click', function() {
-            if (confirm('¿Estas seguro de REINICIAR TODOS los votos?\n\nEsto borrará todos los votos registrados hasta ahora.')) {
-                allVotes = [];
-                localStorage.removeItem('gabonetakoVotes');
-                alert('Todos los votos han sido reiniciados.');
-                
-                // Actualizar interfaz
-                createVoterButtons();
-                updateVotedList();
-                resultsContainer.classList.remove('active');
-                showResultsBtn.style.display = 'none';
-                
-                // Resetear el estado de revelación
-                hasCalculatedResults = false;
-                revealedCount = 0;
-                
-                // Cerrar popup si está abierto
-                closeWinnerPopup();
-                
-                // Si estamos en la pagina de resultados, volver al inicio
-                if (pageResults.classList.contains('active')) {
-                    pageResults.classList.remove('active');
-                    pageVoter.classList.add('active');
-                }
-            }
-        });
-        
-        // Mostrar numero de votos en consola
-        console.log(`Votos guardados: ${allVotes.length}`);
-        if (allVotes.length > 0) {
-            console.log('Lista de votantes:', allVotes.map(v => v.voter));
-        }
-    </script>
+    <button class="save-btn" id="saveBtn">Guardar votación</button>
+  </section>
+
+</div>
+
+<div class="toast" id="toast">✅ Votación guardada (localmente)</div>
+
+<script>
+/* =========================================================
+   DATOS
+   ========================================================= */
+const ALL_VOTERS = [
+  "Abuela","Josefina","Juan Mari","Jon","Mikel",
+  "Ana Luisa","Javi","Iosu","Yaiza"
+];
+// Orden alfabético (localeCompare en castellano)
+const voters = [...ALL_VOTERS].sort((a,b)=>a.localeCompare(b,"es"));
+
+const ABUELA = "Abuela";
+const cooks = [...ALL_VOTERS]
+  .filter(n => n !== ABUELA)
+  .sort((a,b)=>a.localeCompare(b,"es"));
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let currentVoter = null;
+let currentOrder = [];      // orden actual de pintxos
+let currentPresentations = [null,null,null]; // 3 celdas
+const STORAGE_KEY = "gabonetako-votos-v1";
+
+/* =========================================================
+   PANTALLA 1: RENDER VOTANTES
+   ========================================================= */
+const voterListEl = document.getElementById("voterList");
+
+function renderVoters(){
+  voterListEl.innerHTML = "";
+  voters.forEach(name=>{
+    const btn = document.createElement("button");
+    btn.className = "voter-btn";
+    btn.innerHTML = `<span>${name}</span><span class="arrow">›</span>`;
+    btn.addEventListener("click", ()=>startVote(name));
+    voterListEl.appendChild(btn);
+  });
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+function startVote(voter){
+  currentVoter = voter;
+  document.getElementById("currentVoterName").textContent = voter;
+
+  // Orden inicial alfabético de los pintxos
+  currentOrder = [...cooks];
+
+  // Si NO es la abuela, su propio nombre debe ir bloqueado al final
+  if(voter !== ABUELA){
+    currentOrder = currentOrder.filter(n => n !== voter);
+    currentOrder.push(voter);
+  }
+
+  currentPresentations = [null,null,null];
+
+  document.getElementById("screen-voters").classList.add("hidden");
+  document.getElementById("screen-vote").classList.remove("hidden");
+
+  renderPintxos();
+  renderPresentations();
+  updateSaveBtn();
+}
+
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  document.getElementById("screen-vote").classList.add("hidden");
+  document.getElementById("screen-voters").classList.remove("hidden");
+});
+
+/* =========================================================
+   LISTA DE PINTXOS (drag & drop tipo insertar)
+   ========================================================= */
+const pintxoListEl = document.getElementById("pintxoList");
+let draggedEl = null;
+let draggedName = null;
+
+function renderPintxos(){
+  pintxoListEl.innerHTML = "";
+  const total = currentOrder.length;
+
+  currentOrder.forEach((name, index)=>{
+    const points = total - index; // 8,7,...,1
+    const isLocked = (currentVoter !== ABUELA) && (index === total - 1) && (name === currentVoter);
+
+    const item = document.createElement("div");
+    item.className = "pintxo-item" + (isLocked ? " locked" : "");
+    item.dataset.name = name;
+    item.draggable = !isLocked;
+
+    item.innerHTML = `
+      <span class="handle">${isLocked ? "🔒" : "⠿"}</span>
+      <span class="pos-num">${index+1}º</span>
+      <span class="pintxo-name">${name}</span>
+      ${isLocked ? '<span class="lock-tag">Bloqueado</span>' : ''}
+      <span class="points">${points} pts</span>
+    `;
+
+    if(!isLocked){
+      item.addEventListener("dragstart", onDragStart);
+      item.addEventListener("dragend", onDragEnd);
+      item.addEventListener("dragover", onDragOver);
+      item.addEventListener("dragleave", onDragLeave);
+      item.addEventListener("drop", onDrop);
+    }
+
+    pintxoListEl.appendChild(item);
+  });
+}
+
+function onDragStart(e){
+  draggedEl = this;
+  draggedName = this.dataset.name;
+  this.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  // Firefox necesita setData
+  e.dataTransfer.setData("text/plain", draggedName);
+}
+
+function onDragEnd(e){
+  this.classList.remove("dragging");
+  document.querySelectorAll(".pintxo-item").forEach(el=>el.classList.remove("drag-over"));
+  draggedEl = null;
+  draggedName = null;
+}
+
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  if(this === draggedEl) return;
+  if(this.classList.contains("locked")) return; // no se puede soltar sobre bloqueado
+  this.classList.add("drag-over");
+}
+
+function onDragLeave(e){
+  this.classList.remove("drag-over");
+}
+
+function onDrop(e){
+  e.preventDefault();
+  this.classList.remove("drag-over");
+  if(!draggedEl || this === draggedEl) return;
+  if(this.classList.contains("locked")) return;
+
+  const targetName = this.dataset.name;
+
+  // Reordenación tipo "insertar": quitar el arrastrado y meterlo en la posición del destino
+  const fromIndex = currentOrder.indexOf(draggedName);
+  let toIndex = currentOrder.indexOf(targetName);
+
+  if(fromIndex === -1 || toIndex === -1) return;
+
+  // Si el destino es la última posición y el votante no es la abuela,
+  // no permitir que su propio nombre deje de estar bloqueado abajo.
+  // (El nombre bloqueado no es arrastrable ni acepta drop, así que ya está protegido,
+  //  pero nos aseguramos de que el arrastrado no acabe debajo de él.)
+  if(currentVoter !== ABUELA){
+    const lockedName = currentVoter;
+    const lockedIndex = currentOrder.indexOf(lockedName);
+    // El nombre bloqueado siempre debe quedar el último
+    if(lockedIndex !== currentOrder.length - 1){
+      // reubicarlo al final (por seguridad)
+      currentOrder.splice(lockedIndex,1);
+      currentOrder.push(lockedName);
+      // recalcular índices
+      const newFrom = currentOrder.indexOf(draggedName);
+      const newTo = currentOrder.indexOf(targetName);
+      if(newFrom !== -1 && newTo !== -1){
+        reorderInsert(newFrom, newTo);
+      }
+    } else {
+      reorderInsert(fromIndex, toIndex);
+    }
+  } else {
+    reorderInsert(fromIndex, toIndex);
+  }
+
+  renderPintxos();
+  updateSaveBtn();
+}
+
+/* Mueve el elemento de fromIndex a toIndex desplazando el resto */
+function reorderInsert(fromIndex, toIndex){
+  const [moved] = currentOrder.splice(fromIndex,1);
+  currentOrder.splice(toIndex,0,moved);
+}
+
+/* =========================================================
+   PRESENTACIONES (3 celdas con select)
+   ========================================================= */
+const presentationGridEl = document.getElementById("presentationGrid");
+const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
+
+function renderPresentations(){
+  presentationGridEl.innerHTML = "";
+  PRES_LABELS.forEach((label, i)=>{
+    const cell = document.createElement("div");
+    cell.className = "pres-cell" + (currentPresentations[i] ? " filled" : "");
+
+    const lbl = document.createElement("div");
+    lbl.className = "pres-label";
+    lbl.textContent = label;
+    cell.appendChild(lbl);
+
+    const val = document.createElement("div");
+    val.className = "pres-value" + (currentPresentations[i] ? "" : " empty");
+    val.textContent = currentPresentations[i] || "Seleccionar…";
+    cell.appendChild(val);
+
+    const select = document.createElement("select");
+    const emptyOpt = document.createElement("option");
+    emptyOpt.value = "";
+    emptyOpt.textContent = "—";
+    select.appendChild(emptyOpt);
+
+    cooks.forEach(name=>{
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      // No permitir seleccionar el mismo en otra celda
+      if(currentPresentations.includes(name) && currentPresentations[i] !== name){
+        opt.disabled = true;
+      }
+      if(currentPresentations[i] === name) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    select.addEventListener("change", ()=>{
+      const chosen = select.value || null;
+      // Si ya estaba en otra celda, la limpiamos
+      if(chosen){
+        currentPresentations = currentPresentations.map((v,idx)=> idx!==i && v===chosen ? null : v);
+      }
+      currentPresentations[i] = chosen;
+      renderPresentations();
+      updateSaveBtn();
+    });
+
+    cell.appendChild(select);
+    presentationGridEl.appendChild(cell);
+  });
+}
+
+/* =========================================================
+   BOTÓN GUARDAR
+   ========================================================= */
+const saveBtn = document.getElementById("saveBtn");
+
+function allPresentationsFilled(){
+  return currentPresentations.every(v => v !== null);
+}
+
+function updateSaveBtn(){
+  saveBtn.disabled = !allPresentationsFilled();
+}
+
+saveBtn.addEventListener("click", ()=>{
+  if(!allPresentationsFilled()) return;
+
+  const votes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  votes[currentVoter] = {
+    order: [...currentOrder],
+    presentations: [...currentPresentations],
+    timestamp: new Date().toISOString()
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(votes));
+
+  showToast();
+});
+
+function showToast(){
+  const t = document.getElementById("toast");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2400);
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderVoters();
+</script>
 </body>
 </html>
-
-
-
