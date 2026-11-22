@@ -19,6 +19,8 @@
     --gold:#e6c878;
     --silver:#cfd3d6;
     --bronze:#d6a37a;
+    --header-dark:#34495e;
+    --score-green:#27ae60;
   }
   *{box-sizing:border-box;}
   body{
@@ -55,9 +57,7 @@
   }
 
   .voter-grid{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+    display:flex;flex-direction:column;gap:10px;
   }
   .voter-btn{
     display:flex;align-items:center;justify-content:space-between;
@@ -263,6 +263,7 @@
   .toast.show{transform:translateX(-50%) translateY(0);}
   .hidden{display:none !important;}
 
+  /* ---------- pantalla historial ---------- */
   .history-view{
     max-width:760px;margin:0 auto;
   }
@@ -274,15 +275,51 @@
     color:var(--muted);margin:0 0 24px;font-size:1rem;
   }
   .history-view .winner-line strong{color:var(--accent);}
-  .history-placeholder{
+
+  /* tabla de resultados */
+  .results-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    margin-top:16px;
     background:var(--card);
-    border:1px dashed #d8cdbc;
+    border:1px solid var(--border);
     border-radius:12px 4px 12px 4px;
-    padding:28px 22px;
-    color:var(--muted);
-    text-align:center;
-    font-style:italic;
+    overflow:hidden;
   }
+  .results-table th{
+    background:var(--header-dark);
+    color:#fff;
+    text-align:left;
+    padding:12px 16px;
+    font-weight:500;
+    font-size:.95rem;
+  }
+  .results-table th:first-child{ border-top-left-radius:12px; }
+  .results-table th:last-child{ border-top-right-radius:4px; }
+  
+  .results-table td{
+    padding:12px 16px;
+    border-bottom:1px solid var(--border);
+    font-size:1rem;
+  }
+  .results-table tr:last-child td{ border-bottom:none; }
+  
+  .results-table tr{ position:relative; }
+  
+  /* franjas de medallas en la tabla */
+  .results-table tr.medal-gold td:first-child{ border-left:6px solid var(--gold); }
+  .results-table tr.medal-silver td:first-child{ border-left:6px solid var(--silver); }
+  .results-table tr.medal-bronze td:first-child{ border-left:6px solid var(--bronze); }
+  .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) td:first-child{ border-left:6px solid transparent; }
+
+  .results-table .col-pos { font-weight:600; color:var(--header-dark); width: 80px; }
+  .results-table .col-name { font-weight:700; text-align:center; }
+  .results-table .col-name.gold-text { color:var(--bronze); }
+  .results-table .col-score { font-weight:700; color:var(--score-green); text-align:right; }
+
+  .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) .col-name { color:var(--muted); font-weight:500; }
+
 </style>
 </head>
 <body>
@@ -331,9 +368,7 @@
     <div class="history-view">
       <h2 id="historyTitle"></h2>
       <p class="winner-line" id="historyWinner"></p>
-      <div class="history-placeholder" id="historyPlaceholder">
-        Aún no hay fotos ni ranking cargados para esta edición.
-      </div>
+      <div id="historyContent"></div>
     </div>
   </section>
 
@@ -353,7 +388,21 @@ const cooks = [...ALL_VOTERS]
   .sort((a,b)=>a.localeCompare(b,"es"));
 
 const HISTORY = [
-  { id:"25-26", edition:"25-26", winner:"Pendiente" },
+  { 
+    id:"25-26", 
+    edition:"25-26", 
+    winner:"Jon",
+    ranking: [
+      { pos:1, name:"Jon", score:58, medal:"gold" },
+      { pos:2, name:"Josefina", score:54, medal:"silver" },
+      { pos:3, name:"Ana Luisa", score:52, medal:"bronze" },
+      { pos:4, name:"Juan Mari", score:37, medal:null },
+      { pos:5, name:"Mikel", score:34, medal:null },
+      { pos:6, name:"Iosu", score:31, medal:null },
+      { pos:7, name:"Yaiza", score:31, medal:null },
+      { pos:8, name:"Javi", score:19, medal:null }
+    ]
+  },
 ];
 
 let currentVoter = null;
@@ -421,6 +470,40 @@ function openHistory(entry){
     `Edición <span>${entry.edition}</span>`;
   document.getElementById("historyWinner").innerHTML =
     `Irabazlea: <strong>${entry.winner}</strong>`;
+
+  const contentEl = document.getElementById("historyContent");
+  
+  if (entry.ranking && entry.ranking.length > 0) {
+    let tableHTML = `
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th style="text-align:center">Pintxo</th>
+            <th style="text-align:right">Puntuación</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    entry.ranking.forEach(row => {
+      const medalClass = row.medal ? `medal-${row.medal}` : '';
+      const nameClass = row.medal === 'gold' ? 'gold-text' : '';
+      tableHTML += `
+        <tr class="${medalClass}">
+          <td class="col-pos">${row.pos}º</td>
+          <td class="col-name ${nameClass}">${row.name}</td>
+          <td class="col-score">${row.score} puntos</td>
+        </tr>
+      `;
+    });
+    
+    tableHTML += `</tbody></table>`;
+    contentEl.innerHTML = tableHTML;
+  } else {
+    contentEl.innerHTML = `<div class="history-placeholder">Aún no hay fotos ni ranking cargados para esta edición.</div>`;
+  }
+  
   showScreen(screenHistory);
 }
 
