@@ -340,16 +340,24 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    aspect-ratio: 1 / 1; /* Fuerza que la tarjeta entera sea cuadrada */
   }
-  .photo-card img {
+  
+  /* Contenedor de la imagen cuadrado perfecto */
+  .photo-img-wrapper {
     width: 100%;
-    flex: 1; /* Ocupa todo el espacio sobrante por encima del autor */
-    object-fit: cover; /* Recorta sutilmente para encajar sin deformar */
+    aspect-ratio: 1 / 1;
     background: var(--card2);
     border-bottom: 1px solid var(--border);
+    overflow: hidden;
   }
-  .photo-card .photo-author {
+  .photo-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-author {
     padding: 12px 10px;
     font-weight: 600;
     font-size: .95rem;
@@ -560,7 +568,9 @@ function openHistory(entry){
       const card = document.createElement("div");
       card.className = "photo-card";
       card.innerHTML = `
-        <img src="${imgSrc}" alt="Pintxo de ${row.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100%\\' height=\\'100%\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%23f6efe4\\'/><text x=\\'50%\\' y=\\'50%\\' font-family=\\'sans-serif\\' font-size=\\'14\\' fill=\\'%238a7f70\\' text-anchor=\\'middle\\' dominant-baseline=\\'middle\\'>Foto no disponible</text></svg>'">
+        <div class="photo-img-wrapper">
+          <img src="${imgSrc}" alt="Pintxo de ${row.name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
+        </div>
         <div class="photo-author">${row.name}</div>
       `;
       galleryEl.appendChild(card);
