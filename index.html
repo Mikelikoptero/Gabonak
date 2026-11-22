@@ -118,14 +118,13 @@
     gap:10px;
   }
   .vote-tick{
-    font-size:1.05rem;
+    font-size:1.15rem;
     font-weight:800;
     color:#2f6b47;
-    background:#e3efe7;
-    border:1px solid var(--ok);
-    padding:2px 9px;
-    border-radius:6px 2px 6px 2px;
-    line-height:1.25;
+    background:none;
+    border:none;
+    padding:0;
+    line-height:1;
   }
   .delete-vote-btn{
     display:inline-flex;
@@ -1234,6 +1233,8 @@ const presentationGridEl = document.getElementById("presentationGrid");
 
 function renderPresentations(){
   presentationGridEl.innerHTML = "";
+  const eligibleCooks = cooks.filter(name => name !== currentVoter);
+
   PRES_LABELS.forEach((label, i)=>{
     const cell = document.createElement("div");
     cell.className = "pres-cell" + (currentPresentations[i] ? " filled" : "");
@@ -1254,7 +1255,7 @@ function renderPresentations(){
     emptyOpt.textContent = "—";
     select.appendChild(emptyOpt);
 
-    cooks.forEach(name=>{
+    eligibleCooks.forEach(name=>{
       const opt = document.createElement("option");
       opt.value = name;
       opt.textContent = name;
@@ -1267,6 +1268,7 @@ function renderPresentations(){
 
     select.addEventListener("change", ()=>{
       const chosen = select.value || null;
+      if(chosen === currentVoter && currentVoter !== ABUELA) return;
       if(chosen){
         currentPresentations = currentPresentations.map((v,idx)=> idx!==i && v===chosen ? null : v);
       }
