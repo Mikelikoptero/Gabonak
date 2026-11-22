@@ -37,7 +37,7 @@
     color:var(--text);
   }
   h1 span{color:var(--accent);}
-  .container{max-width:760px;margin:0 auto;}
+  .container{max-width:980px;margin:0 auto;}
 
   .voter-list{display:grid;gap:12px;}
   .voter-btn{
@@ -79,19 +79,31 @@
 
   .section-title{
     font-size:.85rem;text-transform:uppercase;letter-spacing:1.5px;
-    color:var(--muted);margin:28px 0 12px;
+    color:var(--muted);margin:0 0 12px;
   }
 
+  /* ---------- layout en dos columnas ---------- */
+  .vote-layout{
+    display:grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  @media(max-width:680px){
+    .vote-layout{grid-template-columns:1fr;}
+  }
+
+  /* ---------- lista pintxos ---------- */
   .pintxo-list{
-    display:flex;flex-direction:column;gap:6px;
+    display:flex;flex-direction:column;gap:8px;
     position:relative;
   }
   .pintxo-item{
-    display:flex;align-items:center;gap:12px;
-    padding:9px 14px 9px 20px;
+    display:flex;align-items:center;gap:14px;
+    padding:14px 16px 14px 22px;
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:10px 3px 10px 3px;
+    border-radius:12px 4px 12px 4px;
     cursor:grab;
     user-select:none;
     -webkit-user-select:none;
@@ -118,7 +130,7 @@
     position:absolute;
     left:0;top:0;bottom:0;
     width:6px;
-    border-radius:10px 0 0 3px;
+    border-radius:12px 0 0 4px;
   }
   .medal-stripe.gold{background:var(--gold);}
   .medal-stripe.silver{background:var(--silver);}
@@ -126,33 +138,32 @@
 
   .pos-num{
     min-width:26px;font-weight:700;
-    color:var(--accent);font-size:1rem;
+    color:var(--accent);font-size:1.05rem;
   }
-  .pintxo-name{flex:1;font-weight:600;font-size:1rem;}
+  .pintxo-name{flex:1;font-weight:600;font-size:1.05rem;}
   .points{
     background:#ecdfc9;color:#8a6d3b;
-    padding:3px 9px;
+    padding:4px 10px;
     border-radius:8px 2px 8px 2px;
-    font-weight:700;font-size:.85rem;
-    min-width:50px;text-align:center;
+    font-weight:700;font-size:.9rem;
+    min-width:52px;text-align:center;
   }
   .lock-tag{
-    font-size:.65rem;text-transform:uppercase;letter-spacing:1px;
+    font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
     color:var(--danger);border:1px solid var(--danger);
-    padding:1px 5px;border-radius:6px 2px 6px 2px;
+    padding:2px 6px;border-radius:6px 2px 6px 2px;
   }
 
-  .presentation-grid{
-    display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
-  }
-  @media(max-width:520px){
-    .presentation-grid{grid-template-columns:1fr;}
+  /* ---------- presentaciones (columna derecha, vertical) ---------- */
+  .presentation-col{
+    display:flex;flex-direction:column;gap:10px;
   }
   .pres-cell{
     background:var(--card);
     border:1px dashed #d8cdbc;
     border-radius:12px 4px 12px 4px;
-    padding:14px;min-height:64px;
+    padding:14px;
+    min-height:64px;
     display:flex;flex-direction:column;justify-content:center;gap:6px;
     cursor:pointer;position:relative;
     transition:border-color .12s;
@@ -226,10 +237,16 @@
       <div class="voter-name">Votando: <span id="currentVoterName"></span></div>
     </div>
 
-    <div class="pintxo-list" id="pintxoList"></div>
+    <div class="vote-layout">
+      <div class="pintxo-col">
+        <div class="pintxo-list" id="pintxoList"></div>
+      </div>
 
-    <div class="section-title">Presentaciones</div>
-    <div class="presentation-grid" id="presentationGrid"></div>
+      <div class="presentation-col">
+        <div class="section-title">Presentaciones</div>
+        <div id="presentationGrid"></div>
+      </div>
+    </div>
 
     <button class="save-btn" id="saveBtn">Guardar votación</button>
   </section>
