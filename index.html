@@ -39,7 +39,6 @@
   h1 span{color:var(--accent);}
   .container{max-width:980px;margin:0 auto;}
 
-  /* ---------- layout principal: votantes + historial ---------- */
   .home-layout{
     display:grid;
     grid-template-columns: 1fr 300px;
@@ -55,14 +54,10 @@
     color:var(--muted);margin:0 0 12px;
   }
 
-  /* ---------- votantes en grid compacto ---------- */
   .voter-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
+    display:flex;
+    flex-direction:column;
     gap:10px;
-  }
-  @media(max-width:480px){
-    .voter-grid{grid-template-columns:1fr;}
   }
   .voter-btn{
     display:flex;align-items:center;justify-content:space-between;
@@ -86,7 +81,6 @@
   }
   .voter-btn .arrow{color:var(--accent);font-size:1.1rem;}
 
-  /* ---------- historial lateral ---------- */
   .history-list{
     display:flex;flex-direction:column;gap:10px;
   }
@@ -113,7 +107,6 @@
   }
   .history-winner strong{color:var(--accent);font-weight:700;}
 
-  /* ---------- pantalla votación (sin cambios) ---------- */
   .header-bar{
     display:flex;align-items:center;gap:14px;
     margin-bottom:22px;flex-wrap:wrap;
@@ -270,7 +263,6 @@
   .toast.show{transform:translateX(-50%) translateY(0);}
   .hidden{display:none !important;}
 
-  /* ---------- pantalla historial ---------- */
   .history-view{
     max-width:760px;margin:0 auto;
   }
@@ -296,7 +288,6 @@
 <body>
 <div class="container">
 
-  <!-- ============ PANTALLA 1: PRINCIPAL ============ -->
   <section id="screen-home">
     <h1>Gabonetako <span>Sari Nagusia</span></h1>
     <div class="home-layout">
@@ -306,13 +297,12 @@
       </div>
 
       <aside class="home-history">
-        <div class="section-title">Historial</div>
+        <div class="section-title">Aurreko edizioak</div>
         <div class="history-list" id="historyList"></div>
       </aside>
     </div>
   </section>
 
-  <!-- ============ PANTALLA 2: VOTACIÓN ============ -->
   <section id="screen-vote" class="hidden">
     <div class="header-bar">
       <button class="back-btn" id="backBtn">Volver</button>
@@ -334,7 +324,6 @@
     <button class="save-btn" id="saveBtn">Guardar votación</button>
   </section>
 
-  <!-- ============ PANTALLA 3: HISTORIAL ============ -->
   <section id="screen-history" class="hidden">
     <div class="header-bar">
       <button class="back-btn" id="historyBackBtn">Volver</button>
@@ -353,9 +342,6 @@
 <div class="toast" id="toast">Votación guardada</div>
 
 <script>
-/* =========================================================
-   DATOS
-   ========================================================= */
 const ALL_VOTERS = [
   "Abuela","Josefina","Juan Mari","Jon","Mikel",
   "Ana Luisa","Javi","Iosu","Yaiza"
@@ -366,11 +352,8 @@ const cooks = [...ALL_VOTERS]
   .filter(n => n !== ABUELA)
   .sort((a,b)=>a.localeCompare(b,"es"));
 
-// Historial de ediciones (de momento con datos de ejemplo)
 const HISTORY = [
   { id:"25-26", edition:"25-26", winner:"Pendiente" },
-  // añade aquí las ediciones anteriores cuando las tengas:
-  // { id:"24-25", edition:"24-25", winner:"Nombre" },
 ];
 
 let currentVoter = null;
@@ -378,9 +361,6 @@ let currentOrder = [];
 let currentPresentations = [null,null,null];
 const STORAGE_KEY = "gabonetako-votos-v1";
 
-/* =========================================================
-   PANTALLA PRINCIPAL
-   ========================================================= */
 const voterListEl = document.getElementById("voterList");
 function renderVoters(){
   voterListEl.innerHTML = "";
@@ -408,9 +388,6 @@ function renderHistory(){
   });
 }
 
-/* =========================================================
-   NAVEGACIÓN
-   ========================================================= */
 const screenHome = document.getElementById("screen-home");
 const screenVote = document.getElementById("screen-vote");
 const screenHistory = document.getElementById("screen-history");
@@ -449,9 +426,6 @@ function openHistory(entry){
 
 document.getElementById("historyBackBtn").addEventListener("click", ()=>showScreen(screenHome));
 
-/* =========================================================
-   LISTA DE PINTXOS (votación)
-   ========================================================= */
 const pintxoListEl = document.getElementById("pintxoList");
 const MEDALS = ["gold","silver","bronze"];
 
@@ -558,9 +532,6 @@ function onPointerDown(e){
   document.addEventListener("pointercancel", onUp);
 }
 
-/* =========================================================
-   PRESENTACIONES
-   ========================================================= */
 const presentationGridEl = document.getElementById("presentationGrid");
 const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
 const PRES_POINTS = [3,2,1];
@@ -613,9 +584,6 @@ function renderPresentations(){
   });
 }
 
-/* =========================================================
-   GUARDAR
-   ========================================================= */
 const saveBtn = document.getElementById("saveBtn");
 function allPresentationsFilled(){
   return currentPresentations.every(v => v !== null);
@@ -640,9 +608,6 @@ function showToast(){
   setTimeout(()=>t.classList.remove("show"), 2400);
 }
 
-/* =========================================================
-   INIT
-   ========================================================= */
 renderVoters();
 renderHistory();
 </script>
