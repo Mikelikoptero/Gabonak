@@ -330,7 +330,7 @@
     padding:12px 22px;
     border-radius:12px 4px 12px 4px;
     font-weight:700;transition:transform .3s ease;
-    z-index:50;
+    z-index:120;
   }
   .toast.show{transform:translateX(-50%) translateY(0);}
   .hidden{display:none !important;}
@@ -361,10 +361,32 @@
     margin-bottom:32px;
   }
 
+  .reveal-controls{
+    display:flex;
+    justify-content:center;
+    margin:14px 0 8px;
+  }
+  .reveal-next-btn{
+    padding:12px 24px;
+    background:var(--accent2);
+    color:#4a3a1f;
+    border:1px solid var(--accent);
+    border-radius:12px 4px 12px 4px;
+    font-size:1rem;
+    font-weight:800;
+    cursor:pointer;
+    transition:transform .12s, background-color .12s, box-shadow .12s;
+  }
+  .reveal-next-btn:hover{
+    transform:translateY(-2px);
+    background:var(--accent);
+    box-shadow:0 6px 16px rgba(120,100,70,.16);
+  }
+
   .results-table{
     width: 100%;
-    max-width: 500px;
-    margin: 16px auto 32px auto;
+    max-width: 540px;
+    margin: 16px auto 28px auto;
     border-collapse:separate;
     border-spacing:0;
     background:var(--card);
@@ -402,11 +424,95 @@
 
   .results-table .col-pos { font-weight:700; color:var(--muted); width: 80px; text-align:center; }
   .results-table .col-name { font-weight:600; text-align:center; color:var(--text); }
-  .results-table .col-name.gold-text { color:var(--bronze); font-weight:700; }
+  .results-table .col-name.mystery { color:var(--muted); letter-spacing:2px; font-style:italic; }
+  .results-table .col-name.gold-text { color:#9c7424; font-weight:800; }
   
-  .results-table .col-score { font-weight:700; color:var(--ok); text-align:right; }
+  .results-table .col-score { font-weight:700; color:#4f825e; text-align:right; }
 
-  .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) .col-name { color:var(--muted); font-weight:500; }
+  .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) .col-name:not(.mystery) { color:var(--text); font-weight:600; }
+
+  .winner-banner-box{
+    max-width:620px;
+    margin:20px auto 28px;
+    padding:24px 26px;
+    background:linear-gradient(135deg, #fbf7f0 0%, #f5e7cb 100%);
+    border:2px solid var(--accent);
+    border-radius:16px 6px 16px 6px;
+    text-align:center;
+    box-shadow:0 10px 26px rgba(120,100,70,.18);
+  }
+  .winner-banner-box h3{
+    margin:0 0 8px;
+    font-size:clamp(1.35rem, 3vw, 1.95rem);
+    color:#8f6519;
+    letter-spacing:.5px;
+  }
+  .winner-banner-box p{
+    margin:0;
+    font-size:1.08rem;
+    font-weight:700;
+    color:var(--text);
+  }
+
+  /* ---------- Fuegos artificiales a pantalla completa ---------- */
+  .fireworks-overlay{
+    position:fixed;
+    inset:0;
+    z-index:90;
+    pointer-events:none;
+    overflow:hidden;
+    background:rgba(20, 16, 12, 0.22);
+  }
+  .firework-scatter{
+    position:absolute;
+    inset:0 0 92px 0;
+  }
+  .firework-scattered-gif{
+    position:absolute;
+    width:clamp(120px, 19vw, 220px);
+    height:clamp(120px, 19vw, 220px);
+    object-fit:contain;
+    transform:translate(-50%, -50%);
+  }
+  .fireworks-bottom-row{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:92px;
+    display:grid;
+    grid-template-columns:repeat(10, 1fr);
+    align-items:end;
+    padding:0 4px 2px;
+    gap:2px;
+  }
+  .fireworks-bottom-row img{
+    width:100%;
+    height:100%;
+    max-height:90px;
+    object-fit:contain;
+    display:block;
+  }
+  .close-fireworks-btn{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:100;
+    pointer-events:auto;
+    padding:9px 16px;
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--accent);
+    border-radius:10px 3px 10px 3px;
+    font-weight:700;
+    font-size:.9rem;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,.22);
+  }
+  .close-fireworks-btn:hover{
+    background:var(--accent2);
+    color:#4a3a1f;
+  }
 
   .gallery-title {
     font-size:.85rem; text-transform:uppercase; letter-spacing:1.5px;
@@ -522,6 +628,12 @@
     </div>
   </section>
 
+</div>
+
+<div class="fireworks-overlay hidden" id="fireworksOverlay" aria-hidden="true">
+  <button class="close-fireworks-btn" id="closeFireworksBtn" type="button">Ocultar fuegos</button>
+  <div class="firework-scatter" id="fireworkScatter"></div>
+  <div class="fireworks-bottom-row" id="fireworksBottomRow"></div>
 </div>
 
 <div class="toast" id="toast">Votación guardada</div>
@@ -694,8 +806,62 @@ const screenHome = document.getElementById("screen-home");
 const screenVote = document.getElementById("screen-vote");
 const screenResults = document.getElementById("screen-results");
 const screenHistory = document.getElementById("screen-history");
+const fireworksOverlay = document.getElementById("fireworksOverlay");
+
+function hideFireworks(){
+  fireworksOverlay.classList.add("hidden");
+  fireworksOverlay.setAttribute("aria-hidden", "true");
+}
+
+function showFireworks(){
+  const scatterEl = document.getElementById("fireworkScatter");
+  const bottomRowEl = document.getElementById("fireworksBottomRow");
+  scatterEl.innerHTML = "";
+  bottomRowEl.innerHTML = "";
+
+  // GIFs 1 a 7 repartidos por la pantalla (con repeticiones)
+  const scatteredSpecs = [
+    { num: 1, top: "14%", left: "12%" },
+    { num: 2, top: "16%", left: "36%" },
+    { num: 3, top: "15%", left: "64%" },
+    { num: 4, top: "18%", left: "88%" },
+    { num: 5, top: "40%", left: "18%" },
+    { num: 6, top: "38%", left: "50%" },
+    { num: 7, top: "42%", left: "82%" },
+    { num: 2, top: "64%", left: "14%" },
+    { num: 4, top: "62%", left: "38%" },
+    { num: 1, top: "66%", left: "66%" },
+    { num: 6, top: "63%", left: "88%" },
+    { num: 3, top: "82%", left: "26%" },
+    { num: 5, top: "82%", left: "74%" }
+  ];
+
+  scatteredSpecs.forEach(spec => {
+    const img = document.createElement("img");
+    img.className = "firework-scattered-gif";
+    img.src = `./Gifs/Fireworks${spec.num}.gif`;
+    img.alt = `Fuegos artificiales ${spec.num}`;
+    img.style.top = spec.top;
+    img.style.left = spec.left;
+    scatterEl.appendChild(img);
+  });
+
+  // Fireworks8 repetido 10 veces en horizontal abajo
+  for(let i = 0; i < 10; i++){
+    const img = document.createElement("img");
+    img.src = "./Gifs/Fireworks8.gif";
+    img.alt = "Fuegos artificiales 8";
+    bottomRowEl.appendChild(img);
+  }
+
+  fireworksOverlay.classList.remove("hidden");
+  fireworksOverlay.setAttribute("aria-hidden", "false");
+}
+
+document.getElementById("closeFireworksBtn").addEventListener("click", hideFireworks);
 
 function showScreen(el){
+  hideFireworks();
   [screenHome, screenVote, screenResults, screenHistory].forEach(s=>s.classList.add("hidden"));
   el.classList.remove("hidden");
 }
@@ -725,6 +891,108 @@ document.getElementById("backBtn").addEventListener("click", ()=>{
 const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
 const PRES_POINTS = [3,2,1];
 
+let liveRankingData = [];
+let revealedIndices = new Set();
+let winnerCelebrated = false;
+
+function revealNextPosition(){
+  if(liveRankingData.length === 0) return;
+
+  // Buscar el índice más bajo aún no revelado, empezando desde el último puesto
+  let unrevealed = [];
+  for(let i = liveRankingData.length - 1; i >= 0; i--){
+    if(!revealedIndices.has(i)){
+      unrevealed.push(i);
+    }
+  }
+
+  if(unrevealed.length === 0) return;
+
+  // Si solo quedan 2 o menos por revelar (es decir, el 1º y el 2º), revelar ambos automáticamente
+  if(unrevealed.length <= 2){
+    unrevealed.forEach(idx => revealedIndices.add(idx));
+  } else {
+    revealedIndices.add(unrevealed[0]);
+  }
+
+  renderLiveResultsTable();
+}
+
+function renderLiveResultsTable(){
+  const contentEl = document.getElementById("liveResultsContent");
+  const medals = ["gold","silver","bronze"];
+  const total = liveRankingData.length;
+  const remainingCount = total - revealedIndices.size;
+
+  const topTwoRevealed = total >= 2 && revealedIndices.has(0) && revealedIndices.has(1);
+  const allRevealed = remainingCount === 0;
+
+  let controlsHTML = "";
+  if(!allRevealed){
+    controlsHTML = `
+      <div class="reveal-controls">
+        <button class="reveal-next-btn" id="revealNextBtn" type="button">
+          Revelar siguiente (${remainingCount} por mostrar)
+        </button>
+      </div>
+    `;
+  }
+
+  let bannerHTML = "";
+  if(topTwoRevealed && total > 0){
+    const winnerName = liveRankingData[0].name;
+    bannerHTML = `
+      <div class="winner-banner-box">
+        <h3>ZORIONAK ${winnerName.toUpperCase()}!</h3>
+        <p>Gabonetako Sari Nagusia VI. edizioaren irabazlea!</p>
+      </div>
+    `;
+  }
+
+  let tableHTML = `
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th style="text-align:center">Posición</th>
+          <th style="text-align:center">Pintxo</th>
+          <th style="text-align:right">Puntuación</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  liveRankingData.forEach((row, idx) => {
+    const isRevealed = revealedIndices.has(idx);
+    const medal = isRevealed ? (medals[idx] || null) : null;
+    const medalClass = medal ? `medal-${medal}` : '';
+    const nameClass = !isRevealed
+      ? 'mystery'
+      : (medal === 'gold' ? 'gold-text' : '');
+    const displayName = isRevealed ? row.name : '???';
+
+    tableHTML += `
+      <tr class="${medalClass}">
+        <td class="col-pos">${idx + 1}º</td>
+        <td class="col-name ${nameClass}">${displayName}</td>
+        <td class="col-score">${row.score} puntos</td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `</tbody></table>`;
+  contentEl.innerHTML = controlsHTML + bannerHTML + tableHTML;
+
+  const nextBtn = document.getElementById("revealNextBtn");
+  if(nextBtn){
+    nextBtn.addEventListener("click", revealNextPosition);
+  }
+
+  if(topTwoRevealed && !winnerCelebrated){
+    winnerCelebrated = true;
+    showFireworks();
+  }
+}
+
 function openResults(){
   const votes = getSavedVotes();
   const validVoters = Object.keys(votes).filter(v => ALL_VOTERS.includes(v));
@@ -750,9 +1018,12 @@ function openResults(){
     }
   });
 
-  const sorted = Object.entries(scores)
+  liveRankingData = Object.entries(scores)
     .map(([name, score]) => ({ name, score }))
     .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name, "es"));
+
+  revealedIndices = new Set();
+  winnerCelebrated = false;
 
   document.getElementById("resultsVotesCount").textContent =
     `Votos registrados: ${validVoters.length} de ${voters.length}`;
@@ -761,32 +1032,7 @@ function openResults(){
   if(validVoters.length === 0){
     contentEl.innerHTML = `<div class="history-placeholder">Todavía no hay votaciones guardadas en esta edición.</div>`;
   } else {
-    const medals = ["gold","silver","bronze"];
-    let tableHTML = `
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th style="text-align:center">Posición</th>
-            <th style="text-align:center">Pintxo</th>
-            <th style="text-align:right">Puntuación</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-    sorted.forEach((row, idx) => {
-      const medal = medals[idx] || null;
-      const medalClass = medal ? `medal-${medal}` : '';
-      const nameClass = medal === 'gold' ? 'gold-text' : '';
-      tableHTML += `
-        <tr class="${medalClass}">
-          <td class="col-pos">${idx + 1}º</td>
-          <td class="col-name ${nameClass}">${row.name}</td>
-          <td class="col-score">${row.score} puntos</td>
-        </tr>
-      `;
-    });
-    tableHTML += `</tbody></table>`;
-    contentEl.innerHTML = tableHTML;
+    renderLiveResultsTable();
   }
 
   showScreen(screenResults);
