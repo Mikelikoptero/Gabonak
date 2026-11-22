@@ -29,14 +29,46 @@
     min-height:100vh;
     padding:24px 16px 80px;
   }
+  .page-header{
+    text-align:center;
+    margin:0 0 28px;
+  }
   h1{
     text-align:center;
     font-size:clamp(1.4rem,3vw,2.2rem);
-    margin:0 0 28px;
+    margin:0 0 6px;
     letter-spacing:.5px;
     color:var(--text);
   }
   h1 span{color:var(--accent);}
+  .edition-subtitle{
+    font-size:.95rem;
+    font-weight:700;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 14px;
+  }
+  .results-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 20px;
+    background:var(--card);
+    border:1px solid var(--accent);
+    color:var(--text);
+    font-size:.92rem;
+    font-weight:700;
+    border-radius:12px 4px 12px 4px;
+    cursor:pointer;
+    transition:transform .12s ease, background-color .12s, box-shadow .12s;
+  }
+  .results-btn:hover{
+    transform:translateY(-2px);
+    background:var(--accent2);
+    color:#4a3a1f;
+    box-shadow:0 6px 16px rgba(120,100,70,.14);
+  }
   .container{max-width:980px;margin:0 auto;}
 
   .home-layout{
@@ -58,7 +90,7 @@
     display:flex;flex-direction:column;gap:10px;
   }
   .voter-btn{
-    display:flex;align-items:center;justify-content:space-between;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
     padding:14px 18px;
     background:var(--card);
     border:1px solid var(--border);
@@ -76,6 +108,49 @@
     transform:translateY(-2px);
     border-color:var(--accent);
     box-shadow:0 6px 16px rgba(120,100,70,.12);
+  }
+  .voter-main-label{
+    flex:1;
+  }
+  .voter-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .vote-tick{
+    font-family:monospace;
+    font-size:.95rem;
+    font-weight:700;
+    color:#3a6b4c;
+    background:#e3efe7;
+    border:1px solid var(--ok);
+    padding:2px 8px;
+    border-radius:6px 2px 6px 2px;
+    line-height:1.2;
+  }
+  .delete-vote-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    padding:4px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:8px 2px 8px 2px;
+    cursor:pointer;
+    transition:border-color .12s, background-color .12s, transform .12s;
+  }
+  .delete-vote-btn:hover{
+    border-color:var(--danger);
+    background:#f7eae7;
+    transform:scale(1.05);
+  }
+  .delete-vote-btn img{
+    width:18px;
+    height:18px;
+    object-fit:contain;
+    display:block;
   }
   .voter-btn .arrow{color:var(--accent);font-size:1.1rem;}
 
@@ -287,7 +362,6 @@
     margin-bottom:32px;
   }
 
-  /* Tabla de resultados acortada horizontalmente */
   .results-table{
     width: 100%;
     max-width: 500px;
@@ -335,7 +409,6 @@
 
   .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) .col-name { color:var(--muted); font-weight:500; }
 
-  /* ---------- galería de fotos cuadradas ---------- */
   .gallery-title {
     font-size:.85rem; text-transform:uppercase; letter-spacing:1.5px;
     color:var(--muted); margin: 0 0 16px;
@@ -354,7 +427,6 @@
     flex-direction: column;
   }
   
-  /* Contenedor de la imagen cuadrado perfecto */
   .photo-img-wrapper {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -382,7 +454,12 @@
 <div class="container">
 
   <section id="screen-home">
-    <h1>Gabonetako <span>Sari Nagusia</span></h1>
+    <header class="page-header">
+      <h1>Gabonetako <span>Sari Nagusia</span></h1>
+      <div class="edition-subtitle">VI. EDIZIOA</div>
+      <button class="results-btn" id="openResultsBtn" type="button">Ver resultados</button>
+    </header>
+
     <div class="home-layout">
       <div class="home-main">
         <div class="section-title">Votantes</div>
@@ -398,7 +475,7 @@
 
   <section id="screen-vote" class="hidden">
     <div class="header-bar">
-      <button class="back-btn" id="backBtn">Volver</button>
+      <button class="back-btn" id="backBtn" type="button">Volver</button>
       <div class="voter-name">Votando: <span id="currentVoterName"></span></div>
     </div>
 
@@ -414,12 +491,23 @@
       </div>
     </div>
 
-    <button class="save-btn" id="saveBtn">Guardar votación</button>
+    <button class="save-btn" id="saveBtn" type="button">Guardar votación</button>
+  </section>
+
+  <section id="screen-results" class="hidden">
+    <div class="header-bar">
+      <button class="back-btn" id="resultsBackBtn" type="button">Volver</button>
+    </div>
+    <div class="history-view">
+      <h2>VI. EDIZIOA — <span>Resultados</span></h2>
+      <p class="date-line" id="resultsVotesCount"></p>
+      <div id="liveResultsContent"></div>
+    </div>
   </section>
 
   <section id="screen-history" class="hidden">
     <div class="header-bar">
-      <button class="back-btn" id="historyBackBtn">Volver</button>
+      <button class="back-btn" id="historyBackBtn" type="button">Volver</button>
     </div>
     <div class="history-view">
       <h2 id="historyTitle"></h2>
@@ -508,13 +596,72 @@ let currentOrder = [];
 let currentPresentations = [null,null,null];
 const STORAGE_KEY = "gabonetako-votos-v1";
 
+function getSavedVotes(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  }catch{
+    return {};
+  }
+}
+
+function deleteVote(voterName, event){
+  event.stopPropagation();
+  const votes = getSavedVotes();
+  if(Object.prototype.hasOwnProperty.call(votes, voterName)){
+    delete votes[voterName];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(votes));
+    renderVoters();
+    showToast(`Voto de ${voterName} eliminado`);
+  }
+}
+
 const voterListEl = document.getElementById("voterList");
 function renderVoters(){
+  const votes = getSavedVotes();
   voterListEl.innerHTML = "";
+
   voters.forEach(name=>{
+    const hasVoted = Boolean(votes[name]);
     const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "voter-btn";
-    btn.innerHTML = `<span>${name}</span><span class="arrow">›</span>`;
+
+    const labelSpan = document.createElement("span");
+    labelSpan.className = "voter-main-label";
+    labelSpan.textContent = name;
+    btn.appendChild(labelSpan);
+
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "voter-actions";
+
+    if(hasVoted){
+      const tickSpan = document.createElement("span");
+      tickSpan.className = "vote-tick";
+      tickSpan.title = "Voto guardado";
+      tickSpan.textContent = "[v]";
+      actionsDiv.appendChild(tickSpan);
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "delete-vote-btn";
+      delBtn.title = `Borrar voto de ${name}`;
+      delBtn.setAttribute("aria-label", `Borrar voto de ${name}`);
+
+      const trashImg = document.createElement("img");
+      trashImg.src = "/Logoak/Basura.png";
+      trashImg.alt = "Borrar";
+      delBtn.appendChild(trashImg);
+
+      delBtn.addEventListener("click", (e)=>deleteVote(name, e));
+      actionsDiv.appendChild(delBtn);
+    }
+
+    const arrowSpan = document.createElement("span");
+    arrowSpan.className = "arrow";
+    arrowSpan.textContent = "›";
+    actionsDiv.appendChild(arrowSpan);
+
+    btn.appendChild(actionsDiv);
     btn.addEventListener("click", ()=>startVote(name));
     voterListEl.appendChild(btn);
   });
@@ -525,6 +672,7 @@ function renderHistory(){
   historyListEl.innerHTML = "";
   HISTORY.forEach(entry=>{
     const card = document.createElement("button");
+    card.type = "button";
     card.className = "history-card";
     card.innerHTML = `
       <div class="history-edition">${entry.edition}</div>
@@ -537,10 +685,11 @@ function renderHistory(){
 
 const screenHome = document.getElementById("screen-home");
 const screenVote = document.getElementById("screen-vote");
+const screenResults = document.getElementById("screen-results");
 const screenHistory = document.getElementById("screen-history");
 
 function showScreen(el){
-  [screenHome, screenVote, screenHistory].forEach(s=>s.classList.add("hidden"));
+  [screenHome, screenVote, screenResults, screenHistory].forEach(s=>s.classList.add("hidden"));
   el.classList.remove("hidden");
 }
 
@@ -561,7 +710,86 @@ function startVote(voter){
   showScreen(screenVote);
 }
 
-document.getElementById("backBtn").addEventListener("click", ()=>showScreen(screenHome));
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  renderVoters();
+  showScreen(screenHome);
+});
+
+const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
+const PRES_POINTS = [3,2,1];
+
+function openResults(){
+  const votes = getSavedVotes();
+  const validVoters = Object.keys(votes).filter(v => ALL_VOTERS.includes(v));
+  const scores = {};
+  cooks.forEach(c => { scores[c] = 0; });
+
+  validVoters.forEach(voterName => {
+    const v = votes[voterName];
+    if(Array.isArray(v.order)){
+      const total = v.order.length;
+      v.order.forEach((cookName, idx) => {
+        if(Object.prototype.hasOwnProperty.call(scores, cookName)){
+          scores[cookName] += (total - idx);
+        }
+      });
+    }
+    if(Array.isArray(v.presentations)){
+      v.presentations.forEach((cookName, idx) => {
+        if(cookName && Object.prototype.hasOwnProperty.call(scores, cookName)){
+          scores[cookName] += (PRES_POINTS[idx] || 0);
+        }
+      });
+    }
+  });
+
+  const sorted = Object.entries(scores)
+    .map(([name, score]) => ({ name, score }))
+    .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name, "es"));
+
+  document.getElementById("resultsVotesCount").textContent =
+    `Votos registrados: ${validVoters.length} de ${voters.length}`;
+
+  const contentEl = document.getElementById("liveResultsContent");
+  if(validVoters.length === 0){
+    contentEl.innerHTML = `<div class="history-placeholder">Todavía no hay votaciones guardadas en esta edición.</div>`;
+  } else {
+    const medals = ["gold","silver","bronze"];
+    let tableHTML = `
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th style="text-align:center">Posición</th>
+            <th style="text-align:center">Pintxo</th>
+            <th style="text-align:right">Puntuación</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    sorted.forEach((row, idx) => {
+      const medal = medals[idx] || null;
+      const medalClass = medal ? `medal-${medal}` : '';
+      const nameClass = medal === 'gold' ? 'gold-text' : '';
+      tableHTML += `
+        <tr class="${medalClass}">
+          <td class="col-pos">${idx + 1}º</td>
+          <td class="col-name ${nameClass}">${row.name}</td>
+          <td class="col-score">${row.score} puntos</td>
+        </tr>
+      `;
+    });
+    tableHTML += `</tbody></table>`;
+    contentEl.innerHTML = tableHTML;
+  }
+
+  showScreen(screenResults);
+}
+
+document.getElementById("openResultsBtn").addEventListener("click", openResults);
+document.getElementById("resultsBackBtn").addEventListener("click", ()=>{
+  renderVoters();
+  showScreen(screenHome);
+});
 
 function openHistory(entry){
   document.getElementById("historyTitle").innerHTML = entry.edition;
@@ -732,8 +960,6 @@ function onPointerDown(e){
 }
 
 const presentationGridEl = document.getElementById("presentationGrid");
-const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
-const PRES_POINTS = [3,2,1];
 
 function renderPresentations(){
   presentationGridEl.innerHTML = "";
@@ -791,20 +1017,24 @@ function updateSaveBtn(){ saveBtn.disabled = !allPresentationsFilled(); }
 
 saveBtn.addEventListener("click", ()=>{
   if(!allPresentationsFilled()) return;
-  const votes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  const votes = getSavedVotes();
   votes[currentVoter] = {
     order: [...currentOrder],
     presentations: [...currentPresentations],
     timestamp: new Date().toISOString()
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(votes));
-  showToast();
+  renderVoters();
+  showToast("Votación guardada");
 });
 
-function showToast(){
+let toastTimer = null;
+function showToast(message = "Votación guardada"){
   const t = document.getElementById("toast");
+  t.textContent = message;
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2400);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2400);
 }
 
 renderVoters();
