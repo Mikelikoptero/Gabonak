@@ -38,7 +38,6 @@
     max-width:760px;
     margin:0 auto;
   }
-  /* ---------- Pantalla de votantes ---------- */
   .voter-list{
     display:grid;
     gap:12px;
@@ -64,7 +63,6 @@
     box-shadow:0 6px 16px rgba(120,100,70,.12);
   }
   .voter-btn .arrow{color:var(--accent);font-size:1.2rem;}
-  /* ---------- Pantalla de votación ---------- */
   .header-bar{
     display:flex;
     align-items:center;
@@ -94,7 +92,6 @@
     color:var(--muted);
     margin:28px 0 12px;
   }
-  /* ---------- Lista de pintxos ---------- */
   .pintxo-list{
     display:flex;
     flex-direction:column;
@@ -111,14 +108,17 @@
     border-radius:12px;
     cursor:grab;
     user-select:none;
-    transition:background .12s, border-color .12s, box-shadow .12s, transform .12s;
+    -webkit-user-select:none;
+    touch-action:none;
+    transition:background .12s, border-color .12s, box-shadow .12s;
     position:relative;
   }
-  .pintxo-item:active{cursor:grabbing;}
-  .pintxo-item.placeholder{
+  .pintxo-item.dragging{
     background:var(--card2);
-    border:1px dashed var(--accent);
-    box-shadow:inset 0 0 0 2px rgba(201,162,107,.15);
+    border-color:var(--accent);
+    box-shadow:0 8px 20px rgba(120,100,70,.22);
+    cursor:grabbing;
+    z-index:10;
   }
   .pintxo-item.locked{
     background:#f1e6d8;
@@ -130,6 +130,8 @@
     color:var(--muted);
     font-size:1.2rem;
     line-height:1;
+    width:14px;
+    text-align:center;
   }
   .pos-num{
     min-width:26px;
@@ -157,7 +159,6 @@
     padding:2px 6px;
     border-radius:6px;
   }
-  /* ---------- Presentaciones ---------- */
   .presentation-grid{
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
@@ -205,7 +206,6 @@
     width:100%;
     height:100%;
   }
-  /* ---------- Botón guardar ---------- */
   .save-btn{
     margin-top:34px;
     width:100%;
@@ -251,13 +251,11 @@
 <body>
 <div class="container">
 
-  <!-- ============ PANTALLA 1: VOTANTES ============ -->
   <section id="screen-voters">
     <h1>Gabonetako <span>Sari Nagusia</span></h1>
     <div class="voter-list" id="voterList"></div>
   </section>
 
-  <!-- ============ PANTALLA 2: VOTACIÓN ============ -->
   <section id="screen-vote" class="hidden">
     <div class="header-bar">
       <button class="back-btn" id="backBtn">Volver</button>
@@ -344,13 +342,9 @@ document.getElementById("backBtn").addEventListener("click", ()=>{
 });
 
 /* =========================================================
-   DRAG & DROP EN TIEMPO REAL
-   Estrategia: mientras se arrastra, el elemento arrastrado se saca del flujo
-   y se inserta un "placeholder" en la posición donde caería.
-   Al soltar, el orden final se fija.
+   LISTA DE PINTXOS
    ========================================================= */
 const pintxoListEl = document.getElementById("pintxoList");
-let dragState = null;
 
 function renderPintxos(){
   pintxoListEl.innerHTML = "";
@@ -363,10 +357,8 @@ function renderPintxos(){
     const item = document.createElement("div");
     item.className = "pintxo-item" + (isLocked ? " locked" : "");
     item.dataset.name = name;
-    item.draggable = !isLocked;
-
     item.innerHTML = `
-      <span class="handle">${isLocked ? "·" : "·"}</span>
+      <span class="handle">·</span>
       <span class="pos-num">${index+1}º</span>
       <span class="pintxo-name">${name}</span>
       ${isLocked ? '<span class="lock-tag">Bloqueado</span>' : ''}
@@ -381,107 +373,100 @@ function renderPintxos(){
   });
 }
 
-/* ---------- Drag con Pointer Events (funciona ratón + táctil) ---------- */
-function onPointerDown(e){
-  // Evitar drag si se pulsa en un select o similar (no hay, pero por seguridad)
-  if(e.button !== undefined && e.button !== 0) return;
+/* =========================================================
+   DRAG EN TIEMPO REAL (el elemento se mueve por el DOM)
+   ========================================================= */
+let drag = null;
 
+function onPointerDown(e){
+  if(e.button !== undefined && e.button !== 0) return;
   const item = this;
   const name = item.dataset.name;
   const startY = e.clientY;
-  let dragging = false;
-  let ghost = null;
-  let placeholder = null;
-  let lastY = startY;
 
   const onMove = (ev)=>{
-    const dy = Math.abs(ev.clientY - startY);
-    if(!dragging && dy > 4){
-      // empezar drag
-      dragging = true;
+    if(!drag){
+      if(Math.abs(ev.clientY - startY) < 5) return;
+      // iniciar drag
+      drag = {
+        el: item,
+        name: name,
+        pointerId: ev.pointerId,
+        offsetY: ev.clientY - item.getBoundingClientRect().top
+      };
+      item.classList.add("dragging");
       item.setPointerCapture(ev.pointerId);
-
-      // Crear ghost flotante
-      ghost = item.cloneNode(true);
-      ghost.style.position = "fixed";
-      ghost.style.left = item.getBoundingClientRect().left + "px";
-      ghost.style.top = item.getBoundingClientRect().top + "px";
-      ghost.style.width = item.getBoundingClientRect().width + "px";
-      ghost.style.pointerEvents = "none";
-      ghost.style.zIndex = "1000";
-      ghost.style.opacity = ".85";
-      ghost.style.boxShadow = "0 10px 24px rgba(120,100,70,.25)";
-      ghost.style.transform = "rotate(-1deg)";
-      document.body.appendChild(ghost);
-
-      // Placeholder
-      placeholder = document.createElement("div");
-      placeholder.className = "pintxo-item placeholder";
-      placeholder.style.height = item.getBoundingClientRect().height + "px";
-      placeholder.innerHTML = "&nbsp;";
-
-      // Ocultar el original (sustituido por placeholder)
-      item.style.display = "none";
-      item.parentNode.insertBefore(placeholder, item);
-
-      lastY = ev.clientY;
+      ev.preventDefault();
     }
 
-    if(!dragging) return;
+    // Mover el propio elemento con transform para feedback visual
+    const rect = item.getBoundingClientRect();
+    const listRect = pintxoListEl.getBoundingClientRect();
 
-    ev.preventDefault();
-
-    // Mover ghost
-    const rect = ghost.getBoundingClientRect();
-    const offsetY = lastY - rect.top; // approx
-    ghost.style.top = (ev.clientY - offsetY) + "px";
-    lastY = ev.clientY;
-
-    // Determinar nueva posición del placeholder según puntero
-    const items = [...pintxoListEl.children].filter(el => el !== placeholder);
-    let inserted = false;
-
-    for(const other of items){
-      if(other.classList.contains("locked")) continue;
-      const r = other.getBoundingClientRect();
+    // Calcular en qué índice debería estar según la posición del puntero
+    const siblings = [...pintxoListEl.children].filter(el => el !== item);
+    let newIndex = siblings.length; // por defecto al final
+    for(let i=0;i<siblings.length;i++){
+      const sib = siblings[i];
+      if(sib.classList.contains("locked")) continue;
+      const r = sib.getBoundingClientRect();
       const mid = r.top + r.height/2;
       if(ev.clientY < mid){
-        pintxoListEl.insertBefore(placeholder, other);
-        inserted = true;
+        newIndex = i;
         break;
       }
     }
-    if(!inserted){
-      // insertar antes del bloqueado (si existe) o al final
+
+    // Recolocar el elemento en el DOM si cambió de posición
+    const children = [...pintxoListEl.children];
+    const currentDomIndex = children.indexOf(item);
+    // índice efectivo entre los no-item
+    let targetSibling = null;
+    if(newIndex < siblings.length){
+      targetSibling = siblings[newIndex];
+    } else {
+      targetSibling = null; // final
+    }
+
+    if(targetSibling){
+      if(item.nextElementSibling !== targetSibling){
+        pintxoListEl.insertBefore(item, targetSibling);
+      }
+    } else {
+      // insertar antes del bloqueado (si hay) o al final
       const lockedEl = pintxoListEl.querySelector(".pintxo-item.locked");
       if(lockedEl){
-        pintxoListEl.insertBefore(placeholder, lockedEl);
+        if(item.nextElementSibling !== lockedEl){
+          pintxoListEl.insertBefore(item, lockedEl);
+        }
       } else {
-        pintxoListEl.appendChild(placeholder);
+        if(item !== pintxoListEl.lastElementChild){
+          pintxoListEl.appendChild(item);
+        }
       }
     }
+
+    // Feedback visual: pequeño translate basado en el puntero
+    const newRect = item.getBoundingClientRect();
+    const deltaY = ev.clientY - (newRect.top + drag.offsetY);
+    item.style.transform = `translateY(${deltaY}px)`;
   };
 
-  const onUp = (ev)=>{
+  const onUp = ()=>{
     document.removeEventListener("pointermove", onMove);
     document.removeEventListener("pointerup", onUp);
     document.removeEventListener("pointercancel", onUp);
 
-    if(!dragging){
-      return;
-    }
+    if(!drag) return;
+    item.style.transform = "";
+    item.classList.remove("dragging");
 
-    // Construir nuevo orden a partir del DOM
-    const newOrder = [];
-    [...pintxoListEl.children].forEach(el=>{
-      if(el === placeholder){
-        newOrder.push(name);
-      } else if(el.dataset && el.dataset.name){
-        newOrder.push(el.dataset.name);
-      }
-    });
+    // Reconstruir orden desde el DOM
+    const newOrder = [...pintxoListEl.children]
+      .map(el => el.dataset.name)
+      .filter(Boolean);
 
-    // Seguridad: si el votante no es abuela, su nombre debe quedar el último
+    // Seguridad: nombre bloqueado al final si no es abuela
     if(currentVoter !== ABUELA){
       const idx = newOrder.indexOf(currentVoter);
       if(idx !== -1 && idx !== newOrder.length - 1){
@@ -490,11 +475,7 @@ function onPointerDown(e){
       }
     }
 
-    // Limpiar
-    if(ghost) ghost.remove();
-    if(placeholder) placeholder.remove();
-    item.style.display = "";
-
+    drag = null;
     currentOrder = newOrder;
     renderPintxos();
     updateSaveBtn();
