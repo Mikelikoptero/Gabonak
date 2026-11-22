@@ -82,7 +82,6 @@
     color:var(--muted);margin:0 0 12px;
   }
 
-  /* ---------- layout en dos columnas ---------- */
   .vote-layout{
     display:grid;
     grid-template-columns: 1.55fr 1fr;
@@ -93,7 +92,6 @@
     .vote-layout{grid-template-columns:1fr;}
   }
 
-  /* ---------- lista pintxos ---------- */
   .pintxo-list{
     display:flex;flex-direction:column;gap:8px;
     position:relative;
@@ -154,9 +152,11 @@
     padding:2px 6px;border-radius:6px 2px 6px 2px;
   }
 
-  /* ---------- presentaciones (columna derecha, vertical) ---------- */
   .presentation-col{
-    display:flex;flex-direction:column;gap:10px;
+    display:flex;flex-direction:column;
+  }
+  .presentation-list{
+    display:flex;flex-direction:column;gap:18px;
   }
   .pres-cell{
     background:var(--card);
@@ -239,12 +239,13 @@
 
     <div class="vote-layout">
       <div class="pintxo-col">
+        <div class="section-title">Pintxoak</div>
         <div class="pintxo-list" id="pintxoList"></div>
       </div>
 
       <div class="presentation-col">
         <div class="section-title">Presentaciones</div>
-        <div id="presentationGrid"></div>
+        <div class="presentation-list" id="presentationGrid"></div>
       </div>
     </div>
 
