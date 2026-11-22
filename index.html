@@ -118,22 +118,21 @@
     gap:10px;
   }
   .vote-tick{
-    font-family:monospace;
-    font-size:.95rem;
-    font-weight:700;
-    color:#3a6b4c;
+    font-size:1.05rem;
+    font-weight:800;
+    color:#2f6b47;
     background:#e3efe7;
     border:1px solid var(--ok);
-    padding:2px 8px;
+    padding:2px 9px;
     border-radius:6px 2px 6px 2px;
-    line-height:1.2;
+    line-height:1.25;
   }
   .delete-vote-btn{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    width:30px;
-    height:30px;
+    width:32px;
+    height:32px;
     padding:4px;
     background:var(--card2);
     border:1px solid var(--border);
@@ -147,8 +146,8 @@
     transform:scale(1.05);
   }
   .delete-vote-btn img{
-    width:18px;
-    height:18px;
+    width:20px;
+    height:20px;
     object-fit:contain;
     display:block;
   }
@@ -638,7 +637,7 @@ function renderVoters(){
       const tickSpan = document.createElement("span");
       tickSpan.className = "vote-tick";
       tickSpan.title = "Voto guardado";
-      tickSpan.textContent = "[v]";
+      tickSpan.textContent = "✓";
       actionsDiv.appendChild(tickSpan);
 
       const delBtn = document.createElement("button");
@@ -648,8 +647,16 @@ function renderVoters(){
       delBtn.setAttribute("aria-label", `Borrar voto de ${name}`);
 
       const trashImg = document.createElement("img");
-      trashImg.src = "/Logoak/Basura.png";
+      trashImg.src = "./Logoak/Basura.png";
       trashImg.alt = "Borrar";
+      trashImg.onerror = function(){
+        if(!this.dataset.triedLower){
+          this.dataset.triedLower = "1";
+          this.src = "./Logoak/basura.png";
+        } else {
+          this.replaceWith(document.createTextNode("×"));
+        }
+      };
       delBtn.appendChild(trashImg);
 
       delBtn.addEventListener("click", (e)=>deleteVote(name, e));
