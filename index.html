@@ -34,25 +34,16 @@
     color:var(--text);
   }
   h1 span{color:var(--accent);}
-  .container{
-    max-width:760px;
-    margin:0 auto;
-  }
-  .voter-list{
-    display:grid;
-    gap:12px;
-  }
+  .container{max-width:760px;margin:0 auto;}
+  .voter-list{display:grid;gap:12px;}
   .voter-btn{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    display:flex;align-items:center;justify-content:space-between;
     padding:18px 22px;
     background:var(--card);
     border:1px solid var(--border);
     border-radius:14px;
     color:var(--text);
-    font-size:1.1rem;
-    font-weight:600;
+    font-size:1.1rem;font-weight:600;
     cursor:pointer;
     transition:transform .12s ease, border-color .12s, box-shadow .12s;
     text-align:left;
@@ -64,44 +55,29 @@
   }
   .voter-btn .arrow{color:var(--accent);font-size:1.2rem;}
   .header-bar{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin-bottom:22px;
-    flex-wrap:wrap;
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:22px;flex-wrap:wrap;
   }
   .back-btn{
     background:transparent;
     border:1px solid var(--muted);
     color:var(--text);
-    padding:8px 14px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:.9rem;
+    padding:8px 14px;border-radius:10px;
+    cursor:pointer;font-size:.9rem;
   }
   .back-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .voter-name{
-    font-size:1.25rem;
-    font-weight:700;
-  }
+  .voter-name{font-size:1.25rem;font-weight:700;}
   .voter-name span{color:var(--accent);}
   .section-title{
-    font-size:.85rem;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-    color:var(--muted);
-    margin:28px 0 12px;
+    font-size:.85rem;text-transform:uppercase;letter-spacing:1.5px;
+    color:var(--muted);margin:28px 0 12px;
   }
   .pintxo-list{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+    display:flex;flex-direction:column;gap:8px;
     position:relative;
   }
   .pintxo-item{
-    display:flex;
-    align-items:center;
-    gap:14px;
+    display:flex;align-items:center;gap:14px;
     padding:14px 16px;
     background:var(--card);
     border:1px solid var(--border);
@@ -110,13 +86,14 @@
     user-select:none;
     -webkit-user-select:none;
     touch-action:none;
-    transition:background .12s, border-color .12s, box-shadow .12s;
+    will-change:background-color, border-color;
+    transition:background-color .15s, border-color .15s, box-shadow .15s;
     position:relative;
   }
   .pintxo-item.dragging{
     background:var(--card2);
     border-color:var(--accent);
-    box-shadow:0 8px 20px rgba(120,100,70,.22);
+    box-shadow:0 6px 18px rgba(120,100,70,.18);
     cursor:grabbing;
     z-index:10;
   }
@@ -128,95 +105,59 @@
   .pintxo-item.locked .handle{color:var(--danger);}
   .handle{
     color:var(--muted);
-    font-size:1.2rem;
-    line-height:1;
-    width:14px;
-    text-align:center;
+    font-size:1.2rem;line-height:1;
+    width:14px;text-align:center;
   }
   .pos-num{
-    min-width:26px;
-    font-weight:700;
-    color:var(--accent);
-    font-size:1.05rem;
+    min-width:26px;font-weight:700;
+    color:var(--accent);font-size:1.05rem;
   }
   .pintxo-name{flex:1;font-weight:600;font-size:1.05rem;}
   .points{
-    background:#ecdfc9;
-    color:#8a6d3b;
-    padding:4px 10px;
-    border-radius:8px;
-    font-weight:700;
-    font-size:.9rem;
-    min-width:52px;
-    text-align:center;
+    background:#ecdfc9;color:#8a6d3b;
+    padding:4px 10px;border-radius:8px;
+    font-weight:700;font-size:.9rem;
+    min-width:52px;text-align:center;
   }
   .lock-tag{
-    font-size:.7rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--danger);
-    border:1px solid var(--danger);
-    padding:2px 6px;
-    border-radius:6px;
+    font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
+    color:var(--danger);border:1px solid var(--danger);
+    padding:2px 6px;border-radius:6px;
   }
   .presentation-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:10px;
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
   }
   @media(max-width:520px){
     .presentation-grid{grid-template-columns:1fr;}
   }
   .pres-cell{
     background:var(--card);
-    border:1px dashed #d8cdbc;
-    border-radius:12px;
-    padding:14px;
-    min-height:64px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:6px;
-    cursor:pointer;
-    position:relative;
+    border:1px dashed #d8cdbc;border-radius:12px;
+    padding:14px;min-height:64px;
+    display:flex;flex-direction:column;justify-content:center;gap:6px;
+    cursor:pointer;position:relative;
     transition:border-color .12s;
   }
   .pres-cell:hover{border-color:var(--accent);}
   .pres-cell.filled{
-    border-style:solid;
-    border-color:var(--accent);
+    border-style:solid;border-color:var(--accent);
     background:var(--card2);
   }
   .pres-label{
-    font-size:.7rem;
-    text-transform:uppercase;
-    letter-spacing:1px;
+    font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
     color:var(--muted);
   }
-  .pres-value{
-    font-weight:700;
-    font-size:1rem;
-  }
+  .pres-value{font-weight:700;font-size:1rem;}
   .pres-value.empty{color:var(--muted);font-weight:400;font-style:italic;}
   .pres-cell select{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    cursor:pointer;
-    width:100%;
-    height:100%;
+    position:absolute;inset:0;opacity:0;
+    cursor:pointer;width:100%;height:100%;
   }
   .save-btn{
-    margin-top:34px;
-    width:100%;
-    padding:16px;
-    background:var(--accent2);
-    color:#4a3a1f;
-    font-weight:800;
-    font-size:1.05rem;
-    border:none;
-    border-radius:14px;
-    cursor:pointer;
+    margin-top:34px;width:100%;padding:16px;
+    background:var(--accent2);color:#4a3a1f;
+    font-weight:800;font-size:1.05rem;
+    border:none;border-radius:14px;cursor:pointer;
     letter-spacing:.5px;
     transition:transform .12s, box-shadow .12s, background .12s;
   }
@@ -226,22 +167,15 @@
     box-shadow:0 8px 20px rgba(120,100,70,.18);
   }
   .save-btn:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-    transform:none;
-    box-shadow:none;
+    opacity:.45;cursor:not-allowed;
+    transform:none;box-shadow:none;
   }
   .toast{
-    position:fixed;
-    bottom:24px;
-    left:50%;
+    position:fixed;bottom:24px;left:50%;
     transform:translateX(-50%) translateY(120%);
-    background:var(--ok);
-    color:#2a3f31;
-    padding:12px 22px;
-    border-radius:12px;
-    font-weight:700;
-    transition:transform .3s ease;
+    background:var(--ok);color:#2a3f31;
+    padding:12px 22px;border-radius:12px;
+    font-weight:700;transition:transform .3s ease;
     z-index:50;
   }
   .toast.show{transform:translateX(-50%) translateY(0);}
@@ -275,33 +209,23 @@
 <div class="toast" id="toast">Votación guardada</div>
 
 <script>
-/* =========================================================
-   DATOS
-   ========================================================= */
 const ALL_VOTERS = [
   "Abuela","Josefina","Juan Mari","Jon","Mikel",
   "Ana Luisa","Javi","Iosu","Yaiza"
 ];
 const voters = [...ALL_VOTERS].sort((a,b)=>a.localeCompare(b,"es"));
-
 const ABUELA = "Abuela";
 const cooks = [...ALL_VOTERS]
   .filter(n => n !== ABUELA)
   .sort((a,b)=>a.localeCompare(b,"es"));
 
-/* =========================================================
-   ESTADO
-   ========================================================= */
 let currentVoter = null;
 let currentOrder = [];
 let currentPresentations = [null,null,null];
 const STORAGE_KEY = "gabonetako-votos-v1";
 
-/* =========================================================
-   PANTALLA 1
-   ========================================================= */
+/* ---------- pantalla votantes ---------- */
 const voterListEl = document.getElementById("voterList");
-
 function renderVoters(){
   voterListEl.innerHTML = "";
   voters.forEach(name=>{
@@ -313,9 +237,6 @@ function renderVoters(){
   });
 }
 
-/* =========================================================
-   NAVEGACIÓN
-   ========================================================= */
 function startVote(voter){
   currentVoter = voter;
   document.getElementById("currentVoterName").textContent = voter;
@@ -325,7 +246,6 @@ function startVote(voter){
     currentOrder = currentOrder.filter(n => n !== voter);
     currentOrder.push(voter);
   }
-
   currentPresentations = [null,null,null];
 
   document.getElementById("screen-voters").classList.add("hidden");
@@ -341,9 +261,7 @@ document.getElementById("backBtn").addEventListener("click", ()=>{
   document.getElementById("screen-voters").classList.remove("hidden");
 });
 
-/* =========================================================
-   LISTA DE PINTXOS
-   ========================================================= */
+/* ---------- lista pintxos ---------- */
 const pintxoListEl = document.getElementById("pintxoList");
 
 function renderPintxos(){
@@ -368,72 +286,45 @@ function renderPintxos(){
     if(!isLocked){
       item.addEventListener("pointerdown", onPointerDown);
     }
-
     pintxoListEl.appendChild(item);
   });
 }
 
-/* =========================================================
-   DRAG EN TIEMPO REAL (el elemento se mueve por el DOM)
-   ========================================================= */
+/* ---------- drag en tiempo real, sin transform ---------- */
 let drag = null;
 
 function onPointerDown(e){
   if(e.button !== undefined && e.button !== 0) return;
   const item = this;
-  const name = item.dataset.name;
   const startY = e.clientY;
+  let dragging = false;
 
   const onMove = (ev)=>{
-    if(!drag){
+    if(!dragging){
       if(Math.abs(ev.clientY - startY) < 5) return;
-      // iniciar drag
-      drag = {
-        el: item,
-        name: name,
-        pointerId: ev.pointerId,
-        offsetY: ev.clientY - item.getBoundingClientRect().top
-      };
+      dragging = true;
       item.classList.add("dragging");
       item.setPointerCapture(ev.pointerId);
+      drag = { el: item };
       ev.preventDefault();
     }
 
-    // Mover el propio elemento con transform para feedback visual
-    const rect = item.getBoundingClientRect();
-    const listRect = pintxoListEl.getBoundingClientRect();
-
-    // Calcular en qué índice debería estar según la posición del puntero
+    // Recolocar SOLO cuando cambia la posición lógica
     const siblings = [...pintxoListEl.children].filter(el => el !== item);
-    let newIndex = siblings.length; // por defecto al final
-    for(let i=0;i<siblings.length;i++){
-      const sib = siblings[i];
+    let targetSibling = null;
+    for(const sib of siblings){
       if(sib.classList.contains("locked")) continue;
       const r = sib.getBoundingClientRect();
       const mid = r.top + r.height/2;
-      if(ev.clientY < mid){
-        newIndex = i;
-        break;
-      }
-    }
-
-    // Recolocar el elemento en el DOM si cambió de posición
-    const children = [...pintxoListEl.children];
-    const currentDomIndex = children.indexOf(item);
-    // índice efectivo entre los no-item
-    let targetSibling = null;
-    if(newIndex < siblings.length){
-      targetSibling = siblings[newIndex];
-    } else {
-      targetSibling = null; // final
+      if(ev.clientY < mid){ targetSibling = sib; break; }
     }
 
     if(targetSibling){
+      // Solo mover si de verdad hace falta (evita reflows innecesarios)
       if(item.nextElementSibling !== targetSibling){
         pintxoListEl.insertBefore(item, targetSibling);
       }
     } else {
-      // insertar antes del bloqueado (si hay) o al final
       const lockedEl = pintxoListEl.querySelector(".pintxo-item.locked");
       if(lockedEl){
         if(item.nextElementSibling !== lockedEl){
@@ -445,11 +336,6 @@ function onPointerDown(e){
         }
       }
     }
-
-    // Feedback visual: pequeño translate basado en el puntero
-    const newRect = item.getBoundingClientRect();
-    const deltaY = ev.clientY - (newRect.top + drag.offsetY);
-    item.style.transform = `translateY(${deltaY}px)`;
   };
 
   const onUp = ()=>{
@@ -457,16 +343,13 @@ function onPointerDown(e){
     document.removeEventListener("pointerup", onUp);
     document.removeEventListener("pointercancel", onUp);
 
-    if(!drag) return;
-    item.style.transform = "";
+    if(!dragging) return;
     item.classList.remove("dragging");
 
-    // Reconstruir orden desde el DOM
     const newOrder = [...pintxoListEl.children]
       .map(el => el.dataset.name)
       .filter(Boolean);
 
-    // Seguridad: nombre bloqueado al final si no es abuela
     if(currentVoter !== ABUELA){
       const idx = newOrder.indexOf(currentVoter);
       if(idx !== -1 && idx !== newOrder.length - 1){
@@ -486,9 +369,7 @@ function onPointerDown(e){
   document.addEventListener("pointercancel", onUp);
 }
 
-/* =========================================================
-   PRESENTACIONES
-   ========================================================= */
+/* ---------- presentaciones ---------- */
 const presentationGridEl = document.getElementById("presentationGrid");
 const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
 
@@ -540,22 +421,15 @@ function renderPresentations(){
   });
 }
 
-/* =========================================================
-   GUARDAR
-   ========================================================= */
+/* ---------- guardar ---------- */
 const saveBtn = document.getElementById("saveBtn");
-
 function allPresentationsFilled(){
   return currentPresentations.every(v => v !== null);
 }
-
-function updateSaveBtn(){
-  saveBtn.disabled = !allPresentationsFilled();
-}
+function updateSaveBtn(){ saveBtn.disabled = !allPresentationsFilled(); }
 
 saveBtn.addEventListener("click", ()=>{
   if(!allPresentationsFilled()) return;
-
   const votes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   votes[currentVoter] = {
     order: [...currentOrder],
@@ -563,7 +437,6 @@ saveBtn.addEventListener("click", ()=>{
     timestamp: new Date().toISOString()
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(votes));
-
   showToast();
 });
 
@@ -573,9 +446,6 @@ function showToast(){
   setTimeout(()=>t.classList.remove("show"), 2400);
 }
 
-/* =========================================================
-   INIT
-   ========================================================= */
 renderVoters();
 </script>
 </body>
