@@ -432,24 +432,26 @@
   .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) .col-name:not(.mystery) { color:var(--text); font-weight:600; }
 
   .winner-banner-box{
-    max-width:620px;
+    position:relative;
+    z-index:105;
+    max-width:640px;
     margin:20px auto 28px;
-    padding:24px 26px;
-    background:linear-gradient(135deg, #fbf7f0 0%, #f5e7cb 100%);
+    padding:26px 28px;
+    background:linear-gradient(135deg, #fffdf9 0%, #f5e6c4 100%);
     border:2px solid var(--accent);
     border-radius:16px 6px 16px 6px;
     text-align:center;
-    box-shadow:0 10px 26px rgba(120,100,70,.18);
+    box-shadow:0 14px 34px rgba(40, 30, 15, 0.34);
   }
   .winner-banner-box h3{
     margin:0 0 8px;
-    font-size:clamp(1.35rem, 3vw, 1.95rem);
+    font-size:clamp(1.4rem, 3.2vw, 2.05rem);
     color:#8f6519;
-    letter-spacing:.5px;
+    letter-spacing:.6px;
   }
   .winner-banner-box p{
     margin:0;
-    font-size:1.08rem;
+    font-size:1.1rem;
     font-weight:700;
     color:var(--text);
   }
@@ -461,18 +463,26 @@
     z-index:90;
     pointer-events:none;
     overflow:hidden;
-    background:rgba(20, 16, 12, 0.22);
+    background:rgba(20, 16, 12, 0.24);
   }
   .firework-scatter{
     position:absolute;
     inset:0 0 92px 0;
   }
   .firework-scattered-gif{
+    --base-size: clamp(110px, 16vw, 185px);
+    --scale: 1;
     position:absolute;
-    width:clamp(120px, 19vw, 220px);
-    height:clamp(120px, 19vw, 220px);
+    width:calc(var(--base-size) * var(--scale));
+    height:calc(var(--base-size) * var(--scale));
     object-fit:contain;
     transform:translate(-50%, -50%);
+  }
+  .firework-scattered-gif.scale-1-5{
+    --scale: 1.5;
+  }
+  .firework-scattered-gif.scale-2{
+    --scale: 2;
   }
   .fireworks-bottom-row{
     position:fixed;
@@ -497,7 +507,7 @@
     position:fixed;
     top:18px;
     right:18px;
-    z-index:100;
+    z-index:110;
     pointer-events:auto;
     padding:9px 16px;
     background:var(--card);
@@ -819,26 +829,36 @@ function showFireworks(){
   scatterEl.innerHTML = "";
   bottomRowEl.innerHTML = "";
 
-  // GIFs 1 a 7 repartidos por la pantalla (con repeticiones)
+  // GIFs 1 a 7 repartidos por la pantalla, incluyendo tamaños 1.5x y 2x
   const scatteredSpecs = [
-    { num: 1, top: "14%", left: "12%" },
-    { num: 2, top: "16%", left: "36%" },
-    { num: 3, top: "15%", left: "64%" },
-    { num: 4, top: "18%", left: "88%" },
-    { num: 5, top: "40%", left: "18%" },
-    { num: 6, top: "38%", left: "50%" },
-    { num: 7, top: "42%", left: "82%" },
-    { num: 2, top: "64%", left: "14%" },
-    { num: 4, top: "62%", left: "38%" },
-    { num: 1, top: "66%", left: "66%" },
-    { num: 6, top: "63%", left: "88%" },
-    { num: 3, top: "82%", left: "26%" },
-    { num: 5, top: "82%", left: "74%" }
+    { num: 1, top: "12%", left: "11%", scale: "1.5" },
+    { num: 2, top: "14%", left: "33%", scale: "1" },
+    { num: 3, top: "13%", left: "58%", scale: "2" },
+    { num: 4, top: "15%", left: "86%", scale: "1.5" },
+    { num: 5, top: "32%", left: "16%", scale: "2" },
+    { num: 6, top: "30%", left: "46%", scale: "1.5" },
+    { num: 7, top: "33%", left: "76%", scale: "1" },
+    { num: 2, top: "52%", left: "12%", scale: "1.5" },
+    { num: 4, top: "50%", left: "32%", scale: "2" },
+    { num: 1, top: "54%", left: "68%", scale: "1.5" },
+    { num: 6, top: "51%", left: "88%", scale: "2" },
+    { num: 3, top: "71%", left: "18%", scale: "1" },
+    { num: 5, top: "72%", left: "44%", scale: "1.5" },
+    { num: 7, top: "70%", left: "76%", scale: "2" },
+    { num: 4, top: "85%", left: "12%", scale: "1.5" },
+    { num: 2, top: "86%", left: "32%", scale: "1" },
+    { num: 6, top: "85%", left: "62%", scale: "1.5" },
+    { num: 1, top: "86%", left: "86%", scale: "1" }
   ];
 
   scatteredSpecs.forEach(spec => {
     const img = document.createElement("img");
     img.className = "firework-scattered-gif";
+    if(spec.scale === "1.5"){
+      img.classList.add("scale-1-5");
+    } else if(spec.scale === "2"){
+      img.classList.add("scale-2");
+    }
     img.src = `./Gifs/Fireworks${spec.num}.gif`;
     img.alt = `Fuegos artificiales ${spec.num}`;
     img.style.top = spec.top;
@@ -898,7 +918,6 @@ let winnerCelebrated = false;
 function revealNextPosition(){
   if(liveRankingData.length === 0) return;
 
-  // Buscar el índice más bajo aún no revelado, empezando desde el último puesto
   let unrevealed = [];
   for(let i = liveRankingData.length - 1; i >= 0; i--){
     if(!revealedIndices.has(i)){
@@ -908,7 +927,6 @@ function revealNextPosition(){
 
   if(unrevealed.length === 0) return;
 
-  // Si solo quedan 2 o menos por revelar (es decir, el 1º y el 2º), revelar ambos automáticamente
   if(unrevealed.length <= 2){
     unrevealed.forEach(idx => revealedIndices.add(idx));
   } else {
