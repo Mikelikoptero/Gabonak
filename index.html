@@ -276,11 +276,22 @@
   }
   .history-view .winner-line strong{color:var(--accent);}
 
+  .history-placeholder{
+    background:var(--card);
+    border:1px dashed var(--border);
+    border-radius:12px 4px 12px 4px;
+    padding:20px;
+    text-align:center;
+    color:var(--muted);
+    font-style:italic;
+    margin-bottom:32px;
+  }
+
   /* Tabla de resultados acortada horizontalmente */
   .results-table{
     width: 100%;
-    max-width: 500px; /* Limita el ancho para que no se vea tan estirada */
-    margin: 16px auto 32px auto; /* Centrada */
+    max-width: 500px;
+    margin: 16px auto 32px auto;
     border-collapse:separate;
     border-spacing:0;
     background:var(--card);
@@ -417,8 +428,10 @@
       
       <div id="historyResults"></div>
 
-      <div class="gallery-title">Fotos</div>
-      <div class="gallery-grid" id="historyGallery"></div>
+      <div id="historyGallerySection">
+        <div class="gallery-title">Fotos</div>
+        <div class="gallery-grid" id="historyGallery"></div>
+      </div>
     </div>
   </section>
 
@@ -460,6 +473,34 @@ const HISTORY = [
       { pos:8, name:"Javi", score:19, medal:null }
     ]
   },
+  { 
+    id:"4", 
+    edition:"IV. Edizioa", 
+    date:"25/12/2024",
+    winner:"Mikel",
+    ranking: []
+  },
+  { 
+    id:"3", 
+    edition:"III. Edizioa", 
+    date:"25/12/2023",
+    winner:"Yaiza",
+    ranking: []
+  },
+  { 
+    id:"2", 
+    edition:"II. Edizioa", 
+    date:"25/12/2022",
+    winner:"Mikel",
+    ranking: []
+  },
+  { 
+    id:"1", 
+    edition:"I. Edizioa", 
+    date:"25/12/2021",
+    winner:"Mikel",
+    ranking: []
+  }
 ];
 
 let currentVoter = null;
@@ -528,6 +569,10 @@ function openHistory(entry){
   document.getElementById("historyWinner").innerHTML = `Irabazlea: <strong>${entry.winner}</strong>`;
 
   const contentEl = document.getElementById("historyResults");
+  const gallerySectionEl = document.getElementById("historyGallerySection");
+  const galleryEl = document.getElementById("historyGallery");
+  galleryEl.innerHTML = "";
+
   if (entry.ranking && entry.ranking.length > 0) {
     let tableHTML = `
       <table class="results-table">
@@ -553,14 +598,8 @@ function openHistory(entry){
     });
     tableHTML += `</tbody></table>`;
     contentEl.innerHTML = tableHTML;
-  } else {
-    contentEl.innerHTML = `<div class="history-placeholder">Aún no hay ranking cargado para esta edición.</div>`;
-  }
 
-  const galleryEl = document.getElementById("historyGallery");
-  galleryEl.innerHTML = "";
-  
-  if (entry.ranking) {
+    gallerySectionEl.classList.remove("hidden");
     entry.ranking.forEach(row => {
       const folderName = `${entry.id}Edizioa`;
       const photoName = getPhotoName(row.name);
@@ -576,6 +615,9 @@ function openHistory(entry){
       `;
       galleryEl.appendChild(card);
     });
+  } else {
+    contentEl.innerHTML = `<div class="history-placeholder">Aún no hay ranking ni fotos cargadas para esta edición.</div>`;
+    gallerySectionEl.classList.add("hidden");
   }
 
   showScreen(screenHistory);
