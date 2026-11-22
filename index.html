@@ -276,12 +276,13 @@
   }
   .history-view .winner-line strong{color:var(--accent);}
 
+  /* Tabla de resultados acortada horizontalmente */
   .results-table{
-    width:100%;
+    width: 100%;
+    max-width: 500px; /* Limita el ancho para que no se vea tan estirada */
+    margin: 16px auto 32px auto; /* Centrada */
     border-collapse:separate;
     border-spacing:0;
-    margin-top:16px;
-    margin-bottom:32px;
     background:var(--card);
     border:1px solid var(--border);
     border-radius:12px 4px 12px 4px;
