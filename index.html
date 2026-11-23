@@ -357,7 +357,6 @@
   }
   .history-view .winner-line strong{color:var(--accent);}
 
-  /* ---------- Selector unificado en una celda a la altura del título ---------- */
   .results-tabs{
     display:inline-flex;
     align-items:center;
@@ -494,7 +493,6 @@
     color:var(--text);
   }
 
-  /* ---------- Fuegos artificiales a pantalla completa ---------- */
   .fireworks-overlay{
     position:fixed;
     inset:0;
@@ -969,6 +967,8 @@ function computeRankingForTab(tabMode){
 
   validVoters.forEach(voterName => {
     const v = votes[voterName];
+    
+    // Clasificación de Pintxos (solo suma esta si la pestaña es 'pintxoa')
     if(tabMode === "pintxoa" && Array.isArray(v.order)){
       const total = v.order.length;
       v.order.forEach((cookName, idx) => {
@@ -977,7 +977,9 @@ function computeRankingForTab(tabMode){
         }
       });
     }
-    if(Array.isArray(v.presentations)){
+    
+    // Clasificación de Presentación (solo suma esta si la pestaña es 'presentacion')
+    if(tabMode === "presentacion" && Array.isArray(v.presentations)){
       v.presentations.forEach((cookName, idx) => {
         if(cookName && Object.prototype.hasOwnProperty.call(scores, cookName)){
           scores[cookName] += (PRES_POINTS[idx] || 0);
