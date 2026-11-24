@@ -707,6 +707,7 @@ const cooks = [...ALL_VOTERS]
 function getPhotoName(name) {
   if (name === "Ana Luisa") return "AnaLuisa";
   if (name === "Juan Mari") return "JuanMari";
+  if (name === "Aitona") return "Aitona";
   return name.replace(/\s+/g, '');
 }
 
@@ -714,7 +715,7 @@ const HISTORY = [
   { 
     id:"5", 
     edition:"V. Edizioa", 
-    date:"25/12/2025",
+    date:"2025/12/25",
     winner:"Jon",
     ranking: [
       { pos:1, name:"Jon", score:58, medal:"gold" },
@@ -730,28 +731,30 @@ const HISTORY = [
   { 
     id:"4", 
     edition:"IV. Edizioa", 
-    date:"25/12/2024",
+    date:"2024/12/24",
     winner:"Mikel",
-    ranking: []
+    ranking: [],
+    participants: ["Abuela", "Javi", "Josefina", "JuanMari", "Iosu", "Yaiza", "Jon", "Mikel"]
   },
   { 
     id:"3", 
     edition:"III. Edizioa", 
-    date:"25/12/2023",
+    date:"2023/12/25",
     winner:"Yaiza",
-    ranking: []
+    ranking: [],
+    participants: ["Abuela", "Javi", "Aitona", "JuanMari", "Iosu", "Yaiza", "Jon", "Mikel"]
   },
   { 
     id:"2", 
     edition:"II. Edizioa", 
-    date:"25/12/2022",
+    date:"2022/12/25",
     winner:"Mikel",
     ranking: []
   },
   { 
     id:"1", 
     edition:"I. Edizioa", 
-    date:"25/12/2021",
+    date:"2021/12/25",
     winner:"Mikel",
     ranking: []
   }
@@ -1172,6 +1175,7 @@ function openHistory(entry){
   const galleryEl = document.getElementById("historyGallery");
   galleryEl.innerHTML = "";
 
+  // Si tiene ranking guardado, mostramos la tabla
   if (entry.ranking && entry.ranking.length > 0) {
     let tableHTML = `
       <table class="results-table">
@@ -1197,25 +1201,33 @@ function openHistory(entry){
     });
     tableHTML += `</tbody></table>`;
     contentEl.innerHTML = tableHTML;
+  } else {
+    contentEl.innerHTML = `<div class="history-placeholder">No hay clasificación guardada para esta edición.</div>`;
+  }
 
+  // Renderizamos las fotos (ya sea desde el ranking o desde el array de participantes)
+  const participantsToRender = entry.ranking && entry.ranking.length > 0 
+    ? entry.ranking.map(r => r.name) 
+    : (entry.participants || []);
+
+  if (participantsToRender.length > 0) {
     gallerySectionEl.classList.remove("hidden");
-    entry.ranking.forEach(row => {
+    participantsToRender.forEach(name => {
       const folderName = `${entry.id}Edizioa`;
-      const photoName = getPhotoName(row.name);
+      const photoName = getPhotoName(name);
       const imgSrc = `${folderName}/${photoName}1.jpeg`;
       
       const card = document.createElement("div");
       card.className = "photo-card";
       card.innerHTML = `
         <div class="photo-img-wrapper">
-          <img src="${imgSrc}" alt="Pintxo de ${row.name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
+          <img src="${imgSrc}" alt="Pintxo de ${name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
         </div>
-        <div class="photo-author">${row.name}</div>
+        <div class="photo-author">${name}</div>
       `;
       galleryEl.appendChild(card);
     });
   } else {
-    contentEl.innerHTML = `<div class="history-placeholder">Aún no hay ranking ni fotos cargadas para esta edición.</div>`;
     gallerySectionEl.classList.add("hidden");
   }
 
@@ -1416,4 +1428,3 @@ renderHistory();
 </script>
 </body>
 </html>
-
