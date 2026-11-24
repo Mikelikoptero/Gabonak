@@ -578,7 +578,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    cursor: pointer; /* Cursor pointer para indicar que es clickable */
+    cursor: pointer;
   }
   
   .photo-img-wrapper {
@@ -593,7 +593,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform .2s; /* Efecto hover */
+    transition: transform .2s;
   }
   .photo-card:hover .photo-img-wrapper img {
     transform: scale(1.05);
@@ -1321,11 +1321,10 @@ function openHistory(entry){
   if (participantsToRender.length > 0) {
     gallerySectionEl.classList.remove("hidden");
     
-    // Creamos un array de datos para el lightbox
     const lightboxData = [];
 
     participantsToRender.forEach((name, idx) => {
-      const folderName = `${entry.id}Edizioa`;
+      const folderName = `./${entry.id}Edizioa`; // <-- Añadido ./ aquí
       const photoName = getPhotoName(name);
       const imgSrc = `${folderName}/${photoName}1.jpeg`;
       
@@ -1340,9 +1339,7 @@ function openHistory(entry){
         <div class="photo-author">${name}</div>
       `;
       
-      // Al hacer clic en la tarjeta, abrimos el lightbox
       card.addEventListener("click", () => {
-        // Solo abrimos si la imagen está visible (no si falló la carga)
         if(!card.querySelector('img').style.display || card.querySelector('img').style.display !== 'none') {
           openLightbox(lightboxData, idx);
         }
@@ -1378,7 +1375,7 @@ function openLightbox(items, startIndex) {
   lightboxCurrentIndex = startIndex;
   updateLightboxView();
   lightboxOverlay.classList.add("active");
-  document.body.style.overflow = "hidden"; // Evitar scroll de fondo
+  document.body.style.overflow = "hidden";
 }
 
 function closeLightbox() {
@@ -1394,12 +1391,10 @@ function updateLightboxView() {
   lightboxImg.alt = `Pintxo de ${item.author}`;
   lightboxAuthor.textContent = item.author;
 
-  // Mostrar/ocultar botones de navegación según si hay más fotos
   if (lightboxItems.length > 1) {
     lightboxPrevBtn.classList.remove("hidden");
     lightboxNextBtn.classList.remove("hidden");
     
-    // En el primer elemento, el botón de "anterior" no hace nada (o podríamos dar la vuelta, pero lo dejamos simple)
     lightboxPrevBtn.style.opacity = lightboxCurrentIndex === 0 ? "0.3" : "1";
     lightboxNextBtn.style.opacity = lightboxCurrentIndex === lightboxItems.length - 1 ? "0.3" : "1";
   } else {
@@ -1419,7 +1414,6 @@ function navigateLightbox(direction) {
 
 lightboxCloseBtn.addEventListener("click", closeLightbox);
 
-// Cerrar al hacer clic fuera de la foto
 lightboxOverlay.addEventListener("click", (e) => {
   if (e.target === lightboxOverlay || e.target.id === "lightboxContent") {
     closeLightbox();
@@ -1429,7 +1423,6 @@ lightboxOverlay.addEventListener("click", (e) => {
 lightboxPrevBtn.addEventListener("click", () => navigateLightbox(-1));
 lightboxNextBtn.addEventListener("click", () => navigateLightbox(1));
 
-// Navegación con teclado
 document.addEventListener("keydown", (e) => {
   if (!lightboxOverlay.classList.contains("active")) return;
   
@@ -1438,7 +1431,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") navigateLightbox(1);
 });
 
-// Navegación táctil (Swipe)
 lightboxOverlay.addEventListener("touchstart", (e) => {
   touchStartX = e.changedTouches[0].screenX;
 }, {passive: true});
@@ -1448,12 +1440,11 @@ lightboxOverlay.addEventListener("touchend", (e) => {
   const touchEndX = e.changedTouches[0].screenX;
   const diff = touchEndX - touchStartX;
   
-  // Si el deslizamiento es mayor a 50px, navegar
   if (Math.abs(diff) > 50) {
     if (diff > 0) {
-      navigateLightbox(-1); // Deslizar a la derecha -> anterior
+      navigateLightbox(-1);
     } else {
-      navigateLightbox(1);  // Deslizar a la izquierda -> siguiente
+      navigateLightbox(1);
     }
   }
 }, {passive: true});
