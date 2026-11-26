@@ -857,16 +857,18 @@ const HISTORY = [
   { 
     id:"2", 
     edition:"II. Edizioa", 
-    date:"2022/12/25",
+    date:"2019/12/25",
     winner:"Mikel",
-    ranking: []
+    ranking: [],
+    participants: []
   },
   { 
     id:"1", 
     edition:"I. Edizioa", 
-    date:"2021/12/25",
+    date:"2019/01/06",
     winner:"Mikel",
-    ranking: []
+    ranking: [],
+    participants: []
   }
 ];
 
@@ -1092,7 +1094,7 @@ window.addEventListener("popstate", (e) => {
 
 // Al cargar la página, comprobar si hay un hash para ir directamente a esa vista
 window.addEventListener("DOMContentLoaded", () => {
-  renderHistory(); // <-- ¡Añadido aquí para que se pinten las tarjetas al inicio!
+  renderHistory();
 
   const hash = window.location.hash.replace("#", "");
   
@@ -1373,37 +1375,65 @@ function openHistory(entry, pushToHistory = true){
     ? entry.ranking.map(r => r.name) 
     : (entry.participants || []);
 
-  if (participantsToRender.length > 0) {
+  // Modificación para las ediciones I y II: Mostrar solo la foto "Argazkia.jpeg"
+  if (entry.id === "1" || entry.id === "2") {
     gallerySectionEl.classList.remove("hidden");
+    const folderName = `./${entry.id}Edizioa`;
+    const imgSrc = `${folderName}/Argazkia.jpeg`;
     
-    const lightboxData = [];
+    const lightboxData = [{ src: imgSrc, author: entry.edition }];
 
-    participantsToRender.forEach((name, idx) => {
-      const folderName = `./${entry.id}Edizioa`;
-      const photoName = getPhotoName(name);
-      const imgSrc = `${folderName}/${photoName}1.jpeg`;
-      
-      lightboxData.push({ src: imgSrc, author: name });
+    const card = document.createElement("div");
+    card.className = "photo-card";
+    card.innerHTML = `
+      <div class="photo-img-wrapper">
+        <img src="${imgSrc}" alt="Foto de ${entry.edition}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
+      </div>
+      <div class="photo-author">${entry.edition}</div>
+    `;
 
-      const card = document.createElement("div");
-      card.className = "photo-card";
-      card.innerHTML = `
-        <div class="photo-img-wrapper">
-          <img src="${imgSrc}" alt="Pintxo de ${name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
-        </div>
-        <div class="photo-author">${name}</div>
-      `;
-      
-      card.addEventListener("click", () => {
-        if(!card.querySelector('img').style.display || card.querySelector('img').style.display !== 'none') {
-          openLightbox(lightboxData, idx);
-        }
-      });
-
-      galleryEl.appendChild(card);
+    card.addEventListener("click", () => {
+      if(!card.querySelector('img').style.display || card.querySelector('img').style.display !== 'none') {
+        openLightbox(lightboxData, 0);
+      }
     });
+
+    galleryEl.appendChild(card);
+
   } else {
-    gallerySectionEl.classList.add("hidden");
+    // Lógica para las ediciones III, IV y V (participantes)
+    if (participantsToRender.length > 0) {
+      gallerySectionEl.classList.remove("hidden");
+      
+      const lightboxData = [];
+
+      participantsToRender.forEach((name, idx) => {
+        const folderName = `./${entry.id}Edizioa`;
+        const photoName = getPhotoName(name);
+        const imgSrc = `${folderName}/${photoName}1.jpeg`;
+        
+        lightboxData.push({ src: imgSrc, author: name });
+
+        const card = document.createElement("div");
+        card.className = "photo-card";
+        card.innerHTML = `
+          <div class="photo-img-wrapper">
+            <img src="${imgSrc}" alt="Pintxo de ${name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
+          </div>
+          <div class="photo-author">${name}</div>
+        `;
+        
+        card.addEventListener("click", () => {
+          if(!card.querySelector('img').style.display || card.querySelector('img').style.display !== 'none') {
+            openLightbox(lightboxData, idx);
+          }
+        });
+
+        galleryEl.appendChild(card);
+      });
+    } else {
+      gallerySectionEl.classList.add("hidden");
+    }
   }
 
   if (pushToHistory) {
