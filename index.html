@@ -607,7 +607,6 @@
     background: var(--card);
   }
 
-  /* ---------- Lightbox (Visor de fotos grande) ---------- */
   .lightbox-overlay {
     position: fixed;
     inset: 0;
@@ -792,7 +791,6 @@
 
 <div class="toast" id="toast">Votación guardada</div>
 
-<!-- Lightbox -->
 <div class="lightbox-overlay" id="lightboxOverlay">
   <button class="lightbox-close-btn" id="lightboxCloseBtn" type="button">&times;</button>
   <button class="lightbox-nav-btn prev hidden" id="lightboxPrevBtn" type="button">&#10094;</button>
@@ -1044,26 +1042,87 @@ function showScreen(el){
   el.classList.remove("hidden");
 }
 
-function startVote(voter){
-  currentVoter = voter;
-  document.getElementById("currentVoterName").textContent = voter;
-
-  currentOrder = [...cooks];
-  if(voter !== ABUELA){
-    currentOrder = currentOrder.filter(n => n !== voter);
-    currentOrder.push(voter);
+/* =========================================================
+   NAVEGACIÓN CON HISTORY API
+   ========================================================= */
+function navigateTo(state, pushToHistory = true) {
+  if (pushToHistory) {
+    let url = window.location.pathname;
+    if (state.screen === "history") url += `#${state.entry.id}Edizioa`;
+    else if (state.screen === "results") url += `#resultados`;
+    else if (state.screen === "vote") url += `#votacion`;
+    
+    history.pushState(state, "", url);
   }
-  currentPresentations = [null,null,null];
 
-  renderPintxos();
-  renderPresentations();
-  updateSaveBtn();
-  showScreen(screenVote);
+  if (state.screen === "home") {
+    renderVoters();
+    showScreen(screenHome);
+  } else if (state.screen === "vote") {
+    currentVoter = state.voter;
+    document.getElementById("currentVoterName").textContent = currentVoter;
+    currentOrder = [...cooks];
+    if(currentVoter !== ABUELA){
+      currentOrder = currentOrder.filter(n => n !== currentVoter);
+      currentOrder.push(currentVoter);
+    }
+    currentPresentations = [null,null,null];
+    renderPintxos();
+    renderPresentations();
+    updateSaveBtn();
+    showScreen(screenVote);
+  } else if (state.screen === "results") {
+    activeResultsTab = state.tab || "pintxoa";
+    loadResultsForActiveTab();
+    showScreen(screenResults);
+  } else if (state.screen === "history") {
+    openHistory(state.entry, false);
+  }
+}
+
+// Manejar el evento "Atrás/Adelante" del navegador
+window.addEventListener("popstate", (e) => {
+  if (e.state) {
+    navigateTo(e.state, false);
+  } else {
+    history.replaceState({ screen: "home" }, "", window.location.pathname);
+    navigateTo({ screen: "home" }, false);
+  }
+});
+
+// Al cargar la página, comprobar si hay un hash para ir directamente a esa vista
+window.addEventListener("DOMContentLoaded", () => {
+  renderHistory(); // <-- ¡Añadido aquí para que se pinten las tarjetas al inicio!
+
+  const hash = window.location.hash.replace("#", "");
+  
+  if (hash) {
+    const matchEdition = hash.match(/^(\d+)Edizioa$/);
+    if (matchEdition) {
+      const entry = HISTORY.find(h => h.id === matchEdition[1]);
+      if (entry) {
+        history.replaceState({ screen: "history", entry: entry }, "", `#${entry.id}Edizioa`);
+        navigateTo({ screen: "history", entry: entry }, false);
+        return;
+      }
+    } else if (hash === "resultados") {
+      history.replaceState({ screen: "results", tab: "pintxoa" }, "", "#resultados");
+      navigateTo({ screen: "results", tab: "pintxoa" }, false);
+      return;
+    }
+  }
+  
+  history.replaceState({ screen: "home" }, "", window.location.pathname);
+  navigateTo({ screen: "home" }, false);
+});
+
+
+function startVote(voter){
+  navigateTo({ screen: "vote", voter: voter });
 }
 
 document.getElementById("backBtn").addEventListener("click", ()=>{
-  renderVoters();
-  showScreen(screenHome);
+  history.back();
 });
 
 const PRES_LABELS = ["Mejor presentación 1","Mejor presentación 2","Mejor presentación 3"];
@@ -1249,33 +1308,29 @@ function loadResultsForActiveTab(){
   renderLiveResultsTable();
 }
 
-function openResults(){
-  activeResultsTab = "pintxoa";
-  loadResultsForActiveTab();
-  showScreen(screenResults);
-}
-
 document.getElementById("tabPintxoaBtn").addEventListener("click", ()=>{
   if(activeResultsTab !== "pintxoa"){
     activeResultsTab = "pintxoa";
-    loadResultsForActiveTab();
+    navigateTo({ screen: "results", tab: "pintxoa" });
   }
 });
 
 document.getElementById("tabPresentacionBtn").addEventListener("click", ()=>{
   if(activeResultsTab !== "presentacion"){
     activeResultsTab = "presentacion";
-    loadResultsForActiveTab();
+    navigateTo({ screen: "results", tab: "presentacion" });
   }
 });
 
-document.getElementById("openResultsBtn").addEventListener("click", openResults);
-document.getElementById("resultsBackBtn").addEventListener("click", ()=>{
-  renderVoters();
-  showScreen(screenHome);
+document.getElementById("openResultsBtn").addEventListener("click", ()=>{
+  navigateTo({ screen: "results", tab: "pintxoa" });
 });
 
-function openHistory(entry){
+document.getElementById("resultsBackBtn").addEventListener("click", ()=>{
+  history.back();
+});
+
+function openHistory(entry, pushToHistory = true){
   document.getElementById("historyTitle").innerHTML = entry.edition;
   document.getElementById("historyDate").textContent = entry.date;
   document.getElementById("historyWinner").innerHTML = `Irabazlea: <strong>${entry.winner}</strong>`;
@@ -1324,7 +1379,7 @@ function openHistory(entry){
     const lightboxData = [];
 
     participantsToRender.forEach((name, idx) => {
-      const folderName = `./${entry.id}Edizioa`; // <-- Añadido ./ aquí
+      const folderName = `./${entry.id}Edizioa`;
       const photoName = getPhotoName(name);
       const imgSrc = `${folderName}/${photoName}1.jpeg`;
       
@@ -1351,10 +1406,16 @@ function openHistory(entry){
     gallerySectionEl.classList.add("hidden");
   }
 
-  showScreen(screenHistory);
+  if (pushToHistory) {
+    navigateTo({ screen: "history", entry: entry });
+  } else {
+    showScreen(screenHistory);
+  }
 }
 
-document.getElementById("historyBackBtn").addEventListener("click", ()=>showScreen(screenHome));
+document.getElementById("historyBackBtn").addEventListener("click", ()=>{
+  history.back();
+});
 
 /* =========================================================
    LÓGICA DEL LIGHTBOX
@@ -1639,8 +1700,6 @@ function showToast(message = "Votación guardada"){
   toastTimer = setTimeout(()=>t.classList.remove("show"), 2400);
 }
 
-renderVoters();
-renderHistory();
 </script>
 </body>
 </html>
