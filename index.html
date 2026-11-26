@@ -86,18 +86,56 @@
     color:var(--muted);margin:0 0 12px;
   }
 
+  /* Menú extraíble de votantes */
+  .voters-drawer-toggle{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 18px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px 4px 12px 4px;
+    color:var(--text);
+    font-size:.9rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    transition:transform .12s ease, border-color .12s, box-shadow .12s, background-color .12s;
+  }
+  .voters-drawer-toggle:hover{
+    transform:translateY(-1px);
+    border-color:var(--accent);
+    background:var(--card2);
+    box-shadow:0 6px 16px rgba(120,100,70,.1);
+  }
+  .voters-drawer-icon{
+    font-size:1.1rem;
+    color:var(--accent);
+    transition:transform .2s ease;
+    display:inline-block;
+  }
+  .voters-drawer-toggle[aria-expanded="true"] .voters-drawer-icon{
+    transform:rotate(90deg);
+  }
+  .voters-drawer-panel{
+    margin-top:10px;
+  }
+
   .voter-grid{
     display:flex;flex-direction:column;gap:10px;
   }
   .voter-btn{
     display:flex;align-items:center;justify-content:space-between;gap:12px;
     padding:14px 18px;
-    background:var(--card);
-    border:1px solid var(--border);
+    background:var(--pastel-bg, var(--card));
+    border:1px solid var(--pastel-border, var(--border));
     color:var(--text);
     font-size:1rem;font-weight:600;
     cursor:pointer;
-    transition:transform .12s ease, border-color .12s, box-shadow .12s;
+    transition:transform .12s ease, border-color .12s, box-shadow .12s, filter .12s;
     text-align:left;
   }
   .voter-btn:nth-child(4n+1){border-radius:14px 4px 14px 4px;}
@@ -107,7 +145,8 @@
   .voter-btn:hover{
     transform:translateY(-2px);
     border-color:var(--accent);
-    box-shadow:0 6px 16px rgba(120,100,70,.12);
+    filter:brightness(0.98);
+    box-shadow:0 6px 16px rgba(120,100,70,.14);
   }
   .voter-main-label{
     flex:1;
@@ -133,7 +172,7 @@
     width:32px;
     height:32px;
     padding:4px;
-    background:var(--card2);
+    background:rgba(255,255,255,0.65);
     border:1px solid var(--border);
     border-radius:8px 2px 8px 2px;
     cursor:pointer;
@@ -150,7 +189,7 @@
     object-fit:contain;
     display:block;
   }
-  .voter-btn .arrow{color:var(--accent);font-size:1.1rem;}
+  .voter-btn .arrow{color:var(--text);opacity:.65;font-size:1.1rem;}
 
   .history-list{
     display:flex;flex-direction:column;gap:10px;
@@ -211,8 +250,8 @@
   .pintxo-item{
     display:flex;align-items:center;gap:14px;
     padding:14px 16px 14px 22px;
-    background:var(--card);
-    border:1px solid var(--border);
+    background:var(--pastel-bg, var(--card));
+    border:1px solid var(--pastel-border, var(--border));
     border-radius:12px 4px 12px 4px;
     cursor:grab;
     user-select:none;
@@ -231,7 +270,7 @@
     z-index:10;
   }
   .pintxo-item.locked{
-    background:#f1e6d8;
+    filter:saturate(0.75) brightness(0.96);
     border-color:#d8c4a8;
     cursor:not-allowed;
   }
@@ -248,11 +287,11 @@
 
   .pos-num{
     min-width:26px;font-weight:700;
-    color:var(--accent);font-size:1.05rem;
+    color:#6b5332;font-size:1.05rem;
   }
   .pintxo-name{flex:1;font-weight:600;font-size:1.05rem;}
   .points{
-    background:#ecdfc9;color:#8a6d3b;
+    background:rgba(255,255,255,0.68);color:#6e552c;
     padding:4px 10px;
     border-radius:8px 2px 8px 2px;
     font-weight:700;font-size:.9rem;
@@ -260,7 +299,7 @@
   }
   .lock-tag{
     font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
-    color:var(--danger);border:1px solid var(--danger);
+    color:var(--danger);border:1px solid var(--danger);background:rgba(255,255,255,0.65);
     padding:2px 6px;border-radius:6px 2px 6px 2px;
   }
 
@@ -271,8 +310,8 @@
     display:flex;flex-direction:column;gap:18px;
   }
   .pres-cell{
-    background:var(--card);
-    border:1px dashed #d8cdbc;
+    background:var(--pastel-bg, var(--card));
+    border:1px dashed var(--pastel-border, #d8cdbc);
     border-radius:12px 4px 12px 4px;
     padding:14px;
     min-height:64px;
@@ -282,8 +321,7 @@
   }
   .pres-cell:hover{border-color:var(--accent);}
   .pres-cell.filled{
-    border-style:solid;border-color:var(--accent);
-    background:var(--card2);
+    border-style:solid;border-color:var(--pastel-border, var(--accent));
   }
   .pres-label{
     font-size:.7rem;text-transform:uppercase;letter-spacing:1px;
@@ -291,7 +329,7 @@
     display:flex;justify-content:space-between;align-items:center;
   }
   .pres-points{
-    background:#ecdfc9;color:#8a6d3b;
+    background:rgba(255,255,255,0.7);color:#8a6d3b;
     padding:1px 6px;border-radius:6px 2px 6px 2px;
     font-weight:700;font-size:.7rem;
     letter-spacing:.5px;
@@ -460,9 +498,9 @@
   .results-table tr:not(.medal-gold):not(.medal-silver):not(.medal-bronze) td:first-child{ border-left:6px solid transparent; }
 
   .results-table .col-pos { font-weight:700; color:var(--muted); width: 80px; text-align:center; }
-  .results-table .col-name { font-weight:600; text-align:center; color:var(--text); }
-  .results-table .col-name.mystery { color:var(--muted); letter-spacing:2px; font-style:italic; }
-  .results-table .col-name.gold-text { color:#9c7424; font-weight:800; }
+  .results-table .col-name { font-weight:600; text-align:center; color:var(--text); background:var(--pastel-bg, transparent); }
+  .results-table .col-name.mystery { color:var(--muted); letter-spacing:2px; font-style:italic; background:transparent; }
+  .results-table .col-name.gold-text { color:#7a5814; font-weight:800; }
   
   .results-table .col-score { font-weight:700; color:#4f825e; text-align:right; }
 
@@ -604,7 +642,7 @@
     font-weight: 600;
     font-size: .95rem;
     text-align: center;
-    background: var(--card);
+    background: var(--pastel-bg, var(--card));
   }
 
   .lightbox-overlay {
@@ -713,8 +751,13 @@
 
     <div class="home-layout">
       <div class="home-main">
-        <div class="section-title">Votantes</div>
-        <div class="voter-grid" id="voterList"></div>
+        <button class="voters-drawer-toggle" id="votersDrawerBtn" type="button" aria-expanded="false" aria-controls="votersDrawerPanel">
+          <span>Votantes</span>
+          <span class="voters-drawer-icon" aria-hidden="true">›</span>
+        </button>
+        <div class="voters-drawer-panel hidden" id="votersDrawerPanel">
+          <div class="voter-grid" id="voterList"></div>
+        </div>
       </div>
 
       <aside class="home-history">
@@ -814,6 +857,26 @@ const cooks = [...ALL_VOTERS]
   .filter(n => n !== ABUELA)
   .sort((a,b)=>a.localeCompare(b,"es"));
 
+// Colores pastel distintos para cada persona (Mikel en rosa pastel)
+const PASTEL_COLORS = {
+  "Mikel":      { bg: "#f9cde2", border: "#e7a4c4" }, // Rosa pastel
+  "Abuela":     { bg: "#f9dfc6", border: "#e4be97" }, // Melocotón pastel
+  "Ana Luisa":  { bg: "#d8efe6", border: "#a9d5c5" }, // Menta pastel
+  "Iosu":       { bg: "#d7e8f9", border: "#a7c8ea" }, // Azul cielo pastel
+  "Javi":       { bg: "#f7f0be", border: "#dfd386" }, // Amarillo limón pastel
+  "Josefina":   { bg: "#e7dcf8", border: "#c6b3e6" }, // Lavanda pastel
+  "Jon":        { bg: "#d9f2f2", border: "#a8d8d8" }, // Turquesa pastel
+  "Juan Mari":  { bg: "#e6efd4", border: "#c3d59f" }, // Verde pistacho pastel
+  "Yaiza":      { bg: "#f8d8d4", border: "#e3aca5" }  // Coral pastel
+};
+
+function applyPastelColor(el, name){
+  const palette = PASTEL_COLORS[name];
+  if(!palette || !el) return;
+  el.style.setProperty("--pastel-bg", palette.bg);
+  el.style.setProperty("--pastel-border", palette.border);
+}
+
 function getPhotoName(name) {
   if (name === "Ana Luisa") return "AnaLuisa";
   if (name === "Juan Mari") return "JuanMari";
@@ -877,6 +940,21 @@ let currentOrder = [];
 let currentPresentations = [null,null,null];
 const STORAGE_KEY = "gabonetako-votos-v1";
 
+// Menú desplegable de votantes (cerrado al cargar)
+const votersDrawerBtn = document.getElementById("votersDrawerBtn");
+const votersDrawerPanel = document.getElementById("votersDrawerPanel");
+let votersDrawerOpen = false;
+
+function setVotersDrawerOpen(open){
+  votersDrawerOpen = Boolean(open);
+  votersDrawerBtn.setAttribute("aria-expanded", String(votersDrawerOpen));
+  votersDrawerPanel.classList.toggle("hidden", !votersDrawerOpen);
+}
+
+votersDrawerBtn.addEventListener("click", ()=>{
+  setVotersDrawerOpen(!votersDrawerOpen);
+});
+
 function getSavedVotes(){
   try{
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -906,6 +984,7 @@ function renderVoters(){
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "voter-btn";
+    applyPastelColor(btn, name);
 
     const labelSpan = document.createElement("span");
     labelSpan.className = "voter-main-label";
@@ -1058,6 +1137,7 @@ function navigateTo(state, pushToHistory = true) {
   }
 
   if (state.screen === "home") {
+    setVotersDrawerOpen(false);
     renderVoters();
     showScreen(screenHome);
   } else if (state.screen === "vote") {
@@ -1082,7 +1162,6 @@ function navigateTo(state, pushToHistory = true) {
   }
 }
 
-// Manejar el evento "Atrás/Adelante" del navegador
 window.addEventListener("popstate", (e) => {
   if (e.state) {
     navigateTo(e.state, false);
@@ -1092,8 +1171,8 @@ window.addEventListener("popstate", (e) => {
   }
 });
 
-// Al cargar la página, comprobar si hay un hash para ir directamente a esa vista
 window.addEventListener("DOMContentLoaded", () => {
+  setVotersDrawerOpen(false);
   renderHistory();
 
   const hash = window.location.hash.replace("#", "");
@@ -1259,11 +1338,13 @@ function renderLiveResultsTable(){
       ? 'mystery'
       : (medal === 'gold' ? 'gold-text' : '');
     const displayName = isRevealed ? row.name : '???';
+    const palette = isRevealed ? PASTEL_COLORS[row.name] : null;
+    const pastelStyle = palette ? `style="--pastel-bg:${palette.bg};"` : '';
 
     tableHTML += `
       <tr class="${medalClass}">
         <td class="col-pos">${idx + 1}º</td>
-        <td class="col-name ${nameClass}">${displayName}</td>
+        <td class="col-name ${nameClass}" ${pastelStyle}>${displayName}</td>
         <td class="col-score">${row.score} puntos</td>
       </tr>
     `;
@@ -1357,10 +1438,12 @@ function openHistory(entry, pushToHistory = true){
     entry.ranking.forEach(row => {
       const medalClass = row.medal ? `medal-${row.medal}` : '';
       const nameClass = row.medal === 'gold' ? 'gold-text' : '';
+      const palette = PASTEL_COLORS[row.name];
+      const pastelStyle = palette ? `style="--pastel-bg:${palette.bg};"` : '';
       tableHTML += `
         <tr class="${medalClass}">
           <td class="col-pos">${row.pos}º</td>
-          <td class="col-name ${nameClass}">${row.name}</td>
+          <td class="col-name ${nameClass}" ${pastelStyle}>${row.name}</td>
           <td class="col-score">${row.score} puntos</td>
         </tr>
       `;
@@ -1375,7 +1458,6 @@ function openHistory(entry, pushToHistory = true){
     ? entry.ranking.map(r => r.name) 
     : (entry.participants || []);
 
-  // Modificación para las ediciones I y II: Mostrar solo la foto "Argazkia.jpeg"
   if (entry.id === "1" || entry.id === "2") {
     gallerySectionEl.classList.remove("hidden");
     const folderName = `./${entry.id}Edizioa`;
@@ -1401,7 +1483,6 @@ function openHistory(entry, pushToHistory = true){
     galleryEl.appendChild(card);
 
   } else {
-    // Lógica para las ediciones III, IV y V (participantes)
     if (participantsToRender.length > 0) {
       gallerySectionEl.classList.remove("hidden");
       
@@ -1416,11 +1497,13 @@ function openHistory(entry, pushToHistory = true){
 
         const card = document.createElement("div");
         card.className = "photo-card";
+        const palette = PASTEL_COLORS[name];
+        const authorStyle = palette ? `style="--pastel-bg:${palette.bg};"` : '';
         card.innerHTML = `
           <div class="photo-img-wrapper">
             <img src="${imgSrc}" alt="Pintxo de ${name}" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:%238a7f70;font-size:0.85rem;font-style:italic;\\'>Foto no disponible</div>';">
           </div>
-          <div class="photo-author">${name}</div>
+          <div class="photo-author" ${authorStyle}>${name}</div>
         `;
         
         card.addEventListener("click", () => {
@@ -1558,6 +1641,7 @@ function renderPintxos(){
     const item = document.createElement("div");
     item.className = "pintxo-item" + (isLocked ? " locked" : "");
     item.dataset.name = name;
+    applyPastelColor(item, name);
     item.innerHTML = `
       ${medal ? `<span class="medal-stripe ${medal}"></span>` : ''}
       <span class="pos-num">${index+1}º</span>
@@ -1656,8 +1740,12 @@ function renderPresentations(){
   const eligibleCooks = cooks.filter(name => name !== currentVoter);
 
   PRES_LABELS.forEach((label, i)=>{
+    const selectedName = currentPresentations[i];
     const cell = document.createElement("div");
-    cell.className = "pres-cell" + (currentPresentations[i] ? " filled" : "");
+    cell.className = "pres-cell" + (selectedName ? " filled" : "");
+    if(selectedName){
+      applyPastelColor(cell, selectedName);
+    }
 
     const lbl = document.createElement("div");
     lbl.className = "pres-label";
@@ -1665,8 +1753,8 @@ function renderPresentations(){
     cell.appendChild(lbl);
 
     const val = document.createElement("div");
-    val.className = "pres-value" + (currentPresentations[i] ? "" : " empty");
-    val.textContent = currentPresentations[i] || "Seleccionar";
+    val.className = "pres-value" + (selectedName ? "" : " empty");
+    val.textContent = selectedName || "Seleccionar";
     cell.appendChild(val);
 
     const select = document.createElement("select");
@@ -1733,3 +1821,4 @@ function showToast(message = "Votación guardada"){
 </script>
 </body>
 </html>
+```[cite: 1]
